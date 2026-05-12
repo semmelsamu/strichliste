@@ -5,7 +5,7 @@
     "scripts": {
         "build": "vite build",
         "dev": "vite",
-        "format": "prettier --write ."
+        "format": "prettier --write 'resources/views/**/*.blade.php'"
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.0.0",
