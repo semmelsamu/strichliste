@@ -1,7 +1,5 @@
-@extends('layouts.main')
-
-@section('title', 'Startseite')
-
-@section('body')
-    <p>This is my body content.</p>
-@endsection
+<x-layouts.main title="Preisliste">
+    <x-wrapper>
+        <p>This is my body content.</p>
+    </x-wrapper>
+</x-layouts.main>

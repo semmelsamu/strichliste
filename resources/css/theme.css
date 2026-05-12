@@ -3,9 +3,9 @@
 
     --color-fsim: #4B78D3;
 
-    --color-fsim-dark: #273B63;
-    --color-fsim-medium: #365697;
-    --color-fsim-light: #4B78D3;
+    --color-fsim-dark: #111828;
+    --color-fsim-medium: #1E3054;
+    --color-fsim-light: #365491;
 
     --spacing-wrapper: calc(6 * var(--spacing));
 

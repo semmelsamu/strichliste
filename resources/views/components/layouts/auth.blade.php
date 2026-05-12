@@ -1,6 +1,6 @@
 <x-layouts.app :title="$title">
 
-    <header class="px-wrapper py-inline bg-black">
+    <header class="px-wrapper py-inline bg-fsim-medium">
 
     </header>
 
