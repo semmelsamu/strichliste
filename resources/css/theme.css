@@ -6,4 +6,10 @@
     --color-fsim-dark: #273B63;
     --color-fsim-medium: #365697;
     --color-fsim-light: #4B78D3;
+
+    --spacing-wrapper: calc(6 * var(--spacing));
+
+    --spacing-inline: calc(4 * var(--spacing));
+    --spacing-content: calc(8 * var(--spacing));
+    --spacing-section: calc(12 * var(--spacing));
 }
