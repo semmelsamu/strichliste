@@ -7,6 +7,9 @@
     --color-fsim-medium: #1E3054;
     --color-fsim-light: #365491;
 
+    --color-text-primary: white;
+    --color-text-secondary: var(--color-neutral-300);
+
     --spacing-wrapper: calc(6 * var(--spacing));
 
     --spacing-inline: calc(4 * var(--spacing));
