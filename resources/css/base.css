@@ -1,0 +1,7 @@
+* {
+    @apply font-rubik;
+}
+
+html {
+    @apply bg-fsim-dark text-white;
+}
