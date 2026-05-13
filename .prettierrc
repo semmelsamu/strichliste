@@ -1,6 +1,7 @@
 {
     "tabWidth": 4,
     "useTabs": false,
+    "tailwindStylesheet": "./resources/css/app.css",
     "plugins": [
         "prettier-plugin-organize-imports",
         "prettier-plugin-tailwindcss",
@@ -8,7 +9,9 @@
     ],
     "overrides": [
         {
-            "files": ["*.blade.php"],
+            "files": [
+                "*.blade.php"
+            ],
             "options": {
                 "parser": "blade"
             }

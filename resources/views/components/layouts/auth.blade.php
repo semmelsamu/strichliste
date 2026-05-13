@@ -1,5 +1,5 @@
 <x-layouts.app :title="$title">
-    <header class="px-wrapper py-inline bg-fsim-medium"></header>
+    <header class="bg-fsim-medium px-wrapper py-inline"></header>
 
     {{ $slot }}
 </x-layouts.app>

@@ -9,7 +9,7 @@
     @vite (['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body
-    class="bg-fsim-dark mx-auto flex h-screen max-w-5xl flex-col overflow-y-hidden"
+    class="mx-auto flex h-screen max-w-5xl flex-col overflow-y-hidden bg-fsim-dark"
 >
     {{ $slot }}
 </body>
