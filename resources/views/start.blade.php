@@ -10,6 +10,7 @@
                 Anmelden
             </a>
             <a
+                href="/preisliste"
                 class="card col-span-3 flex flex-col items-center gap-inline p-content"
             >
                 <x-lucide-scroll-text />
