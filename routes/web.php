@@ -34,3 +34,15 @@ Route::get('/login', function () {
             }),
     ]);
 });
+
+Route::get('/buy', function () {
+    return view('buy-overview', [
+        'categories' => Category::all(),
+    ]);
+});
+
+Route::get('/buy/category/{category_id}', function ($category_id) {
+    return view('buy-category', [
+        'category' => Category::with('articles')->firstWhere('id', $category_id),
+    ]);
+});
