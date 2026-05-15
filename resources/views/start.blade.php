@@ -4,13 +4,14 @@
             <h1 class="col-span-full p-content">Willkommen</h1>
 
             <a
+                href="/login"
                 class="card col-span-3 flex flex-col items-center gap-inline p-content"
             >
                 <x-lucide-log-in />
                 Anmelden
             </a>
             <a
-                href="/preisliste"
+                href="/article-list"
                 class="card col-span-3 flex flex-col items-center gap-inline p-content"
             >
                 <x-lucide-scroll-text />
