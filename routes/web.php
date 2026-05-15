@@ -9,6 +9,6 @@ Route::get('/', function () {
 
 Route::get('/preisliste', function () {
     return view('preisliste', [
-        'categories' => Category::with('products')->get(),
+        'categories' => Category::with('articles')->get(),
     ]);
 });

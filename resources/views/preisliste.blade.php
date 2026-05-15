@@ -29,13 +29,13 @@
                 >
                     <h2 class="mb-inline">{{ $category->name }}</h2>
                     <div class="flex flex-col gap-inline">
-                        @foreach ($category->products as $product)
+                        @foreach ($category->articles as $article)
                             <div
                                 class="card flex items-center justify-between p-inline"
                             >
-                                <span>{{ $product->name }}</span>
+                                <span>{{ $article->name }}</span>
                                 <span class="text-text-secondary"
-                                    >{{ number_format($product->price, 2, ',', '') }} €</span
+                                    >{{ number_format($article->price, 2, ',', '') }} €</span
                                 >
                             </div>
                         @endforeach

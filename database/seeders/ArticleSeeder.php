@@ -2,18 +2,18 @@
 
 namespace Database\Seeders;
 
+use App\Models\Article;
 use App\Models\Category;
-use App\Models\Product;
 use Illuminate\Database\Seeder;
 
-class ProductSeeder extends Seeder
+class ArticleSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        $products = [
+        $articles = [
             ['name' => 'Apfelschorle naturtrüb 0,5l', 'price' => 1, 'category' => 'Wasser und Säfte'],
             ['name' => 'Balisto', 'price' => 1.20, 'category' => 'Snacks'],
             ['name' => 'Eichhofner Helles 0,5l', 'price' => 1.50, 'category' => 'Bier'],
@@ -33,10 +33,10 @@ class ProductSeeder extends Seeder
             ['name' => 'Labertaler Medium', 'price' => 0.60, 'category' => 'Wasser und Säfte'],
         ];
 
-        foreach ($products as $data) {
+        foreach ($articles as $data) {
             $category = Category::where('name', $data['category'])->firstOrFail();
 
-            Product::firstOrCreate(
+            Article::firstOrCreate(
                 ['name' => $data['name']],
                 ['price' => $data['price'], 'category_id' => $category->id],
             );
