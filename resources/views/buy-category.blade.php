@@ -11,7 +11,7 @@
                     </div>
                     <div class="flex justify-between p-inline">
                         <strong>{{ $article->name }}</strong>
-                        <span>{{ $article->price }}</span>
+                        <span>{{ $article->formatted_price }}</span>
                     </div>
                 </button>
             @endforeach
