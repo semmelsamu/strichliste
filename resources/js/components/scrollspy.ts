@@ -1,3 +1,15 @@
+/**
+ * Scrollspy Alpine.js component.
+ *
+ * Tracks which group section is currently visible in a scrollable container
+ * and exposes it as `activeGroup`.
+ *
+ * Usage:
+ * - Add `x-data="scrollspy(<initialGroupId>)"` to a parent element.
+ * - Add `x-ref="scrollContainer"` to the scrollable container.
+ * - Add `data-group-id="<id>"` to each `<section>` inside the container.
+ * - Bind `activeGroup` to highlight the corresponding nav item.
+ */
 export default (initialGroup: number | null = null) => ({
     activeGroup: initialGroup,
 
