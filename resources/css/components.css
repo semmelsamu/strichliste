@@ -1,3 +1,7 @@
 .card {
     @apply block overflow-clip rounded-md bg-fsim-medium shadow-lg;
 }
+
+.button {
+    @apply flex h-12 items-center gap-inline overflow-clip rounded-md px-inline;
+}
