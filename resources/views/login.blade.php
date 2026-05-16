@@ -27,11 +27,12 @@
                     <h2 class="mb-inline">{{ $letter }}</h2>
                     <div class="flex flex-col gap-inline">
                         @foreach ($users as $user)
-                            <div
+                            <a
+                                href="/buy"
                                 class="card flex items-center justify-between p-inline"
                             >
-                                @dump ($user)
-                            </div>
+                                {{ $user->name }}
+                            </a>
                         @endforeach
                     </div>
                 </section>
