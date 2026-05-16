@@ -11,7 +11,7 @@
                 <a
                     href="#category-{{ $category->id }}"
                     class="p-inline"
-                    :class="activeGroup === {{ $category->id }} ? 'card' : ''"
+                    :class="activeGroup == {{ $category->id }} ? 'card' : ''"
                 >
                     {{ $category->name }}
                 </a>

@@ -11,7 +11,7 @@
                 <a
                     href="#{{ $letter }}"
                     class="p-inline"
-                    :class="activeGroup === '{{ $letter }}' ? 'card' : ''"
+                    :class="activeGroup == '{{ $letter }}' ? 'card' : ''"
                 >
                     {{ $letter }}
                 </a>

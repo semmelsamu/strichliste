@@ -10,7 +10,7 @@
  * - Add `data-group-id="<id>"` to each `<section>` inside the container.
  * - Bind `activeGroup` to highlight the corresponding nav item.
  */
-export default (initialGroup: number | null = null) => ({
+export default (initialGroup: any = null) => ({
     activeGroup: initialGroup,
 
     init() {
@@ -22,7 +22,7 @@ export default (initialGroup: number | null = null) => ({
         const update = () => {
             for (const section of sections) {
                 if (visible.has(section)) {
-                    this.activeGroup = parseInt(section.dataset.groupId!);
+                    this.activeGroup = section.dataset.groupId!;
                     return;
                 }
             }
