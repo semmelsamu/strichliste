@@ -6,6 +6,11 @@
         </x-note>
         <section class="space-y-inline">
             <h2>Häufig gekauft</h2>
+            <div class="grid grid-cols-3 gap-inline">
+                @foreach ($categories->first()->articles->take(3) as $article)
+                    <x-article-card :article="$article" />
+                @endforeach
+            </div>
         </section>
         <section class="space-y-inline">
             <h2>Alle Kategorien</h2>
