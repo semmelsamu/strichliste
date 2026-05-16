@@ -13,22 +13,20 @@
                 Abmelden
             </button>
         </div>
-        <nav
-            class="flex w-full justify-evenly px-wrapper *:flex *:flex-col *:items-center *:gap-2 *:px-section *:py-inline"
-        >
-            <a class="shadow-[inset_0_-3px_0_0]">
+        <x-tab-bar class="w-full px-wrapper">
+            <x-tab-bar.tab data-active>
                 <x-lucide-shopping-cart />
                 Kaufen
-            </a>
-            <a>
+            </x-tab-bar.tab>
+            <x-tab-bar.tab>
                 <x-lucide-coins />
                 Aufladen
-            </a>
-            <a>
+            </x-tab-bar.tab>
+            <x-tab-bar.tab>
                 <x-lucide-history />
                 Verlauf
-            </a>
-        </nav>
+            </x-tab-bar.tab>
+        </x-tab-bar>
     </header>
 
     {{ $slot }}
