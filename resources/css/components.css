@@ -5,3 +5,7 @@
 .button {
     @apply flex h-12 items-center gap-inline overflow-clip rounded-md px-inline;
 }
+
+.text-input {
+    @apply my-2 h-12 rounded-md px-inline ring ring-offset-2;
+}
