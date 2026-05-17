@@ -34,7 +34,9 @@
                 <h2>{{ $variant["heading"] }}</h2>
                 <div class="grid grid-cols-4 gap-inline">
                     @foreach ($variant["amounts"] as $amount)
-                        <button class="card p-content">{{ $amount }}</button>
+                        <button class="card p-content">
+                            {{ Number::currency($amount, in: 'EUR', locale: 'de') }}
+                        </button>
                     @endforeach
                 </div>
             </section>
