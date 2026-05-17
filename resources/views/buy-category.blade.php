@@ -1,4 +1,4 @@
-<x-layouts.auth :title="$category->name . ' kaufen'">
+<x-layouts.auth :title="$category->name . ' kaufen'" activeTab="buy">
     <x-wrapper class="space-y-inline">
         <h2>{{ $category->name }}</h2>
         <div class="grid grid-cols-3 gap-inline">

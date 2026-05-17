@@ -13,16 +13,16 @@
                 Abmelden
             </button>
         </div>
-        <x-tab-bar class="w-full px-wrapper">
-            <x-tab-bar.tab data-active>
+        <x-tab-bar class="w-full px-wrapper" activeTab="{{ $activeTab }}">
+            <x-tab-bar.tab href="/buy" name="buy">
                 <x-lucide-shopping-cart />
                 Kaufen
             </x-tab-bar.tab>
-            <x-tab-bar.tab>
+            <x-tab-bar.tab href="/deposit" name="deposit">
                 <x-lucide-coins />
                 Aufladen
             </x-tab-bar.tab>
-            <x-tab-bar.tab>
+            <x-tab-bar.tab href="/history" name="history">
                 <x-lucide-history />
                 Verlauf
             </x-tab-bar.tab>

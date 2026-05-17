@@ -46,3 +46,7 @@ Route::get('/buy/category/{category_id}', function ($category_id) {
         'category' => Category::with('articles')->firstWhere('id', $category_id),
     ]);
 });
+
+Route::get('/deposit', function () {
+    return view('deposit');
+});

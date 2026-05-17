@@ -1,4 +1,4 @@
-<x-layouts.auth title="Artikel kaufen">
+<x-layouts.auth title="Artikel kaufen" activeTab="buy">
     <x-wrapper class="space-y-section">
         <x-note>
             Du kannst Artikel entweder mit dem Barcodescanner einscannen oder
