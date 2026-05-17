@@ -80,6 +80,8 @@ return [
 
     'locale' => env('APP_LOCALE', 'de'),
 
+    'currency' => env('APP_CURRENCY', 'EUR'),
+
     'fallback_locale' => env('APP_FALLBACK_LOCALE', 'de'),
 
     'faker_locale' => env('APP_FAKER_LOCALE', 'de_DE'),
