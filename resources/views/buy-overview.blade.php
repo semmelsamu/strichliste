@@ -20,7 +20,7 @@
                         href="/buy/category/{{ $category->id }}"
                         class="card block flex flex-col items-center gap-inline p-content text-center"
                     >
-                        <x-lucide-beer class="h-8 w-8" />
+                        @svg ($category->icon, "w-8 h-8")
                         <h3>{{ $category->name }}</h3>
                     </a>
                 @endforeach

@@ -12,17 +12,21 @@ class CategorySeeder extends Seeder
      */
     public function run(): void
     {
-        $names = [
-            'Softdrinks',
-            'Wasser und Säfte',
-            'Bier',
-            'Kaffee',
-            'Snacks',
-            'Sonstiges',
+        $categories = [
+            ['name' => 'Softdrinks', 'icon' => 'lucide-cup-soda'],
+            ['name' => 'Wasser und Säfte', 'icon' => 'lucide-bottle-wine'],
+            ['name' => 'Bier', 'icon' => 'lucide-beer'],
+            ['name' => 'Kaffee', 'icon' => 'lucide-coffee'],
+            ['name' => 'Snacks', 'icon' => 'lucide-cookie'],
+            ['name' => 'Sonstiges', 'icon' => 'lucide-shapes'],
         ];
 
-        foreach ($names as $name) {
-            Category::firstOrCreate(['name' => $name]);
+        foreach ($categories as $data) {
+            Category::firstOrCreate([
+                'name' => $data['name'],
+            ], [
+                'icon' => $data['icon'],
+            ]);
         }
     }
 }
