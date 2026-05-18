@@ -15,7 +15,7 @@ Route::get('/article-list', function () {
 });
 
 Route::get('/login', [AuthController::class, 'showUsers']);
-Route::get('/login/{userId}', [AuthController::class, 'loginAs']);
+Route::get('/login/{userId}', [AuthController::class, 'loginAs'])->whereNumber('userId');
 Route::get('/logout', [AuthController::class, 'logout']);
 
 Route::get('/buy', function () {
