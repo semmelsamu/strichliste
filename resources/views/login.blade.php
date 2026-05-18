@@ -28,7 +28,7 @@
                     <div class="flex flex-col gap-inline">
                         @foreach ($users as $user)
                             <a
-                                href="/buy"
+                                href="/login/{{ $user->id }}"
                                 class="card flex items-center justify-between p-inline"
                             >
                                 {{ $user->name }}

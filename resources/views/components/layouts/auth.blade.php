@@ -1,3 +1,5 @@
+@use (Illuminate\Support\Facades\Auth)
+
 <x-layouts.app :title="$title">
     <header class="space-y-content bg-fsim-medium">
         <div
@@ -5,13 +7,13 @@
         >
             <button class="button">
                 <x-lucide-user />
-                semmelsamu
+                {{ Auth::user()->name }}
             </button>
             <p class="mr-auto">11,40 €</p>
-            <button class="button">
+            <a class="button" href="/logout">
                 <x-lucide-log-out />
                 Abmelden
-            </button>
+            </a>
         </div>
         <x-tab-bar class="w-full px-wrapper" activeTab="{{ $activeTab }}">
             <x-tab-bar.tab href="/buy" name="buy">

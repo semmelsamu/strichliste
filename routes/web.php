@@ -1,7 +1,7 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Models\Category;
-use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -14,26 +14,9 @@ Route::get('/article-list', function () {
     ]);
 });
 
-Route::get('/login', function () {
-    return view('login', [
-        'usersByLetter' => User::all()
-            ->groupBy(function ($user) {
-                $first = strtoupper(substr($user->name, 0, 1));
-
-                return ctype_alpha($first) ? $first : '*';
-            })
-            ->sortKeys()
-            ->pipe(function ($col) {
-                // Move '*' to the end if present
-                if ($col->has('*')) {
-                    $star = $col->pull('*');
-                    $col->put('*', $star);
-                }
-
-                return $col;
-            }),
-    ]);
-});
+Route::get('/login', [AuthController::class, 'showUsers']);
+Route::get('/login/{userId}', [AuthController::class, 'loginAs']);
+Route::get('/logout', [AuthController::class, 'logout']);
 
 Route::get('/buy', function () {
     return view('buy-overview', [
