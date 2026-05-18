@@ -14,22 +14,25 @@ Route::get('/article-list', function () {
     ]);
 });
 
-Route::get('/login', [AuthController::class, 'showUsers']);
+Route::get('/login', [AuthController::class, 'showUsers'])->name('login');
 Route::get('/login/{userId}', [AuthController::class, 'loginAs'])->whereNumber('userId');
-Route::get('/logout', [AuthController::class, 'logout']);
 
-Route::get('/buy', function () {
-    return view('buy-overview', [
-        'categories' => Category::all(),
-    ]);
-});
+Route::middleware('auth')->group(function () {
+    Route::get('/logout', [AuthController::class, 'logout']);
 
-Route::get('/buy/category/{category_id}', function ($category_id) {
-    return view('buy-category', [
-        'category' => Category::with('articles')->firstWhere('id', $category_id),
-    ]);
-});
+    Route::get('/buy', function () {
+        return view('buy-overview', [
+            'categories' => Category::all(),
+        ]);
+    });
 
-Route::get('/deposit', function () {
-    return view('deposit');
+    Route::get('/buy/category/{category_id}', function ($category_id) {
+        return view('buy-category', [
+            'category' => Category::with('articles')->firstWhere('id', $category_id),
+        ]);
+    });
+
+    Route::get('/deposit', function () {
+        return view('deposit');
+    });
 });
