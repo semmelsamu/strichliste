@@ -6,11 +6,11 @@
         class="grid grid-cols-[auto_1fr] gap-content overflow-hidden p-wrapper"
         x-data="scrollspy({{ $usersByLetter->keys()->first()?->id ?? 'null' }})"
     >
-        <nav class="flex flex-col gap-inline overflow-y-auto">
+        <nav class="flex flex-col overflow-y-auto">
             @foreach ($usersByLetter as $letter => $users)
                 <a
                     href="#{{ $letter }}"
-                    class="p-inline"
+                    class="button"
                     :class="activeGroup == '{{ $letter }}' ? 'card' : ''"
                 >
                     {{ $letter }}
