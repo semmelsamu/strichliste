@@ -9,7 +9,7 @@
                 <x-lucide-user />
                 {{ Auth::user()->name }}
             </button>
-            <x-currency class="mr-auto" :amount="11.4" />
+            <x-currency class="mr-auto" :amount="Auth::user()->balance" />
             <a class="button" href="/logout">
                 <x-lucide-log-out />
                 Abmelden

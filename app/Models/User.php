@@ -6,6 +6,7 @@ namespace App\Models;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -45,5 +46,17 @@ class User extends Authenticatable
     {
         return $this->hasMany(Transaction::class, 'from_user_id')
             ->orWhere('to_user_id', $this->id);
+    }
+
+    protected function balance(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                $incoming = $this->receivedTransactions()->sum('amount');
+                $outgoing = $this->sentTransactions()->sum('amount');
+
+                return $incoming - $outgoing;
+            }
+        );
     }
 }
