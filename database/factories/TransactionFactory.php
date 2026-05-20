@@ -21,7 +21,7 @@ class TransactionFactory extends Factory
         $users = User::inRandomOrder()->limit(2)->pluck('id');
 
         return [
-            'amount' => fake()->randomFloat(2, 1, 1000),
+            'amount' => fake()->randomFloat(1, 0.2, 10),
             'from_user_id' => $users[0],
             'to_user_id' => $users[1],
         ];
