@@ -6,7 +6,7 @@
                     <td>{{ $transaction->created_at->diffForHumans()}}</td>
                     <td>
                         @if ($transaction->buyArticleTransaction)
-                            Artikel gekauft
+                            {{ $transaction->buyArticleTransaction->article->name }}
                         @elseif ($transaction->undoTransaction)
                             Rückgängig gemacht
                         @else

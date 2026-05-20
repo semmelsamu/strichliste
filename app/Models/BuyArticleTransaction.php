@@ -16,4 +16,9 @@ class BuyArticleTransaction extends Model
     {
         return $this->belongsTo(Transaction::class);
     }
+
+    public function article(): BelongsTo
+    {
+        return $this->belongsTo(Article::class);
+    }
 }
