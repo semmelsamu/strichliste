@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Models\Category;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -34,5 +35,11 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/deposit', function () {
         return view('deposit');
+    });
+
+    Route::get('/history', function () {
+        return view('history', [
+            'transactions' => Auth::user()->transactions()->orderBy('created_at', 'desc')->orderBy('id', 'desc')->get(),
+        ]);
     });
 });

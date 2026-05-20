@@ -9,3 +9,11 @@
 .text-input {
     @apply my-2 h-12 rounded-md px-inline ring ring-offset-2;
 }
+
+.table {
+    @apply w-full;
+}
+
+.table td {
+    @apply p-2;
+}
