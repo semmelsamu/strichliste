@@ -20,12 +20,12 @@ return new class extends Migration
         });
 
         Schema::create('buy_article_transactions', function (Blueprint $table) {
-            $table->foreignId('transaction_id')->primary()->constrained('transactions');
-            $table->foreignId('article_cost_id')->constrained();
+            $table->foreignId('transaction_id')->primary()->constrained();
+            $table->foreignId('article_id')->constrained();
         });
 
         Schema::create('undo_transactions', function (Blueprint $table) {
-            $table->foreignId('transaction_id')->primary()->constrained('transactions');
+            $table->foreignId('transaction_id')->primary()->constrained();
             $table->foreignId('undone_transaction_id')->constrained('transactions');
         });
     }
