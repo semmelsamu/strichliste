@@ -2,6 +2,21 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Article extends Model {}
+class Article extends Model
+{
+    public function prices(): HasMany
+    {
+        return $this->hasMany(ArticlePrice::class);
+    }
+
+    protected function currentPrice(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->prices()->latest('effective_since')->value('price')
+        );
+    }
+}

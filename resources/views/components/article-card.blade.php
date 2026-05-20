@@ -4,6 +4,6 @@
     </div>
     <div class="flex justify-between p-inline">
         <strong>{{ $article->name }}</strong>
-        <span>{{ Number::currency($article->price) }}</span>
+        <span>{{ Number::currency($article->currentPrice) }}</span>
     </div>
 </button>
