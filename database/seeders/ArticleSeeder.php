@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Article;
+use App\Models\ArticlePrice;
 use App\Models\Category;
 use Illuminate\Database\Seeder;
 
@@ -36,10 +37,17 @@ class ArticleSeeder extends Seeder
         foreach ($articles as $data) {
             $category = Category::where('name', $data['category'])->firstOrFail();
 
-            Article::firstOrCreate(
+            $article = Article::firstOrCreate(
                 ['name' => $data['name']],
-                ['price' => $data['price'], 'category_id' => $category->id],
+                ['category_id' => $category->id],
             );
+
+            $price = new ArticlePrice;
+
+            $price->price = $data['price'];
+            $price->article_id = $article->id;
+
+            $price->save();
         }
     }
 }
