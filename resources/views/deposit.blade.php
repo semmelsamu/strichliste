@@ -35,7 +35,7 @@
                 <div class="grid grid-cols-4 gap-inline">
                     @foreach ($variant["amounts"] as $amount)
                         <button class="card p-content">
-                            {{ Number::currency($amount) }}
+                            <x-currency :amount="$amount" />
                         </button>
                     @endforeach
                 </div>

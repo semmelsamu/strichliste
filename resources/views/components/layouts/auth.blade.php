@@ -9,7 +9,7 @@
                 <x-lucide-user />
                 {{ Auth::user()->name }}
             </button>
-            <p class="mr-auto">11,40 €</p>
+            <x-currency class="mr-auto" :amount="11.4" />
             <a class="button" href="/logout">
                 <x-lucide-log-out />
                 Abmelden

@@ -1,3 +1,5 @@
+@use (Illuminate\Support\Facades\Auth)
+
 <x-layouts.auth title="Verlauf" activeTab="history">
     <x-wrapper class="space-y-section">
         <table class="table">
@@ -13,7 +15,12 @@
                             Geld gesendet
                         @endif
                     </td>
-                    <td>{{Number::currency($transaction->amount)}}</td>
+                    <td class="text-right">
+                        <x-currency
+                            :amount="$transaction->toUser == Auth::user() ?
+                            $transaction->amount : -1 * $transaction->amount"
+                        />
+                    </td>
                 </tr>
             @endforeach
         </table>
