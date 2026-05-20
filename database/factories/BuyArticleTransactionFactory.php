@@ -24,4 +24,15 @@ class BuyArticleTransactionFactory extends Factory
             'article_id' => Article::inRandomOrder()->value('id'),
         ];
     }
+
+    public function configure(): static
+    {
+        return $this->afterMaking(function (BuyArticleTransaction $transaction) {
+            $article = Article::find($transaction->article->id);
+
+            $transaction->transaction->update([
+                'amount' => $article->currentPrice,
+            ]);
+        });
+    }
 }
