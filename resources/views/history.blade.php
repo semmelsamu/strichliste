@@ -1,4 +1,5 @@
 @use (Illuminate\Support\Facades\Auth)
+@use (App\Enums\UserType)
 
 <x-layouts.auth title="Verlauf" activeTab="history">
     <x-wrapper class="space-y-section">
@@ -11,8 +12,12 @@
                             {{ $transaction->buyArticleTransaction->article->name }}
                         @elseif ($transaction->undoTransaction)
                             Rückgängig gemacht
+                        @elseif ($transaction->fromUser == Auth::user())
+                            Geld an {{ $transaction->toUser->name }} gesendet
+                        @elseif ($transaction->fromUser->type == UserType::World->value)
+                            Geld bei {{$transaction->fromUser->name }} eingezahlt
                         @else
-                            Geld gesendet
+                            Geld von {{ $transaction->fromUser->name }} empfangen
                         @endif
                     </td>
                     <td class="text-right">
