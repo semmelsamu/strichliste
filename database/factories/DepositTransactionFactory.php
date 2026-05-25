@@ -22,7 +22,7 @@ class DepositTransactionFactory extends Factory
     public function definition(): array
     {
         return [
-            'amount' => fake()->randomFloat(1, 0.5, 10),
+            'amount' => fake()->randomNumber(1, 10),
             'from_user_id' => User::where('type', UserType::World)->inRandomOrder()->value('id'),
             'to_user_id' => User::where('type', UserType::NormalUser)->inRandomOrder()->value('id'),
         ];
