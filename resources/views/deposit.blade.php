@@ -6,30 +6,54 @@
     <x-wrapper class="space-y-section">
         <section class="space-y-content">
             <h2>Betrag eingeben</h2>
-            <div class="flex">
+            <form
+                class="flex"
+                method="POST"
+                action="{{ route('tally-sheet.deposit-action') }}"
+            >
+                @csrf
+                <input type="hidden" name="world" value="1" />
+                <input type="hidden" name="user" value="{{ $user->id }}" />
+
                 <div class="mr-auto flex items-center gap-inline">
                     <input
                         type="number"
+                        name="amount"
                         min="0"
                         step="0.01"
                         class="text-input"
                     />
                     €
                 </div>
-                <button class="button">Einzahlen</button>
-                <button class="button">Abbuchen</button>
-            </div>
+
+                <button
+                    type="submit"
+                    class="button"
+                    name="action"
+                    value="deposit"
+                >
+                    Einzahlen
+                </button>
+                <button
+                    type="submit"
+                    class="button"
+                    name="action"
+                    value="withdraw"
+                >
+                    Abbuchen
+                </button>
+            </form>
         </section>
         @php
         $amounts = [0.2, 0.5, 1, 2, 5, 10, 20, 50];
         $variants = [
             [
                 "heading" => "Oder schnell einzanlen",
-                "amounts" => $amounts
+                "action" => "deposit"
             ],
             [
                 "heading" => "Oder schnell auszahlen",
-                "amounts" => collect($amounts)->map(fn ($value) => $value * -1)
+                "action" => "withdraw"
             ]
         ];
         @endphp
@@ -37,7 +61,7 @@
             <section class="space-y-content">
                 <h2>{{ $variant["heading"] }}</h2>
                 <div class="grid grid-cols-4 gap-inline">
-                    @foreach ($variant["amounts"] as $amount)
+                    @foreach ($amounts as $amount)
                         <form
                             class="w-full"
                             method="POST"
@@ -55,8 +79,20 @@
                                 name="amount"
                                 value="{{ $amount }}"
                             />
-                            <button type="submit" class="card w-full p-content">
-                                <x-currency :amount="$amount" />
+                            <input
+                                type="hidden"
+                                name="action"
+                                value="{{ $variant["action"] }}"
+                            />
+                            <button
+                                type="submit"
+                                @class ([
+                                    "card w-full p-content",
+                                    "bg-green-800" => $variant["action"] == "deposit",
+                                    "bg-red-800" => $variant["action"] == "withdraw",
+                                ])
+                            >
+                                <x-currency :colors="false" :amount="$amount" />
                             </button>
                         </form>
                     @endforeach

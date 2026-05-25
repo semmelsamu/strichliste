@@ -15,6 +15,7 @@ class TransactionController extends Controller
     {
         try {
             $validated = $request->validate([
+                'action' => ['required', Rule::in(['deposit', 'withdraw'])],
                 'world' => [
                     'required',
                     Rule::exists('users', 'id')->where('type', UserType::World->value),
@@ -29,6 +30,9 @@ class TransactionController extends Controller
                     'decimal:0,2',
                     function (string $attribute, mixed $value, Closure $fail) {
                         $user = User::find(request()->user);
+                        if (request()->action == 'withdraw') {
+                            $value *= -1;
+                        }
                         if ($user->balance + $value < 0) {
                             $fail('Du kannst nicht mehr abbuchen als du auf dem Konto hast.');
                         }
