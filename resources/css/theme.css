@@ -1,14 +1,14 @@
 @theme {
     --font-rubik: "Rubik", ui-sans-serif, system-ui, sans-serif;
 
-    --color-fsim: #4B78D3;
+    --color-fsim: #4b78d3;
 
     --color-fsim-dark: #111828;
-    --color-fsim-medium: #1E3054;
+    --color-fsim-medium: #1e3054;
     --color-fsim-light: #365491;
 
     --color-text-primary: white;
-    --color-text-secondary: var(--color-neutral-300);
+    --color-text-secondary: var(--color-neutral-400);
 
     --spacing-wrapper: calc(6 * var(--spacing));
 

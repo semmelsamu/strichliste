@@ -3,6 +3,10 @@
     color-scheme: dark;
 }
 
+svg * {
+    color: inherit;
+}
+
 h1 {
     @apply text-4xl font-bold;
 }

@@ -5,13 +5,21 @@
     <x-wrapper class="space-y-section">
         <table class="table">
             @foreach ($transactions as $transaction)
-                <tr>
+                <tr id="transaction-{{ $transaction->id }}">
                     <td>{{ $transaction->created_at->diffForHumans()}}</td>
                     <td>
                         @if ($transaction->buyArticleTransaction)
                             {{ $transaction->buyArticleTransaction->article->name }}
                         @elseif ($transaction->undoTransaction)
-                            Rückgängig gemacht
+                            <a
+                                href="#transaction-{{ $transaction->undoTransaction->undoneTransaction->id }}"
+                                class="inline-flex gap-2"
+                            >
+                                Rückgängig gemacht
+                                <x-lucide-corner-right-down
+                                    class="text-text-secondary"
+                                />
+                            </a>
                         @elseif ($transaction->fromUser == Auth::user())
                             Geld an {{ $transaction->toUser->name }} gesendet
                         @elseif ($transaction->fromUser->type == UserType::World->value)
