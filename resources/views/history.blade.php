@@ -5,7 +5,12 @@
     <x-wrapper class="space-y-section">
         <table class="table">
             @foreach ($transactions as $transaction)
-                <tr id="transaction-{{ $transaction->id }}">
+                <tr
+                    id="transaction-{{ $transaction->id }}"
+                    class="focus:ring"
+                    tabindex="-1"
+                    onmousedown="event.preventDefault()"
+                >
                     <td>{{ $transaction->created_at->diffForHumans()}}</td>
                     <td>
                         @if ($transaction->buyArticleTransaction)
@@ -13,6 +18,7 @@
                         @elseif ($transaction->undoTransaction)
                             <a
                                 href="#transaction-{{ $transaction->undoTransaction->undoneTransaction->id }}"
+                                onclick="document.getElementById('transaction-{{ $transaction->undoTransaction->undoneTransaction->id }}').focus()"
                                 class="inline-flex gap-2"
                             >
                                 Rückgängig gemacht
