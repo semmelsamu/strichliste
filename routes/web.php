@@ -14,7 +14,7 @@ Route::get('/article-list', function () {
     ]);
 })->name('article-list');
 
-Route::name('strichliste.')->prefix('strichliste')->group(function () {
+Route::name('tally-sheet.')->prefix('strichliste')->group(function () {
 
     Route::get('/', function () {
         return view('login', [

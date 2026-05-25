@@ -11,28 +11,28 @@
                 {{ $user->name }}
             </button>
             <x-currency class="mr-auto" :amount="$user->balance" />
-            <a class="button" href="{{ route('strichliste.login') }}">
+            <a class="button" href="{{ route('tally-sheet.login') }}">
                 <x-lucide-log-out />
                 Abmelden
             </a>
         </div>
         <x-tab-bar class="w-full px-wrapper" activeTab="{{ $activeTab }}">
             <x-tab-bar.tab
-                href="{{ route('strichliste.buy-overview', $user->id) }}"
+                href="{{ route('tally-sheet.buy-overview', $user->id) }}"
                 name="buy"
             >
                 <x-lucide-shopping-cart />
                 Kaufen
             </x-tab-bar.tab>
             <x-tab-bar.tab
-                href="{{ route('strichliste.deposit', $user->id) }}"
+                href="{{ route('tally-sheet.deposit', $user->id) }}"
                 name="deposit"
             >
                 <x-lucide-coins />
                 Aufladen
             </x-tab-bar.tab>
             <x-tab-bar.tab
-                href="{{ route('strichliste.history', $user->id) }}"
+                href="{{ route('tally-sheet.history', $user->id) }}"
                 name="history"
             >
                 <x-lucide-history />

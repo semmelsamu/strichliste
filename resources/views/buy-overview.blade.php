@@ -17,7 +17,7 @@
             <div class="grid grid-cols-3 gap-inline">
                 @foreach ($categories as $category)
                     <a
-                        href="{{ route('strichliste.buy-categories', [$user->id, $category->id]) }}"
+                        href="{{ route('tally-sheet.buy-categories', [$user->id, $category->id]) }}"
                         class="card block flex flex-col items-center gap-inline p-content text-center"
                     >
                         @svg ($category->icon, "w-8 h-8")

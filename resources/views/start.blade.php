@@ -4,7 +4,7 @@
             <h1 class="col-span-full p-content">Willkommen</h1>
 
             <a
-                href="{{ route('strichliste.login') }}"
+                href="{{ route('tally-sheet.login') }}"
                 class="card col-span-3 flex flex-col items-center gap-inline p-content"
             >
                 <x-lucide-log-in />

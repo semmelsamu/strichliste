@@ -28,7 +28,7 @@
                     <div class="flex flex-col gap-inline">
                         @foreach ($users as $user)
                             <a
-                                href="{{ route('strichliste.buy-overview', $user->id) }}"
+                                href="{{ route('tally-sheet.buy-overview', $user->id) }}"
                                 class="card flex items-center justify-between p-inline"
                             >
                                 {{ $user->name }}
@@ -39,4 +39,4 @@
             @endforeach
         </div>
     </x-wrapper>
-</x-layouts.app>
+</x-layouts.main>
