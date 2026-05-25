@@ -19,20 +19,13 @@ class BuyArticleTransactionFactory extends Factory
      */
     public function definition(): array
     {
+        $article = Article::inRandomOrder()->first();
+
         return [
-            'transaction_id' => Transaction::factory(),
-            'article_id' => Article::inRandomOrder()->value('id'),
-        ];
-    }
-
-    public function configure(): static
-    {
-        return $this->afterMaking(function (BuyArticleTransaction $transaction) {
-            $article = Article::find($transaction->article->id);
-
-            $transaction->transaction->update([
+            'transaction_id' => Transaction::factory()->create([
                 'amount' => $article->currentPrice,
-            ]);
-        });
+            ]),
+            'article_id' => $article->id,
+        ];
     }
 }
