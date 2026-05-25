@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection;
 
 #[Fillable(['name', 'email', 'password'])]
 #[Hidden(['password', 'remember_token'])]
@@ -60,5 +61,25 @@ class User extends Authenticatable
                 return $incoming - $outgoing;
             }
         );
+    }
+
+    public static function groupByFirstLetter(Collection $users)
+    {
+        return $users
+            ->groupBy(function ($user) {
+                $first = strtoupper(substr($user->name, 0, 1));
+
+                return ctype_alpha($first) ? $first : '*';
+            })
+            ->sortKeys()
+            ->pipe(function ($col) {
+                // Move '*' to the end if present
+                if ($col->has('*')) {
+                    $star = $col->pull('*');
+                    $col->put('*', $star);
+                }
+
+                return $col;
+            });
     }
 }

@@ -1,4 +1,8 @@
-<x-layouts.auth title="Geld ein- und auszahlen" activeTab="deposit">
+<x-layouts.auth
+    title="Geld ein- und auszahlen"
+    activeTab="deposit"
+    :user="$user"
+>
     <x-wrapper class="space-y-section">
         <section class="space-y-content">
             <h2>Betrag eingeben</h2>

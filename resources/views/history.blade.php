@@ -1,7 +1,7 @@
 @use (Illuminate\Support\Facades\Auth)
 @use (App\Enums\UserType)
 
-<x-layouts.auth title="Verlauf" activeTab="history">
+<x-layouts.auth title="Verlauf" activeTab="history" :user="$user">
     <x-wrapper class="space-y-section">
         <table class="table">
             @foreach ($transactions as $transaction)

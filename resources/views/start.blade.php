@@ -4,14 +4,14 @@
             <h1 class="col-span-full p-content">Willkommen</h1>
 
             <a
-                href="/login"
+                href="{{ route('strichliste.login') }}"
                 class="card col-span-3 flex flex-col items-center gap-inline p-content"
             >
                 <x-lucide-log-in />
                 Anmelden
             </a>
             <a
-                href="/article-list"
+                href="{{ route('article-list') }}"
                 class="card col-span-3 flex flex-col items-center gap-inline p-content"
             >
                 <x-lucide-scroll-text />
@@ -40,7 +40,7 @@
         <footer
             class="flex flex-col items-center gap-inline text-center text-text-secondary"
         >
-            <img src="/fsim-logo.svg" class="h-12 w-12" />
+            <img src="{{ asset('fsim-logo.svg') }}" class="h-12 w-12" />
             Strichliste der FSIM
         </footer>
     </x-wrapper>

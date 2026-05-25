@@ -28,7 +28,7 @@
                     <div class="flex flex-col gap-inline">
                         @foreach ($users as $user)
                             <a
-                                href="/login/{{ $user->id }}"
+                                href="{{ route('strichliste.buy-overview', $user->id) }}"
                                 class="card flex items-center justify-between p-inline"
                             >
                                 {{ $user->name }}
