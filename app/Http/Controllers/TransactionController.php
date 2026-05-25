@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\UserType;
+use App\Models\Transaction;
 use App\Models\User;
 use Closure;
 use Exception;
@@ -39,6 +40,18 @@ class TransactionController extends Controller
                     },
                 ],
             ]);
+
+            $transaction = new Transaction;
+
+            if ($validated['action'] == 'deposit') {
+                $transaction->amount = $validated['amount'];
+            } else {
+                $transaction->amount = -1 * $validated['amount'];
+            }
+
+            $transaction->from_user_id = $validated['world'];
+            $transaction->to_user_id = $validated['user'];
+            $transaction->save();
 
             return back()->with('toast', [
                 'type' => 'success',
