@@ -1,4 +1,4 @@
-<x-layouts.auth
+<x-layouts.tally-sheet
     :title="$category->name . ' kaufen'"
     activeTab="buy"
     :user="$user"
@@ -11,4 +11,4 @@
             @endforeach
         </div>
     </x-wrapper>
-</x-layouts.auth>
+</x-layouts.tally-sheet>

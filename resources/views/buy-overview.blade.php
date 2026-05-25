@@ -1,4 +1,4 @@
-<x-layouts.auth title="Artikel kaufen" activeTab="buy" :user="$user">
+<x-layouts.tally-sheet title="Artikel kaufen" activeTab="buy" :user="$user">
     <x-wrapper class="space-y-section">
         <x-note>
             Du kannst Artikel entweder mit dem Barcodescanner einscannen oder
@@ -27,4 +27,4 @@
             </div>
         </section>
     </x-wrapper>
-</x-layouts.auth>
+</x-layouts.tally-sheet>

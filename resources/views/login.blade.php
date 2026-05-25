@@ -1,4 +1,4 @@
-<x-layouts.app title="Anmelden">
+<x-layouts.main title="Anmelden">
     <header class="bg-fsim-medium p-wrapper">
         <h1>Anmelden</h1>
     </header>

@@ -1,4 +1,4 @@
-<x-layouts.auth
+<x-layouts.tally-sheet
     title="Geld ein- und auszahlen"
     activeTab="deposit"
     :user="$user"
@@ -46,4 +46,4 @@
             </section>
         @endforeach
     </x-wrapper>
-</x-layouts.auth>
+</x-layouts.tally-sheet>

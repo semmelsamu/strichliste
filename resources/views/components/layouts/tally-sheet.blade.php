@@ -1,7 +1,7 @@
 @use (Illuminate\Support\Facades\Auth)
 @use (App\Models\User)
 
-<x-layouts.app :title="$title">
+<x-layouts.main :title="$title">
     <header class="space-y-content bg-fsim-medium">
         <div
             class="flex items-center justify-between gap-content px-wrapper pt-wrapper"
@@ -42,4 +42,4 @@
     </header>
 
     {{ $slot }}
-</x-layouts.app>
+</x-layouts.main>
