@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\TransactionController;
 use App\Models\Category;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +22,8 @@ Route::name('tally-sheet.')->prefix('strichliste')->group(function () {
             'usersByLetter' => User::groupByFirstLetter(User::all()),
         ]);
     })->name('login');
+
+    Route::post('/deposit', [TransactionController::class, 'depositMoney'])->name('deposit-action');
 
     Route::prefix('{user}')->group(function () {
 

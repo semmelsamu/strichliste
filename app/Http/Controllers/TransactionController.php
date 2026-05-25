@@ -2,15 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Enums\UserType;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class TransactionController extends Controller
 {
-    public function depositMoney(User $world, User $user, double $amount)
+    public function depositMoney(Request $request)
     {
         try {
-            // Your logic here
-            throw new \Exception('Something went wrong'); // simulate failure
+            $validated = $request->validate([
+                'amount' => ['required', 'decimal:0,2'],
+                'world' => ['required', Rule::exists('users', 'id')->where('type', UserType::World->value)],
+                'user' => ['required', 'exists:users,id'],
+            ]);
 
             return back()->with('toast', [
                 'type' => 'success',

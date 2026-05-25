@@ -38,9 +38,27 @@
                 <h2>{{ $variant["heading"] }}</h2>
                 <div class="grid grid-cols-4 gap-inline">
                     @foreach ($variant["amounts"] as $amount)
-                        <button class="card p-content">
-                            <x-currency :amount="$amount" />
-                        </button>
+                        <form
+                            class="w-full"
+                            method="POST"
+                            action="{{ route('tally-sheet.deposit-action') }}"
+                        >
+                            @csrf
+                            <input type="hidden" name="world" value="1" />
+                            <input
+                                type="hidden"
+                                name="user"
+                                value="{{ $user->id }}"
+                            />
+                            <input
+                                type="hidden"
+                                name="amount"
+                                value="{{ $amount }}"
+                            />
+                            <button type="submit" class="card w-full p-content">
+                                <x-currency :amount="$amount" />
+                            </button>
+                        </form>
                     @endforeach
                 </div>
             </section>
