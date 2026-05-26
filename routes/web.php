@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\TransactionController;
 use App\Models\Category;
+use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
@@ -49,7 +50,11 @@ Route::name('tally-sheet.')->prefix('strichliste')->group(function () {
 
         Route::get('/history', function (User $user) {
             return view('history', [
-                'transactions' => $user->transactions()->orderBy('created_at', 'desc')->orderBy('id', 'desc')->get(),
+                'normalizedTransactions' => $user->transactions()
+                    ->orderBy('created_at', 'desc')
+                    ->orderBy('id', 'desc')
+                    ->get()
+                    ->map(fn ($t) => Transaction::normalize($t)),
                 'user' => $user,
             ]);
         })->name('history');

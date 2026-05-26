@@ -30,4 +30,17 @@ class Transaction extends Model
     {
         return $this->hasOne(UndoTransaction::class);
     }
+
+    public static function normalize(Transaction $transaction): Transaction
+    {
+        if ($transaction->amount >= 0) {
+            return $transaction;
+        }
+
+        $clone = clone $transaction;
+        [$clone->fromUser, $clone->toUser] = [$clone->toUser, $clone->fromUser];
+        $clone->amount = abs($clone->amount);
+
+        return $clone;
+    }
 }

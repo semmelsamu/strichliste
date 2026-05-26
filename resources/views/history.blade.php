@@ -1,10 +1,11 @@
 @use (Illuminate\Support\Facades\Auth)
 @use (App\Enums\UserType)
+@use (App\Models\Transaction)
 
 <x-layouts.tally-sheet title="Verlauf" activeTab="history" :user="$user">
     <x-wrapper class="space-y-section">
         <table class="table">
-            @foreach ($transactions as $transaction)
+            @foreach ($normalizedTransactions as $transaction)
                 <tr
                     id="transaction-{{ $transaction->id }}"
                     class="focus:ring"
@@ -26,18 +27,19 @@
                                     class="text-text-secondary"
                                 />
                             </a>
-                        @elseif ($transaction->fromUser == Auth::user())
-                            Geld an {{ $transaction->toUser->name }} gesendet
                         @elseif ($transaction->fromUser->type == UserType::World->value)
                             Geld bei {{$transaction->fromUser->name }} eingezahlt
+                        @elseif ($transaction->toUser->type == UserType::World->value)
+                            Geld bei {{$transaction->toUser->name }} ausgezahlt
+                        @elseif ($transaction->fromUser->is($user))
+                            Geld an {{ $transaction->toUser->name }} gesendet
                         @else
                             Geld von {{ $transaction->fromUser->name }} empfangen
                         @endif
                     </td>
                     <td class="text-right">
                         <x-currency
-                            :amount="$transaction->toUser == Auth::user() ?
-                            $transaction->amount : -1 * $transaction->amount"
+                            :amount="$transaction->fromUser->is($user) ? -1 * $transaction->amount : $transaction->amount"
                         />
                     </td>
                 </tr>
