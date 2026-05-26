@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\UserType;
 use App\Http\Controllers\TransactionController;
 use App\Models\Category;
 use App\Models\Transaction;
@@ -20,7 +21,9 @@ Route::name('tally-sheet.')->prefix('strichliste')->group(function () {
 
     Route::get('/', function () {
         return view('login', [
-            'usersByLetter' => User::groupByFirstLetter(User::all()),
+            'usersByLetter' => User::groupByFirstLetter(
+                User::where('type', UserType::NormalUser)->get()
+            ),
         ]);
     })->name('login');
 
