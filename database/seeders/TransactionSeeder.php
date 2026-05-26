@@ -15,12 +15,19 @@ class TransactionSeeder extends Seeder
     public function run(): void
     {
         DepositTransactionFactory::new()->count(20)->create();
-        UndoTransaction::factory(5)->create();
+        $this->createUndoTransactions(5);
         BuyArticleTransaction::factory(30)->create();
-        UndoTransaction::factory(5)->create();
+        $this->createUndoTransactions(5);
         DepositTransactionFactory::new()->count(5)->create();
-        UndoTransaction::factory(5)->create();
+        $this->createUndoTransactions(5);
         BuyArticleTransaction::factory(20)->create();
-        UndoTransaction::factory(5)->create();
+        $this->createUndoTransactions(5);
+    }
+
+    private function createUndoTransactions(int $count): void
+    {
+        for ($i = 0; $i < $count; $i++) {
+            UndoTransaction::factory()->create();
+        }
     }
 }
