@@ -40,7 +40,7 @@ class TransactionController extends Controller
                                 $fail('Dein Konto hat schulden, du kannst nicht noch mehr abbuchen.');
                             }
                         } else {
-                            if (dd($user->balance + $amount) < 0) {
+                            if (($user->balance + $amount) < 0) {
                                 $fail('Du kannst nicht mehr abbuchen als du auf dem Konto hast.');
                             }
                         }

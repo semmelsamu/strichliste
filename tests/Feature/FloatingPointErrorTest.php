@@ -1,7 +1,28 @@
 <?php
 
-test('example', function () {
-    $response = $this->get('/');
+use App\Enums\UserType;
+use App\Models\Transaction;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-    $response->assertStatus(200);
+pest()->use(RefreshDatabase::class);
+
+test('that when a user has 0,20 € and withdraws 0,20 €, it succeds', function () {
+    $world = User::factory()->create(['type' => UserType::World]);
+    $user = User::factory()->create(['type' => UserType::NormalUser]);
+
+    Transaction::factory()->create([
+        'from_user_id' => $world->id,
+        'to_user_id' => $user->id,
+        'amount' => 0.2,
+    ]);
+
+    $response = $this->post(route('tally-sheet.deposit-action'), [
+        'action' => 'withdraw',
+        'world' => $world->id,
+        'user' => $user->id,
+        'amount' => 0.2,
+    ]);
+
+    expect($user->balance)->toBe(0);
 });
