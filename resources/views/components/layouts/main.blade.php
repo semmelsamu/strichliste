@@ -17,5 +17,8 @@
             {{ session('toast.message') }}
         </x-toast>
     @endif
+    @foreach ($errors->all() as $error)
+        <x-toast type="error">{{ $error }}</x-toast>
+    @endforeach
 </body>
 </html>
