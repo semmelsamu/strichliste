@@ -29,13 +29,20 @@ class TransactionController extends Controller
                 'amount' => [
                     'required',
                     'decimal:0,2',
-                    function (string $attribute, mixed $value, Closure $fail) {
+                    function (string $attribute, mixed $amount, Closure $fail) {
                         $user = User::find(request()->user);
                         if (request()->action == 'withdraw') {
-                            $value *= -1;
+                            $amount *= -1;
                         }
-                        if ($user->balance + $value < 0) {
-                            $fail('Du kannst nicht mehr abbuchen als du auf dem Konto hast.');
+
+                        if ($user->balance < 0) {
+                            if ($amount < 0) {
+                                $fail('Dein Konto hat schulden, du kannst nicht noch mehr abbuchen.');
+                            }
+                        } else {
+                            if (dd($user->balance + $amount) < 0) {
+                                $fail('Du kannst nicht mehr abbuchen als du auf dem Konto hast.');
+                            }
                         }
                     },
                 ],
