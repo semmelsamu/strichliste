@@ -18,8 +18,7 @@ class UndoTransactionFactory extends Factory
      */
     public function definition(): array
     {
-        // Must pick a transaction that has NOT already been undone
-        $undoneTransaction = Transaction::whereDoesntHave('undoTransaction')
+        $undoneTransaction = Transaction::whereNotIn('id', UndoTransaction::pluck('undone_transaction_id'))
             ->inRandomOrder()->first();
 
         return [
