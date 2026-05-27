@@ -26,7 +26,9 @@ Route::name('tally-sheet.')->prefix('strichliste')->group(function () {
         Route::get('/register', 'registerForm')->name('show-register');
         Route::post('/register', 'register')->name('register');
         Route::get('/user-settings/{user}', 'settings')->name('show-settings');
-        Route::post('/user-settings', 'updateSettings')->name('update-settings');
+        Route::post('/user-settings/{user}/username', 'updateUsername')->name('update-username');
+        Route::post('/user-settings/{user}/pin', 'updatePin')->name('update-pin');
+        Route::post('/user-settings/{user}/remove-pin', 'removePin')->name('remove-pin');
     });
 
     Route::post('/deposit', [TransactionController::class, 'depositMoney'])->name('deposit-action');

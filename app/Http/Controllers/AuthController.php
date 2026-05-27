@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\UserType;
 use App\Models\User;
 use Closure;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -70,7 +71,7 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $validated = $request->validate([
-            'username' => ['required', 'string', 'min:5', 'unique:users,name'],
+            'username' => ['required', 'string', 'min:3', 'unique:users,name'],
             'pin' => ['nullable', 'string'],
         ]);
 
@@ -97,5 +98,41 @@ class AuthController extends Controller
         return view('user-settings', ['user' => $user]);
     }
 
-    public function updateSettings() {}
+    public function updateUsername(Request $request, User $user): RedirectResponse
+    {
+        $validated = $request->validate([
+            'username' => ['required', 'string', 'min:3', 'unique:users,name'],
+        ]);
+
+        $user->name = $validated['username'];
+        $user->save();
+
+        return redirect()
+            ->route('tally-sheet.auth.show-settings', $user)
+            ->with('toast', ['type' => 'success', 'message' => 'Nutzername geändert.']);
+    }
+
+    public function updatePin(Request $request, User $user): RedirectResponse
+    {
+        $validated = $request->validate([
+            'pin' => ['required', 'string'],
+        ]);
+
+        $user->pin = $validated['pin'];
+        $user->save();
+
+        return redirect()
+            ->route('tally-sheet.auth.show-settings', $user)
+            ->with('toast', ['type' => 'success', 'message' => 'PIN geändert.']);
+    }
+
+    public function removePin(User $user): RedirectResponse
+    {
+        $user->pin = null;
+        $user->save();
+
+        return redirect()
+            ->route('tally-sheet.auth.show-settings', $user)
+            ->with('toast', ['type' => 'success', 'message' => 'PIN entfernt.']);
+    }
 }

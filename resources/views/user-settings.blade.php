@@ -11,11 +11,15 @@
         <section class="space-y-content">
             <h2>Nutzername</h2>
 
-            <form method="POST" action="">
+            <form
+                method="POST"
+                action="{{ route('tally-sheet.auth.update-username', $user) }}"
+            >
                 @csrf
-                <input type="hidden" name="user" value="{{ $user->id }}" />
                 <div class="space-y-2">
-                    <label class="block">Nutzername ändern</label>
+                    <label class="block" for="username"
+                        >Nutzername ändern</label
+                    >
                     <div class="flex items-center gap-inline">
                         <input
                             type="text"
@@ -23,7 +27,7 @@
                             id="username"
                             class="text-input flex-1"
                             required
-                            value="{{old('username') ?? $user->name}}"
+                            value="{{ old('username', $user->name) }}"
                         />
 
                         <button
@@ -40,18 +44,27 @@
         <section class="space-y-content">
             <h2>PIN</h2>
 
-            <form method="POST" action="">
+            <form
+                method="POST"
+                action="{{ route('tally-sheet.auth.update-pin', $user) }}"
+            >
                 @csrf
-                <input type="hidden" name="user" value="{{ $user->id }}" />
                 <div class="space-y-2">
-                    <label class="block">PIN ändern</label>
+                    <label class="block" for="pin">
+                        @if ($user->pin)
+                            PIN ändern
+                        @else
+                            PIN hinzufügen
+                        @endif
+                    </label>
                     <div class="flex items-center gap-inline">
                         <input
-                            type="text"
-                            name="username"
-                            id="username"
+                            type="password"
+                            name="pin"
+                            id="pin"
                             class="text-input flex-1"
                             required
+                            placeholder="Neue PIN eingeben"
                         />
 
                         <button
@@ -64,14 +77,18 @@
                 </div>
             </form>
 
-            <form method="POST" action="">
-                @csrf
-                <input type="hidden" name="user" value="{{ $user->id }}" />
-                <div class="space-y-2">
-                    <label class="block">PIN entfernen</label>
-                    <button class="button bg-red-800">Pin entfernen</button>
-                </div>
-            </form>
+            @if ($user->pin)
+                <form
+                    method="POST"
+                    action="{{ route('tally-sheet.auth.remove-pin', $user) }}"
+                >
+                    @csrf
+                    <div class="space-y-2">
+                        <label class="block">PIN entfernen</label>
+                        <button class="button bg-red-800">Pin entfernen</button>
+                    </div>
+                </form>
+            @endif
         </section>
     </x-wrapper>
 </x-layouts.main>
