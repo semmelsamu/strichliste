@@ -28,6 +28,10 @@ Route::name('tally-sheet.')->prefix('strichliste')->group(function () {
         ]);
     })->name('login');
 
+    Route::get('/login/{user}', function (User $user) {
+        return view('enter-pin', ['user' => $user]);
+    })->name('enter-pin');
+
     Route::get('/register', function () {
         return view('register');
     })->name('register');
