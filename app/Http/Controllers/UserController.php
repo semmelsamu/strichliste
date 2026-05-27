@@ -21,6 +21,13 @@ class UserController extends Controller
         $user->name = $username;
         $user->save();
 
-        dd($user);
+        return redirect()
+            ->route('tally-sheet.deposit', [
+                'user' => $user->id,
+            ])
+            ->with('toast', [
+                'type' => 'success',
+                'message' => 'Willkommen, '.$user->name.'!',
+            ]);
     }
 }
