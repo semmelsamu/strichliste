@@ -6,7 +6,11 @@
         <h1>Registrieren</h1>
     </header>
     <x-wrapper>
-        <form class="mx-auto flex max-w-sm flex-col gap-4">
+        <form
+            class="mx-auto flex max-w-sm flex-col gap-4"
+            method="POST"
+            action="{{ route('tally-sheet.register-action') }}"
+        >
             @csrf
 
             <div class="flex flex-col gap-2">
@@ -16,6 +20,8 @@
                     name="username"
                     id="username"
                     class="text-input"
+                    required
+                    value="{{old('username')}}"
                 />
             </div>
 
