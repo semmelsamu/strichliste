@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Enums\UserType;
+use App\Models\Article;
 use App\Models\Transaction;
 use App\Models\User;
 use Closure;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -17,7 +19,9 @@ class TransactionController extends Controller
             'action' => ['required', Rule::in(['deposit', 'withdraw'])],
             'world' => [
                 'required',
-                Rule::exists('users', 'id')->where('type', UserType::World->value),
+                Rule::exists('users', 'id')->where(function (Builder $query) {
+                    $query->where('type', UserType::World->value);
+                }),
             ],
             'user' => [
                 'required',
@@ -61,6 +65,32 @@ class TransactionController extends Controller
         return back()->with('toast', [
             'type' => 'success',
             'message' => 'Action completed successfully!',
+        ]);
+    }
+
+    public function buyArticle(Request $request)
+    {
+        $validated = $request->validate([
+            'user' => [
+                'required',
+                'exists:users,id',
+                'bail',
+            ],
+            'vendor' => [
+                'required',
+                Rule::exists('users', 'id')->where('type', UserType::Vendor->value),
+            ],
+            'article' => [
+                'required',
+                'integer',
+                'exists:articles,id',
+                function (string $attribute, mixed $value, Closure $fail) {
+                    $user = User::find(request()->user);
+                    $article = Article::find($value);
+
+                    dd($user, $article);
+                },
+            ],
         ]);
     }
 }

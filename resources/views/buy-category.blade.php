@@ -7,7 +7,7 @@
         <h2>{{ $category->name }}</h2>
         <div class="grid grid-cols-3 gap-inline">
             @foreach ($category->articles as $article)
-                <x-article-card :article="$article" />
+                <x-article-card :article="$article" :user="$user" />
             @endforeach
         </div>
     </x-wrapper>

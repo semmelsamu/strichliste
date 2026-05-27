@@ -29,6 +29,8 @@ Route::name('tally-sheet.')->prefix('strichliste')->group(function () {
 
     Route::post('/deposit', [TransactionController::class, 'depositMoney'])->name('deposit-action');
 
+    Route::post('/buy-article', [TransactionController::class, 'buyArticle'])->name('buy-article-action');
+
     Route::prefix('{user}')->group(function () {
 
         Route::get('/buy', function (User $user) {
