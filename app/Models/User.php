@@ -15,7 +15,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 
 #[Fillable(['name'])]
-#[Hidden([])]
+#[Hidden(['pin'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
@@ -30,6 +30,7 @@ class User extends Authenticatable
     {
         return [
             'type' => UserType::class,
+            'pin' => 'hashed',
         ];
     }
 

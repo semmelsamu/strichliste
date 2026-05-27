@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Enums\UserType;
 use App\Models\User;
+use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -49,7 +50,12 @@ class AuthController extends Controller
             'pin' => [
                 'required',
                 'string',
-                Rule::exists('users', 'pin')->where('id', $request->user),
+                function (string $attribute, mixed $value, Closure $fail) use ($request) {
+                    $user = User::find($request->user);
+                    if (! $user || ! Hash::check($value, $user->pin)) {
+                        $fail('The provided PIN is incorrect.');
+                    }
+                },
             ],
         ]);
 
