@@ -23,8 +23,7 @@
                             id="username"
                             class="text-input flex-1"
                             required
-                            autofocus
-                            value="{{old('username')}}"
+                            value="{{old('username') ?? $user->name}}"
                         />
 
                         <button
@@ -53,8 +52,6 @@
                             id="username"
                             class="text-input flex-1"
                             required
-                            autofocus
-                            value="{{old('username')}}"
                         />
 
                         <button
