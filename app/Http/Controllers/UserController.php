@@ -10,7 +10,7 @@ class UserController extends Controller
     public function register(Request $request)
     {
         $validated = $request->validate([
-            'username' => ['required', 'string', 'min:5'],
+            'username' => ['required', 'string', 'min:5', 'unique:users,name'],
             'pin' => ['nullable', 'string'],
         ]);
 
