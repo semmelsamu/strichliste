@@ -25,7 +25,14 @@
 
             <div class="flex flex-col gap-2">
                 <label for="pin">PIN</label>
-                <input type="password" name="pin" id="pin" class="text-input" />
+                <input
+                    type="password"
+                    name="pin"
+                    id="pin"
+                    class="text-input"
+                    required
+                    autofocus
+                />
             </div>
 
             <button type="submit" class="button ml-auto bg-fsim-light">

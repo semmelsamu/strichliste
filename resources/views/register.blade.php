@@ -21,6 +21,7 @@
                     id="username"
                     class="text-input"
                     required
+                    autofocus
                     value="{{old('username')}}"
                 />
             </div>
