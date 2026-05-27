@@ -84,6 +84,10 @@ class TransactionController extends Controller
                 function (string $attribute, mixed $value, Closure $fail) {
                     $user = User::find(request()->user);
                     $article = Article::find($value);
+
+                    if ($user->balance < $article->currentPrice) {
+                        $fail('Nicht genügend Guthaben.');
+                    }
                 },
             ],
         ]);
