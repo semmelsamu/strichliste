@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Enums\UserType;
 use App\Models\Article;
+use App\Models\BuyArticleTransaction;
 use App\Models\Transaction;
 use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 class TransactionController extends Controller
@@ -70,11 +72,13 @@ class TransactionController extends Controller
         $validated = $request->validate([
             'user' => [
                 'required',
+                'integer',
                 'exists:users,id',
                 'bail',
             ],
             'vendor' => [
                 'required',
+                'integer',
                 Rule::exists('users', 'id')->where('type', UserType::Vendor->value),
             ],
             'article' => [
@@ -92,6 +96,22 @@ class TransactionController extends Controller
             ],
         ]);
 
-        dd($validated);
+        DB::transaction(function () use ($validated) {
+            $transaction = new Transaction;
+            $transaction->from_user_id = $validated['user'];
+            $transaction->to_user_id = $validated['vendor'];
+            $transaction->amount = Article::find($validated['article'])->currentPrice;
+            $transaction->save();
+
+            $buyArticleTransaction = new BuyArticleTransaction;
+            $buyArticleTransaction->transaction_id = $transaction->id;
+            $buyArticleTransaction->article_id = $validated['article'];
+            $buyArticleTransaction->save();
+        });
+
+        return back()->with('toast', [
+            'type' => 'success',
+            'message' => 'Artikel wurde gekauft!',
+        ]);
     }
 }
