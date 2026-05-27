@@ -1,6 +1,6 @@
 <x-layouts.main title="Pin eingeben">
     <header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
-        <a class="button" href="{{ route('tally-sheet.login') }}">
+        <a class="button" href="{{ route('tally-sheet.auth.list-users') }}">
             <x-lucide-arrow-left />
         </a>
         <h1>Pin eingeben</h1>
@@ -9,7 +9,7 @@
         <form
             class="mx-auto flex max-w-sm flex-col gap-8"
             method="POST"
-            action="{{ route('tally-sheet.validate-pin-action', $user->id) }}"
+            action="{{ route('tally-sheet.auth.validate-pin', $user->id) }}"
         >
             @csrf
 

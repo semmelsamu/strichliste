@@ -13,7 +13,7 @@
             <x-currency class="mr-auto" :amount="$user->balance" />
             <a
                 class="button bg-fsim-light"
-                href="{{ route('tally-sheet.login') }}"
+                href="{{ route('tally-sheet.auth.list-users') }}"
             >
                 Abmelden
                 <x-lucide-log-out />

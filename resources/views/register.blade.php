@@ -1,6 +1,6 @@
 <x-layouts.main title="Registrieren">
     <header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
-        <a class="button" href="{{ route('tally-sheet.login') }}">
+        <a class="button" href="{{ route('tally-sheet.auth.list-users') }}">
             <x-lucide-arrow-left />
         </a>
         <h1>Registrieren</h1>
@@ -9,7 +9,7 @@
         <form
             class="mx-auto flex max-w-sm flex-col gap-4"
             method="POST"
-            action="{{ route('tally-sheet.register-action') }}"
+            action="{{ route('tally-sheet.auth.register') }}"
         >
             @csrf
 

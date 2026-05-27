@@ -3,7 +3,7 @@
         <h1>Anmelden</h1>
         <a
             class="button bg-fsim-light"
-            href="{{ route('tally-sheet.register') }}"
+            href="{{ route('tally-sheet.auth.show-register') }}"
         >
             <x-lucide-user-plus />
             Registrieren
@@ -35,11 +35,7 @@
                     <div class="flex flex-col gap-inline">
                         @foreach ($users as $user)
                             <a
-                                href="{{
-                                    $user->pin ?
-                                    route('tally-sheet.enter-pin', $user->id) :
-                                    route('tally-sheet.buy-overview', $user->id)
-                                }}"
+                                href="{{ route('tally-sheet.auth.login', $user->id) }}"
                                 class="card flex items-center justify-between p-inline"
                             >
                                 {{ $user->name }}

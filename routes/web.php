@@ -1,8 +1,7 @@
 <?php
 
-use App\Enums\UserType;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TransactionController;
-use App\Http\Controllers\UserController;
 use App\Models\Category;
 use App\Models\Transaction;
 use App\Models\User;
@@ -20,25 +19,13 @@ Route::get('/article-list', function () {
 
 Route::name('tally-sheet.')->prefix('strichliste')->group(function () {
 
-    Route::get('/', function () {
-        return view('login', [
-            'usersByLetter' => User::groupByFirstLetter(
-                User::where('type', UserType::NormalUser)->get()
-            ),
-        ]);
-    })->name('login');
-
-    Route::get('/login/{user}', function (User $user) {
-        return view('enter-pin', ['user' => $user]);
-    })->name('enter-pin');
-
-    Route::post('/login/{user}', [UserController::class, 'login'])->name('validate-pin-action');
-
-    Route::get('/register', function () {
-        return view('register');
-    })->name('register');
-
-    Route::post('/register', [UserController::class, 'register'])->name('register-action');
+    Route::name('auth.')->controller(AuthController::class)->group(function () {
+        Route::get('/', 'listUsers')->name('list-users');
+        Route::get('/login/{user}', 'login')->name('login');
+        Route::post('/login/{user}', 'validatePin')->name('validate-pin');
+        Route::get('/register', 'registerForm')->name('show-register');
+        Route::post('/register', 'register')->name('register');
+    });
 
     Route::post('/deposit', [TransactionController::class, 'depositMoney'])->name('deposit-action');
 
