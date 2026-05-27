@@ -91,4 +91,11 @@ class AuthController extends Controller
                 'message' => 'Willkommen, '.$user->name.'!',
             ]);
     }
+
+    public function settings(User $user)
+    {
+        return view('user-settings', ['user' => $user]);
+    }
+
+    public function updateSettings() {}
 }

@@ -6,10 +6,13 @@
         <div
             class="flex items-center justify-between gap-content px-wrapper pt-wrapper"
         >
-            <button class="button bg-fsim-light">
+            <a
+                class="button bg-fsim-light"
+                href="{{ route('tally-sheet.auth.show-settings', $user->id) }}"
+            >
                 <x-lucide-user />
                 {{ $user->name }}
-            </button>
+            </a>
             <x-currency class="mr-auto" :amount="$user->balance" />
             <a
                 class="button bg-fsim-light"
