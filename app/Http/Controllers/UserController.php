@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -19,6 +20,7 @@ class UserController extends Controller
 
         $user = new User;
         $user->name = $username;
+        $user->pin = $pin;
         $user->save();
 
         return redirect()
@@ -28,6 +30,23 @@ class UserController extends Controller
             ->with('toast', [
                 'type' => 'success',
                 'message' => 'Willkommen, '.$user->name.'!',
+            ]);
+    }
+
+    public function login(Request $request)
+    {
+        $validated = $request->validate([
+            'user' => ['required', 'exists:users,id'],
+            'pin' => [
+                'required',
+                'string',
+                Rule::exists('users', 'pin')->where('id', $request->user),
+            ],
+        ]);
+
+        return redirect()
+            ->route('tally-sheet.deposit', [
+                'user' => $validated['user'],
             ]);
     }
 }

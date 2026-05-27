@@ -9,7 +9,7 @@
         <form
             class="mx-auto flex max-w-sm flex-col gap-8"
             method="POST"
-            action="{{ route('tally-sheet.login') }}"
+            action="{{ route('tally-sheet.validate-pin-action', $user->id) }}"
         >
             @csrf
 
@@ -20,6 +20,7 @@
                     <x-lucide-user />
                 </div>
                 {{ $user->name }}
+                <input type="hidden" name="user" value="{{ $user->id }}" />
             </div>
 
             <div class="flex flex-col gap-2">

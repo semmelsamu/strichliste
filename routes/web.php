@@ -32,6 +32,8 @@ Route::name('tally-sheet.')->prefix('strichliste')->group(function () {
         return view('enter-pin', ['user' => $user]);
     })->name('enter-pin');
 
+    Route::post('/login/{user}', [UserController::class, 'login'])->name('validate-pin-action');
+
     Route::get('/register', function () {
         return view('register');
     })->name('register');
