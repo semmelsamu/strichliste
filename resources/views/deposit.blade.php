@@ -7,7 +7,7 @@
         <section class="space-y-content">
             <h2>Betrag eingeben</h2>
             <form
-                class="flex"
+                class="flex items-center"
                 method="POST"
                 action="{{ route('tally-sheet.deposit-action') }}"
             >
@@ -15,20 +15,21 @@
                 <input type="hidden" name="world" value="1" />
                 <input type="hidden" name="user" value="{{ $user->id }}" />
 
-                <div class="mr-auto flex items-center gap-inline">
+                <div class="mr-content flex items-center gap-inline">
                     <input
                         type="number"
                         name="amount"
                         min="0"
                         step="0.01"
                         class="text-input"
+                        required
                     />
                     €
                 </div>
 
                 <button
                     type="submit"
-                    class="button"
+                    class="button mr-inline bg-green-800 px-content"
                     name="action"
                     value="deposit"
                 >
@@ -36,7 +37,7 @@
                 </button>
                 <button
                     type="submit"
-                    class="button"
+                    class="button bg-red-800 px-content"
                     name="action"
                     value="withdraw"
                 >
