@@ -35,7 +35,11 @@
                     <div class="flex flex-col gap-inline">
                         @foreach ($users as $user)
                             <a
-                                href="{{ route('tally-sheet.buy-overview', $user->id) }}"
+                                href="{{
+                                    $user->pin ?
+                                    route('tally-sheet.enter-pin', $user->id) :
+                                    route('tally-sheet.buy-overview', $user->id)
+                                }}"
                                 class="card flex items-center justify-between p-inline"
                             >
                                 {{ $user->name }}
