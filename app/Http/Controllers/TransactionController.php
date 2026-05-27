@@ -10,6 +10,7 @@ use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Number;
 use Illuminate\Validation\Rule;
 
 class TransactionController extends Controller
@@ -49,21 +50,26 @@ class TransactionController extends Controller
             ],
         ]);
 
+        $action = $validated['action'];
+        $amount = $validated['amount'];
+        $world = $validated['world'];
+        $user = $validated['user'];
+
         $transaction = new Transaction;
 
-        if ($validated['action'] == 'deposit') {
-            $transaction->amount = $validated['amount'];
+        if ($action == 'deposit') {
+            $transaction->amount = $amount;
         } else {
-            $transaction->amount = -1 * $validated['amount'];
+            $transaction->amount = -1 * $amount;
         }
 
-        $transaction->from_user_id = $validated['world'];
-        $transaction->to_user_id = $validated['user'];
+        $transaction->from_user_id = $world;
+        $transaction->to_user_id = $user;
         $transaction->save();
 
         return back()->with('toast', [
             'type' => 'success',
-            'message' => 'Action completed successfully!',
+            'message' => ($action == 'deposit' ? 'Aufgeladen: ' : 'Abgehoben: ').Number::currency($amount),
         ]);
     }
 
@@ -96,22 +102,26 @@ class TransactionController extends Controller
             ],
         ]);
 
-        DB::transaction(function () use ($validated) {
+        $userId = $validated['user'];
+        $vendorId = $validated['vendor'];
+        $article = Article::find($validated['article']);
+
+        DB::transaction(function () use ($userId, $vendorId, $article) {
             $transaction = new Transaction;
-            $transaction->from_user_id = $validated['user'];
-            $transaction->to_user_id = $validated['vendor'];
-            $transaction->amount = Article::find($validated['article'])->currentPrice;
+            $transaction->from_user_id = $userId;
+            $transaction->to_user_id = $vendorId;
+            $transaction->amount = $article->currentPrice;
             $transaction->save();
 
             $buyArticleTransaction = new BuyArticleTransaction;
             $buyArticleTransaction->transaction_id = $transaction->id;
-            $buyArticleTransaction->article_id = $validated['article'];
+            $buyArticleTransaction->article_id = $article->id;
             $buyArticleTransaction->save();
         });
 
         return back()->with('toast', [
             'type' => 'success',
-            'message' => 'Artikel wurde gekauft!',
+            'message' => 'Gekauft: '.$article->name.' für '.Number::currency($article->currentPrice),
         ]);
     }
 }
