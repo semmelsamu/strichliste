@@ -27,6 +27,10 @@ Route::name('tally-sheet.')->prefix('strichliste')->group(function () {
         ]);
     })->name('login');
 
+    Route::get('/register', function () {
+        return view('register');
+    })->name('register');
+
     Route::post('/deposit', [TransactionController::class, 'depositMoney'])->name('deposit-action');
 
     Route::post('/buy-article', [TransactionController::class, 'buyArticle'])->name('buy-article-action');

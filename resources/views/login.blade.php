@@ -1,6 +1,13 @@
 <x-layouts.main title="Anmelden">
-    <header class="bg-fsim-medium p-wrapper">
+    <header class="flex items-center justify-between bg-fsim-medium p-wrapper">
         <h1>Anmelden</h1>
+        <a
+            class="button bg-fsim-light"
+            href="{{ route('tally-sheet.register') }}"
+        >
+            <x-lucide-user-plus />
+            Registrieren
+        </a>
     </header>
     <x-wrapper
         class="grid grid-cols-[auto_1fr] gap-content overflow-hidden p-wrapper"
