@@ -6,14 +6,17 @@
         <div
             class="flex items-center justify-between gap-content px-wrapper pt-wrapper"
         >
-            <button class="button">
+            <button class="button bg-fsim-light">
                 <x-lucide-user />
                 {{ $user->name }}
             </button>
             <x-currency class="mr-auto" :amount="$user->balance" />
-            <a class="button" href="{{ route('tally-sheet.login') }}">
-                <x-lucide-log-out />
+            <a
+                class="button bg-fsim-light"
+                href="{{ route('tally-sheet.login') }}"
+            >
                 Abmelden
+                <x-lucide-log-out />
             </a>
         </div>
         <x-tab-bar class="w-full px-wrapper" activeTab="{{ $activeTab }}">
