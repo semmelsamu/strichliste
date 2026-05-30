@@ -1,18 +1,21 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\LoginController;
 use App\Http\Controllers\TransactionController;
 use App\Models\Category;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/login', [LoginController::class, 'buyArticle'])->name('buy-article-action');
+
 Route::get('/', function () {
-    return view('start');
+    return view('pages.tally-sheet.start');
 })->name('index');
 
 Route::get('/article-list', function () {
-    return view('article-list', [
+    return view('pages.tally-sheet.article-list', [
         'categories' => Category::with('articles')->get(),
     ]);
 })->name('article-list');
@@ -40,27 +43,27 @@ Route::name('tally-sheet.')->prefix('strichliste')->group(function () {
     Route::prefix('{user}')->group(function () {
 
         Route::get('/buy', function (User $user) {
-            return view('buy-overview', [
+            return view('pages.tally-sheet.buy-overview', [
                 'categories' => Category::all(),
                 'user' => $user,
             ]);
         })->name('buy-overview');
 
         Route::get('/buy/category/{category_id}', function (User $user, $category_id) {
-            return view('buy-category', [
+            return view('pages.tally-sheet.buy-category', [
                 'category' => Category::with('articles')->firstWhere('id', $category_id),
                 'user' => $user,
             ]);
         })->name('buy-categories');
 
         Route::get('/deposit', function (User $user) {
-            return view('deposit', [
+            return view('pages.tally-sheet.deposit', [
                 'user' => $user,
             ]);
         })->name('deposit');
 
         Route::get('/history', function (User $user) {
-            return view('history', [
+            return view('pages.tally-sheet.history', [
                 'normalizedTransactions' => $user->transactions()
                     ->orderBy('created_at', 'desc')
                     ->orderBy('id', 'desc')

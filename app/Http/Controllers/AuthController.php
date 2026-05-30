@@ -13,7 +13,7 @@ class AuthController extends Controller
 {
     public function listUsers()
     {
-        return view('login', [
+        return view('pages.tally-sheet.login', [
             'usersByLetter' => User::groupByFirstLetter(
                 User::where('type', UserType::NormalUser)->get()
             ),
@@ -38,7 +38,7 @@ class AuthController extends Controller
     public function login(Request $request, User $user)
     {
         if ($user->pin) {
-            return view('enter-pin', ['user' => $user]);
+            return view('pages.tally-sheet.enter-pin', ['user' => $user]);
         } else {
             return $this->userStartPage($user);
         }
@@ -65,7 +65,7 @@ class AuthController extends Controller
 
     public function registerForm()
     {
-        return view('register');
+        return view('pages.tally-sheet.register');
     }
 
     public function register(Request $request)
@@ -95,7 +95,7 @@ class AuthController extends Controller
 
     public function settings(User $user)
     {
-        return view('user-settings', ['user' => $user]);
+        return view('pages.tally-sheet.user-settings', ['user' => $user]);
     }
 
     public function updateUsername(Request $request, User $user): RedirectResponse
