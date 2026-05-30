@@ -8,7 +8,8 @@ use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/login', [LoginController::class, 'buyArticle'])->name('buy-article-action');
+Route::get('/login', [LoginController::class, 'login'])->name('login');
+Route::post('/login', [LoginController::class, 'authenticate'])->name('authenticate');
 
 Route::get('/', function () {
     return view('pages.tally-sheet.start');
