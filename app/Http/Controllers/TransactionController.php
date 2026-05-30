@@ -171,5 +171,10 @@ class TransactionController extends Controller
             $undoTransaction->save();
 
         });
+
+        return back()->with('toast', [
+            'type' => 'success',
+            'message' => 'Transaktion rückgängig gemacht',
+        ]);
     }
 }
