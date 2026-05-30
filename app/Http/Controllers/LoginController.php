@@ -26,11 +26,25 @@ class LoginController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            return redirect()->intended('index');
+            return redirect()->route('index');
         }
 
         return back()->withErrors([
             'name' => 'Die angegebenen Zugangsdaten sind fehlerhaft.',
         ])->onlyInput('name');
+    }
+
+    /**
+     * Log the user out of the application.
+     */
+    public function logout(Request $request): RedirectResponse
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login');
     }
 }
