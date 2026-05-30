@@ -15,8 +15,8 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::middleware('auth')->group(function () {
 
     Route::get('/', function () {
-        return view('pages.tally-sheet.start');
-    })->name('index');
+        return view('pages.dashboard');
+    })->name('dashboard');
 
     Route::get('/article-list', function () {
         return view('pages.tally-sheet.article-list', [
