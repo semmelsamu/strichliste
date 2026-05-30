@@ -42,6 +42,20 @@
                             :amount="$transaction->fromUser->is($user) ? -1 * $transaction->amount : $transaction->amount"
                         />
                     </td>
+                    @if ($transaction->created_at->gt(now()->subMinutes(5)))
+                        <td>
+                            <form
+                                method="post"
+                                action=""
+                                class="grid place-items-center"
+                            >
+                                @csrf
+                                <button type="submit">
+                                    <x-lucide-undo-2 />
+                                </button>
+                            </form>
+                        </td>
+                    @endif
                 </tr>
             @endforeach
         </table>
