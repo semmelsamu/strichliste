@@ -1,7 +1,7 @@
 <form
     class="card"
     method="POST"
-    action="{{ route('tally-sheet.buy-article-action') }}"
+    action="{{ route('tally-sheet.transaction.buy') }}"
 >
     @csrf
     <input type="hidden" name="user" value="{{ $user->id }}" />

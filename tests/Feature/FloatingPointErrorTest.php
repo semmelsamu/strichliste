@@ -17,7 +17,7 @@ test('that when a user has 0,20 € and withdraws 0,20 €, it succeds', functio
         'amount' => 0.2,
     ]);
 
-    $response = $this->post(route('tally-sheet.deposit-action'), [
+    $response = $this->post(route('tally-sheet.transaction.deposit'), [
         'action' => 'withdraw',
         'world' => $world->id,
         'user' => $user->id,

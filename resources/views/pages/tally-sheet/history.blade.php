@@ -46,7 +46,7 @@
                         <td>
                             <form
                                 method="post"
-                                action="{{ route('tally-sheet.undo-transaction-action') }}"
+                                action="{{ route('tally-sheet.transaction.undo') }}"
                                 class="grid place-items-center"
                             >
                                 @csrf

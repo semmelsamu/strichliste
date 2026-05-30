@@ -9,7 +9,7 @@
             <form
                 class="flex items-center"
                 method="POST"
-                action="{{ route('tally-sheet.deposit-action') }}"
+                action="{{ route('tally-sheet.transaction.deposit') }}"
             >
                 @csrf
                 <input type="hidden" name="world" value="1" />
@@ -66,7 +66,7 @@
                         <form
                             class="w-full"
                             method="POST"
-                            action="{{ route('tally-sheet.deposit-action') }}"
+                            action="{{ route('tally-sheet.transaction.deposit') }}"
                         >
                             @csrf
                             <input type="hidden" name="world" value="1" />

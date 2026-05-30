@@ -38,11 +38,11 @@ Route::middleware('auth')->group(function () {
             Route::post('/user-settings/{user}/remove-pin', 'removePin')->name('remove-pin');
         });
 
-        Route::post('/deposit', [TransactionController::class, 'depositMoney'])->name('deposit-action');
-
-        Route::post('/buy-article', [TransactionController::class, 'buyArticle'])->name('buy-article-action');
-
-        Route::post('/undo', [TransactionController::class, 'undoTransaction'])->name('undo-transaction-action');
+        Route::name('transaction.')->controller(TransactionController::class)->group(function () {
+            Route::post('/deposit', 'depositMoney')->name('deposit');
+            Route::post('/buy', 'buyArticle')->name('buy');
+            Route::post('/undo', 'undoTransaction')->name('undo');
+        });
 
         Route::prefix('{user}')->group(function () {
 
