@@ -26,9 +26,20 @@ class Transaction extends Model
         return $this->hasOne(BuyArticleTransaction::class);
     }
 
+    /**
+     * If this transaciton is an UndoTransaction, returns it
+     */
     public function undoTransaction(): HasOne
     {
         return $this->hasOne(UndoTransaction::class);
+    }
+
+    /**
+     * If existing, returns the UndoTransaction that undoes this transaction
+     */
+    public function undone(): HasOne
+    {
+        return $this->hasOne(UndoTransaction::class, 'undone_transaction_id');
     }
 
     public static function normalize(Transaction $transaction): Transaction

@@ -42,7 +42,7 @@
                             :amount="$transaction->fromUser->is($user) ? -1 * $transaction->amount : $transaction->amount"
                         />
                     </td>
-                    @if ($transaction->created_at->gt(now()->subMinutes(5)))
+                    @if ($transaction->created_at->gt(now()->subMinutes(5)) && !$transaction->undone()->exists())
                         <td>
                             <form
                                 method="post"
