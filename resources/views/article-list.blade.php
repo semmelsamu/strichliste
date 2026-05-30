@@ -1,4 +1,4 @@
-<x-layouts.app title="Preisliste">
+<x-layouts.main title="Preisliste">
     <header class="bg-fsim-medium p-wrapper">
         <h1>Preisliste</h1>
     </header>
@@ -34,9 +34,11 @@
                                 class="card flex items-center justify-between p-inline"
                             >
                                 <span>{{ $article->name }}</span>
-                                <span class="text-text-secondary"
-                                    >{{ number_format($article->price, 2, ',', '') }} €</span
-                                >
+                                <x-currency
+                                    :amount="$article->currentPrice"
+                                    :colors="false"
+                                    class="text-text-secondary"
+                                />
                             </div>
                         @endforeach
                     </div>
@@ -44,4 +46,4 @@
             @endforeach
         </div>
     </x-wrapper>
-</x-layouts.app>
+</x-layouts.main>
