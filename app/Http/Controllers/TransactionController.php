@@ -6,6 +6,7 @@ use App\Enums\UserType;
 use App\Models\Article;
 use App\Models\BuyArticleTransaction;
 use App\Models\Transaction;
+use App\Models\UndoTransaction;
 use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
@@ -123,5 +124,52 @@ class TransactionController extends Controller
             'type' => 'success',
             'message' => 'Gekauft: '.$article->name.' für '.Number::currency($article->currentPrice),
         ]);
+    }
+
+    public function undoTransaction(Request $request)
+    {
+        $validated = $request->validate([
+            'user' => ['required',
+                'integer',
+                'exists:users,id',
+                'bail',
+            ],
+            'transaction' => [
+                'required',
+                'integer',
+                'bail',
+                'exists:transactions,id',
+                Rule::unique('undo_transactions', 'undone_transaction_id'),
+                function (string $attribute, mixed $value, Closure $fail) {
+                    $transaction = Transaction::find($value);
+                    $user = User::find(request()->user);
+                    if (! $transaction) {
+                        $fail('Transaktion wurde nicht gefunden');
+                    }
+                    if ($transaction->from_user_id !== $user->id && $transaction->to_user_id !== $user->id) {
+                        $fail('This transaction does not belong to the given user.');
+                    }
+                    if ($transaction->created_at->lt(now()->subMinutes(5))) {
+                        $fail('This transaction is too old to be undone.');
+                    }
+                },
+            ],
+        ]);
+
+        $transactionToUndo = Transaction::find($validated['transaction']);
+
+        DB::transaction(function () use ($transactionToUndo) {
+            $transaction = new Transaction;
+            $transaction->from_user_id = $transactionToUndo->from_user_id;
+            $transaction->to_user_id = $transactionToUndo->to_user_id;
+            $transaction->amount = -$transactionToUndo->amount;
+            $transaction->save();
+
+            $undoTransaction = new UndoTransaction;
+            $undoTransaction->transaction_id = $transaction->id;
+            $undoTransaction->undone_transaction_id = $transactionToUndo->id;
+            $undoTransaction->save();
+
+        });
     }
 }

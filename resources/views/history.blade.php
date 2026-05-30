@@ -46,10 +46,20 @@
                         <td>
                             <form
                                 method="post"
-                                action=""
+                                action="{{ route('tally-sheet.undo-transaction-action') }}"
                                 class="grid place-items-center"
                             >
                                 @csrf
+                                <input
+                                    type="hidden"
+                                    name="user"
+                                    value="{{ $user->id }}"
+                                />
+                                <input
+                                    type="hidden"
+                                    name="transaction"
+                                    value="{{ $transaction->id }}"
+                                />
                                 <button type="submit">
                                     <x-lucide-undo-2 />
                                 </button>

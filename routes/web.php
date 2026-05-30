@@ -35,6 +35,8 @@ Route::name('tally-sheet.')->prefix('strichliste')->group(function () {
 
     Route::post('/buy-article', [TransactionController::class, 'buyArticle'])->name('buy-article-action');
 
+    Route::post('/undo', [TransactionController::class, 'undoTransaction'])->name('undo-transaction-action');
+
     Route::prefix('{user}')->group(function () {
 
         Route::get('/buy', function (User $user) {
