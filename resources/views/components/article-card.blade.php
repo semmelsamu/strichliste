@@ -5,7 +5,7 @@
 >
     @csrf
     <input type="hidden" name="user" value="{{ $user->id }}" />
-    <input type="hidden" name="vendor" value="2" />
+    <input type="hidden" name="vendor" value="3" />
     <input type="hidden" name="article" value="{{ $article->id }}" />
     <button class="h-full w-full">
         <div

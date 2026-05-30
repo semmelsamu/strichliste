@@ -12,7 +12,7 @@
                 action="{{ route('tally-sheet.transaction.deposit') }}"
             >
                 @csrf
-                <input type="hidden" name="world" value="1" />
+                <input type="hidden" name="world" value="2" />
                 <input type="hidden" name="user" value="{{ $user->id }}" />
 
                 <div class="mr-content flex items-center gap-inline">
@@ -69,7 +69,7 @@
                             action="{{ route('tally-sheet.transaction.deposit') }}"
                         >
                             @csrf
-                            <input type="hidden" name="world" value="1" />
+                            <input type="hidden" name="world" value="2" />
                             <input
                                 type="hidden"
                                 name="user"
