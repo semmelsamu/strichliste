@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\TransactionController;
 use App\Models\Category;
@@ -83,6 +84,10 @@ Route::middleware('auth')->group(function () {
     Route::post('articles/{article}/price', [ArticleController::class, 'updatePrice'])->name('articles.update-price');
 
     Route::resource('articles', ArticleController::class)->only([
+        'index', 'edit', 'update', 'create', 'store',
+    ]);
+
+    Route::resource('categories', CategoryController::class)->only([
         'index', 'edit', 'update', 'create', 'store',
     ]);
 

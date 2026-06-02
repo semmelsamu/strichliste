@@ -31,7 +31,9 @@
             <a class="card p-inline" href="{{ route("articles.index") }}">
                 Artikel bearbeiten
             </a>
-            <a class="card p-inline">Kategorien bearbeiten</a>
+            <a class="card p-inline" href="{{ route("categories.index") }}">
+                Kategorien bearbeiten
+            </a>
             <a class="card p-inline">Nutzer bearbeiten</a>
 
             <p class="mt-content flex items-center gap-2 text-lg font-medium">
