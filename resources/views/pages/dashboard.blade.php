@@ -32,9 +32,10 @@
             </a>
             <a
                 class="card col-span-2 flex flex-col items-center gap-inline p-content"
+                href="{{ route('logout') }}"
             >
-                <x-lucide-party-popper />
-                Event-Modus
+                <x-lucide-log-out />
+                Abmelden
             </a>
         </div>
         <footer
