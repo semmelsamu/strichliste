@@ -1,42 +1,56 @@
 <x-layouts.main title="Preisliste">
-    <x-wrapper class="flex flex-col">
-        <div class="my-auto grid grid-cols-6 gap-inline **:text-center">
-            <h1 class="col-span-full p-content">Willkommen</h1>
+    <x-wrapper class="space-y-content">
+        <header class="space-y-inline">
+            <h1 class="text-center">Willkommen</h1>
+            <p class="flex items-center justify-center gap-2 text-center text-text-secondary">
+                Angemeldet als <em>{{ Auth::user()->name }}</em>
+            </p>
+        </header>
 
+        <nav class="mx-auto max-w-sm space-y-inline">
             <a
                 href="{{ route('tally-sheet.auth.list-users') }}"
-                class="card col-span-3 flex flex-col items-center gap-inline p-content"
+                class="card flex items-center gap-4 p-inline"
             >
-                <x-lucide-log-in />
-                Anmelden
+                <x-lucide-tally-5 />
+                Strichliste
             </a>
             <a
                 href="{{ route('article-list') }}"
-                class="card col-span-3 flex flex-col items-center gap-inline p-content"
+                class="card flex items-center gap-4 p-inline"
             >
                 <x-lucide-scroll-text />
                 Preisliste
             </a>
 
-            <a
-                class="card col-span-2 flex flex-col items-center gap-inline p-content"
-            >
-                <x-lucide-shield-cog-corner />
-                Admin-Zugriff
+            <hr />
+
+            <a class="card flex items-center gap-4 p-inline">
+                <x-lucide-square-pen />
+                Artikel bearbeiten
             </a>
-            <a
-                class="card col-span-2 flex flex-col items-center gap-inline p-content"
-            >
-                <x-lucide-party-popper />
-                Event-Modus
+
+            <hr />
+
+            <a class="card flex items-center gap-4 p-inline">
+                <x-lucide-banknote />
+                Kassen-Modus
             </a>
+
+            <a class="card flex items-center gap-4 p-inline">
+                <x-lucide-hand />
+                Helfer-Modus
+            </a>
+
+            <hr />
+
             <a
-                class="card col-span-2 flex flex-col items-center gap-inline p-content"
                 href="{{ route('logout') }}"
+                class="card flex items-center gap-4 p-inline"
             >
                 <x-lucide-log-out />
                 Abmelden
             </a>
-        </div>
+        </nav>
     </x-wrapper>
 </x-layouts.main>

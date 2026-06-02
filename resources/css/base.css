@@ -18,3 +18,7 @@ h2 {
 h3 {
     @apply text-2xl font-medium;
 }
+
+hr {
+    @apply h-px w-full border-none bg-text-secondary;
+}
