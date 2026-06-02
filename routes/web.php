@@ -81,7 +81,7 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::resource('articles', ArticleController::class)->only([
-        'index', 'edit',
+        'index', 'edit', 'update',
     ]);
 
 });

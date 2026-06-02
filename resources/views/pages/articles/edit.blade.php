@@ -4,12 +4,19 @@
     </header>
     <x-wrapper>
         <h2 class="mb-inline">Generelle Informationen</h2>
-        <form>
+        <form
+            action="{{ route("articles.update", $article->id) }}"
+            method="POST"
+        >
+            @csrf
+            @method ('PUT')
+
             <label for="name" class="mb-2 block">Name</label>
             <input
                 id="name"
                 type="text"
                 class="text-input mb-content w-md"
+                name="name"
                 value="{{ $article->name }}"
             />
 

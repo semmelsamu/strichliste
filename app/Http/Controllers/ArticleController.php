@@ -22,4 +22,21 @@ class ArticleController extends Controller
             'prices' => ArticlePrice::where('article_id', $article->id)->get(),
         ]);
     }
+
+    public function update(Request $request, Article $article)
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string'],
+            'category' => ['required', 'integer'],
+        ]);
+
+        $article->name = $validated['name'];
+        $article->category_id = $validated['category'];
+        $article->save();
+
+        return redirect()->route('articles.index')->with('toast', [
+            'type' => 'success',
+            'message' => 'Änderungen gespeichert.',
+        ]);
+    }
 }
