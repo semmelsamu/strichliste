@@ -18,6 +18,10 @@ a.card:not([href]) {
     @apply w-full;
 }
 
-.table td {
+.table :is(td, th) {
     @apply p-2;
+}
+
+.table th {
+    @apply text-left text-sm font-medium text-text-secondary;
 }
