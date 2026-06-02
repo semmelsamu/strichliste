@@ -1,5 +1,8 @@
 <x-layouts.main title="Artikel">
-    <header class="bg-fsim-medium p-wrapper">
+    <header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
+        <a class="button" href="{{ route('dashboard') }}">
+            <x-lucide-arrow-left />
+        </a>
         <h1>Artikel</h1>
     </header>
     <x-wrapper>

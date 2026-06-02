@@ -1,5 +1,8 @@
 <x-layouts.main title="Artikel bearbeiten">
-    <header class="bg-fsim-medium p-wrapper">
+    <header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
+        <a class="button" href="{{ route('articles.index') }}">
+            <x-lucide-arrow-left />
+        </a>
         <h1>Artikel bearbeiten</h1>
     </header>
     <x-wrapper>
