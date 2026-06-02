@@ -19,7 +19,7 @@ class ArticleController extends Controller
         return view('pages.articles.edit', [
             'article' => $article,
             'categories' => Category::all(),
-            'prices' => ArticlePrice::where('article_id', $article->id)->get(),
+            'prices' => ArticlePrice::where('article_id', $article->id)->orderByDesc('effective_since')->get(),
         ]);
     }
 
@@ -52,7 +52,7 @@ class ArticleController extends Controller
         $newPrice->price = $validated['price'];
         $newPrice->save();
 
-        return redirect()->route('articles.edit')->with('toast', [
+        return redirect()->route('articles.edit', $article->id)->with('toast', [
             'type' => 'success',
             'message' => 'Preis geändert.',
         ]);

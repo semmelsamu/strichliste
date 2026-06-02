@@ -39,7 +39,10 @@
 
         <h2 class="mt-section mb-inline">Preis</h2>
 
-        <form>
+        <form
+            method="POST"
+            action="{{ route("articles.update-price", $article->id) }}"
+        >
             <label for="price" class="mb-2 block">Neuen Preis festlegen</label>
             <div class="mr-content flex items-center gap-inline">
                 <input
