@@ -8,52 +8,47 @@
         </header>
 
         <nav class="mx-auto max-w-sm space-y-inline">
-            <a
-                href="{{ route('tally-sheet.auth.list-users') }}"
-                class="card flex items-center gap-4 p-inline"
-            >
+            <p class="flex items-center gap-2 text-lg font-medium">
                 <x-lucide-tally-5 />
+                Hauptfunktionen
+            </p>
+
+            <a
+                class="card p-inline"
+                href="{{ route('tally-sheet.auth.list-users') }}"
+            >
                 Strichliste
             </a>
-            <a
-                href="{{ route('article-list') }}"
-                class="card flex items-center gap-4 p-inline"
-            >
-                <x-lucide-scroll-text />
+            <a class="card p-inline" href="{{ route('article-list') }}">
                 Preisliste
             </a>
 
-            <hr />
+            <p class="mt-content flex items-center gap-2 text-lg font-medium">
+                <x-lucide-pencil-ruler />
+                Administration
+            </p>
 
-            <a
-                href="{{ route("articles.index") }}"
-                class="card flex items-center gap-4 p-inline"
-            >
-                <x-lucide-square-pen />
+            <a class="card p-inline" href="{{ route("articles.index") }}">
                 Artikel bearbeiten
             </a>
+            <a class="card p-inline">Kategorien bearbeiten</a>
+            <a class="card p-inline">Nutzer bearbeiten</a>
 
-            <hr />
+            <p class="mt-content flex items-center gap-2 text-lg font-medium">
+                <x-lucide-boxes />
+                Modi
+            </p>
 
-            <a class="card flex items-center gap-4 p-inline">
-                <x-lucide-banknote />
-                Kassen-Modus
-            </a>
+            <a class="card p-inline">Kassen-Modus</a>
+            <a class="card p-inline">Helfer-Modus</a>
 
-            <a class="card flex items-center gap-4 p-inline">
-                <x-lucide-hand />
-                Helfer-Modus
-            </a>
+            <p class="mt-content flex items-center gap-2 text-lg font-medium">
+                <x-lucide-circle-user-round />
+                Account
+            </p>
 
-            <hr />
-
-            <a
-                href="{{ route('logout') }}"
-                class="card flex items-center gap-4 p-inline"
-            >
-                <x-lucide-log-out />
-                Abmelden
-            </a>
+            <a class="card p-inline">Einstellungen</a>
+            <a class="card p-inline" href="{{ route('logout') }}">Abmelden</a>
         </nav>
     </x-wrapper>
 </x-layouts.main>
