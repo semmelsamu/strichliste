@@ -26,7 +26,7 @@
             <hr />
 
             <a
-                href="{{ route("articles.list") }}"
+                href="{{ route("articles.index") }}"
                 class="card flex items-center gap-4 p-inline"
             >
                 <x-lucide-square-pen />

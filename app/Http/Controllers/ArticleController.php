@@ -39,4 +39,22 @@ class ArticleController extends Controller
             'message' => 'Änderungen gespeichert.',
         ]);
     }
+
+    public function updatePrice(Request $request, Article $article)
+    {
+        $validated = $request->validate([
+            'price' => ['required', 'decimal:0,2'],
+        ]);
+
+        $newPrice = new ArticlePrice;
+
+        $newPrice->article_id = $article->id;
+        $newPrice->price = $validated['price'];
+        $newPrice->save();
+
+        return redirect()->route('articles.edit')->with('toast', [
+            'type' => 'success',
+            'message' => 'Preis geändert.',
+        ]);
+    }
 }
