@@ -29,7 +29,20 @@ class ArticleController extends Controller
             'price' => ['required', 'decimal:0,2', 'gte:0'],
         ]);
 
-        dd($validated);
+        $article = new Article;
+        $article->name = $validated['name'];
+        $article->category_id = $validated['category'];
+        $article->save();
+
+        $price = new ArticlePrice;
+        $price->price = $validated['price'];
+        $price->article_id = $article->id;
+        $price->save();
+
+        return redirect()->route('articles.index')->with('toast', [
+            'type' => 'success',
+            'message' => 'Artikel wurde erstellt.',
+        ]);
     }
 
     public function edit(Request $request, Article $article)

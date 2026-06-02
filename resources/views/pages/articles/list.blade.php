@@ -4,6 +4,13 @@
             <x-lucide-arrow-left />
         </a>
         <h1>Artikel</h1>
+        <a
+            class="button ml-auto bg-fsim-light"
+            href="{{ route('articles.create') }}"
+        >
+            <x-lucide-plus />
+            Neuen Artikel erstellen
+        </a>
     </header>
     <x-wrapper>
         <table class="table">
