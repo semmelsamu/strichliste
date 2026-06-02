@@ -38,11 +38,5 @@
                 Abmelden
             </a>
         </div>
-        <footer
-            class="flex flex-col items-center gap-inline text-center text-text-secondary"
-        >
-            <img src="{{ asset('fsim-logo.svg') }}" class="h-12 w-12" />
-            Strichliste der FSIM
-        </footer>
     </x-wrapper>
 </x-layouts.main>

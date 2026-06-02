@@ -11,6 +11,12 @@
 <body
     class="relative mx-auto flex h-screen max-w-5xl flex-col overflow-y-hidden bg-fsim-dark"
 >
+    <nav
+        class="flex w-full items-center justify-center gap-inline bg-black p-inline"
+    >
+        <img src="{{ asset('fsim-logo.svg') }}" class="h-6 w-6" />
+        <a href="{{ route('dashboard') }}">Strichliste der FSIM</a>
+    </nav>
     {{ $slot }}
     @if (session('toast'))
         <x-toast :type="session('toast.type')">
