@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Article;
+use App\Models\ArticlePrice;
 use App\Models\Category;
 use Illuminate\Http\Request;
 
@@ -18,6 +19,7 @@ class ArticleController extends Controller
         return view('pages.articles.edit', [
             'article' => $article,
             'categories' => Category::all(),
+            'prices' => ArticlePrice::where('article_id', $article->id)->get(),
         ]);
     }
 }
