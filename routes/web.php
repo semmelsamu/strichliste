@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\TransactionController;
@@ -78,5 +79,7 @@ Route::middleware('auth')->group(function () {
             })->name('history');
         });
     });
+
+    Route::name('articles.')->prefix('articles')->controller(ArticleController::class)->group(function () {});
 
 });
