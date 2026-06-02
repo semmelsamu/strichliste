@@ -6,7 +6,7 @@
         <h1>Artikel erstellen</h1>
     </header>
     <x-wrapper>
-        <form action="" method="POST">
+        <form action="{{ route("articles.store") }}" method="POST">
             @csrf
 
             <label for="name" class="mb-2 block">Name</label>
@@ -15,12 +15,17 @@
                 type="text"
                 class="text-input mb-content w-md"
                 name="name"
+                required
+                value="{{ old('name') }}"
             />
 
             <label for="category" class="mb-2 block">Kategorie</label>
             <select name="category" id="category" class="text-input">
                 @foreach ($categories as $category)
-                    <option value="{{ $category->id }}">
+                    <option
+                        value="{{ $category->id }}"
+                        @selected (old('category') == $category->id)
+                    >
                         {{ $category->name }}
                     </option>
                 @endforeach
@@ -37,6 +42,7 @@
                     step="0.01"
                     class="text-input w-40"
                     required
+                    value="{{ old('price') }}"
                 />
                 €
             </div>

@@ -83,7 +83,7 @@ Route::middleware('auth')->group(function () {
     Route::post('articles/{article}/price', [ArticleController::class, 'updatePrice'])->name('articles.update-price');
 
     Route::resource('articles', ArticleController::class)->only([
-        'index', 'edit', 'update', 'create',
+        'index', 'edit', 'update', 'create', 'store',
     ]);
 
 });

@@ -21,6 +21,17 @@ class ArticleController extends Controller
         ]);
     }
 
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string'],
+            'category' => ['required', 'integer', 'exists:categories,id'],
+            'price' => ['required', 'decimal:0,2', 'gte:0'],
+        ]);
+
+        dd($validated);
+    }
+
     public function edit(Request $request, Article $article)
     {
         return view('pages.articles.edit', [
@@ -34,7 +45,7 @@ class ArticleController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string'],
-            'category' => ['required', 'integer'],
+            'category' => ['required', 'integer', 'exists:categories,id'],
         ]);
 
         $article->name = $validated['name'];
@@ -50,7 +61,7 @@ class ArticleController extends Controller
     public function updatePrice(Request $request, Article $article)
     {
         $validated = $request->validate([
-            'price' => ['required', 'decimal:0,2'],
+            'price' => ['required', 'decimal:0,2', 'gte:0'],
         ]);
 
         $newPrice = new ArticlePrice;
