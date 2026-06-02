@@ -42,14 +42,5 @@
                 Anmelden
             </button>
         </form>
-        <form
-            class="mx-auto flex max-w-sm flex-col gap-4"
-            method="POST"
-            action="{{ route('logout') }}"
-        >
-            <button type="submit" class="button ml-auto bg-fsim-light">
-                Abmelden
-            </button>
-        </form>
     </x-wrapper>
 </x-layouts.main>
