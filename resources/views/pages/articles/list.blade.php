@@ -23,7 +23,9 @@
                     </td>
 
                     <td class="w-6">
-                        <x-lucide-square-pen />
+                        <a href="{{ route("articles.edit", $article->id) }}">
+                            <x-lucide-square-pen />
+                        </a>
                     </td>
                 </tr>
             @endforeach
