@@ -14,6 +14,13 @@ class ArticleController extends Controller
         return view('pages.articles.list', ['articles' => Article::all()]);
     }
 
+    public function create(Request $request)
+    {
+        return view('pages.articles.create', [
+            'categories' => Category::all(),
+        ]);
+    }
+
     public function edit(Request $request, Article $article)
     {
         return view('pages.articles.edit', [
