@@ -80,6 +80,8 @@ Route::middleware('auth')->group(function () {
         });
     });
 
-    Route::name('articles.')->prefix('articles')->controller(ArticleController::class)->group(function () {});
+    Route::name('articles.')->prefix('articles')->controller(ArticleController::class)->group(function () {
+        Route::get('/', 'list')->name('list');
+    });
 
 });

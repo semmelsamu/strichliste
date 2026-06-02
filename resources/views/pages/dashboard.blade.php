@@ -25,7 +25,10 @@
 
             <hr />
 
-            <a class="card flex items-center gap-4 p-inline">
+            <a
+                href="{{ route("articles.list") }}"
+                class="card flex items-center gap-4 p-inline"
+            >
                 <x-lucide-square-pen />
                 Artikel bearbeiten
             </a>
