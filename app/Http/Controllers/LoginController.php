@@ -26,7 +26,10 @@ class LoginController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            return redirect()->route('dashboard');
+            return redirect()->route('dashboard')->with('toast', [
+                'type' => 'success',
+                'message' => 'Willkommen, '.Auth::user()->name.'!',
+            ]);
         }
 
         return back()->withErrors([
@@ -45,6 +48,9 @@ class LoginController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect()->route('login');
+        return redirect()->route('login')->with('toast', [
+            'type' => 'success',
+            'message' => 'Erfolgreich abgemeldet.',
+        ]);
     }
 }
