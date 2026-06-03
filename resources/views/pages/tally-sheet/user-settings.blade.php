@@ -5,9 +5,7 @@
         </a>
         <h1>Account-Einstellungen</h1>
     </header>
-    <x-wrapper
-        class="mx-auto flex max-w-2xl flex-col items-center space-y-section"
-    >
+    <x-wrapper class="mx-auto flex max-w-2xl flex-col space-y-section">
         <section class="space-y-content">
             <h2>Nutzername</h2>
 
@@ -17,10 +15,10 @@
             >
                 @csrf
                 <div class="space-y-2">
-                    <label class="block" for="username"
-                        >Nutzername ändern</label
-                    >
-                    <div class="flex items-center gap-inline">
+                    <label class="block" for="username">
+                        Nutzername ändern
+                    </label>
+                    <div class="flex w-sm items-center gap-inline">
                         <input
                             type="text"
                             name="username"
@@ -57,7 +55,7 @@
                             PIN hinzufügen
                         @endif
                     </label>
-                    <div class="flex items-center gap-inline">
+                    <div class="flex w-sm items-center gap-inline">
                         <input
                             type="password"
                             name="pin"
@@ -89,6 +87,22 @@
                     </div>
                 </form>
             @endif
+        </section>
+
+        <section class="space-y-content">
+            <h2>Danger Zone</h2>
+
+            <form
+                method="POST"
+                action="{{ route("tally-sheet.auth.deactivate", $user->id) }}"
+                class="flex items-center"
+            >
+                @csrf
+                @method ("DELETE")
+                <button type="submit" class="button bg-red-800">
+                    Account deaktivieren
+                </button>
+            </form>
         </section>
     </x-wrapper>
 </x-layouts.main>

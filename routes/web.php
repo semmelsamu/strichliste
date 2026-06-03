@@ -39,6 +39,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/user-settings/{user}/username', 'updateUsername')->name('update-username');
             Route::post('/user-settings/{user}/pin', 'updatePin')->name('update-pin');
             Route::post('/user-settings/{user}/remove-pin', 'removePin')->name('remove-pin');
+            Route::delete('/user-settings/{user}/deactivate', 'deactivate')->name('deactivate')->withTrashed();
         });
 
         Route::name('transaction.')->controller(TransactionController::class)->group(function () {

@@ -135,4 +135,14 @@ class AuthController extends Controller
             ->route('tally-sheet.auth.show-settings', $user)
             ->with('toast', ['type' => 'success', 'message' => 'PIN entfernt.']);
     }
+
+    public function deactivate(User $user)
+    {
+        $user->delete();
+
+        return redirect()->route('tally-sheet.auth.list-users')->with('toast', [
+            'type' => 'success',
+            'message' => 'Account wurde erfolgreich deaktiviert.',
+        ]);
+    }
 }
