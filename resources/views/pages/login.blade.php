@@ -5,7 +5,6 @@
         <h1>Anmelden</h1>
     </header>
     <x-wrapper>
-        @dump (Auth::user())
         <form
             class="mx-auto flex max-w-sm flex-col gap-4"
             method="POST"
