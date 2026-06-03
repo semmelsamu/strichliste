@@ -3,7 +3,7 @@
         <h1>Anmelden</h1>
         <a
             class="button bg-fsim-light"
-            href="{{ route('tally-sheet.auth.show-register') }}"
+            href="{{ route('tally-sheet.users.create') }}"
         >
             <x-lucide-user-plus />
             Registrieren

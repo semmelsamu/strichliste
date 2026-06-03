@@ -8,7 +8,7 @@
         >
             <a
                 class="button bg-fsim-light"
-                href="{{ route('tally-sheet.auth.show-settings', $user->id) }}"
+                href="{{ route('tally-sheet.users.edit', $user->id) }}"
             >
                 <x-lucide-user />
                 {{ $user->name }}

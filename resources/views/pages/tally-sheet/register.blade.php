@@ -9,9 +9,10 @@
         <form
             class="mx-auto flex max-w-sm flex-col gap-4"
             method="POST"
-            action="{{ route('tally-sheet.auth.register') }}"
+            action="{{ route('tally-sheet.users.store') }}"
         >
             @csrf
+            @method ("PUT")
 
             <div class="flex flex-col gap-2">
                 <label for="username">Nutzername</label>

@@ -1,19 +1,33 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\TallySheet;
 
+use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
-class AuthController extends Controller
+class UserController extends Controller
 {
-    public function registerForm()
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        //
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
     {
         return view('pages.tally-sheet.register');
     }
 
-    public function register(Request $request)
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
     {
         $validated = $request->validate([
             'username' => ['required', 'string', 'min:3', 'unique:users,name'],
@@ -38,12 +52,26 @@ class AuthController extends Controller
             ]);
     }
 
-    public function settings(User $user)
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(User $user)
     {
         return view('pages.tally-sheet.user-settings', ['user' => $user]);
     }
 
-    public function updateUsername(Request $request, User $user): RedirectResponse
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, User $user)
     {
         $validated = $request->validate([
             'username' => ['required', 'string', 'min:3', 'unique:users,name'],
@@ -53,11 +81,11 @@ class AuthController extends Controller
         $user->save();
 
         return redirect()
-            ->route('tally-sheet.auth.show-settings', $user)
+            ->route('tally-sheet.users.edit', $user)
             ->with('toast', ['type' => 'success', 'message' => 'Nutzername geändert.']);
     }
 
-    public function updatePin(Request $request, User $user): RedirectResponse
+    public function updatePin(Request $request, User $user)
     {
         $validated = $request->validate([
             'pin' => ['required', 'string'],
@@ -67,21 +95,24 @@ class AuthController extends Controller
         $user->save();
 
         return redirect()
-            ->route('tally-sheet.auth.show-settings', $user)
+            ->route('tally-sheet.users.edit', $user)
             ->with('toast', ['type' => 'success', 'message' => 'PIN geändert.']);
     }
 
-    public function removePin(User $user): RedirectResponse
+    public function removePin(User $user)
     {
         $user->pin = null;
         $user->save();
 
         return redirect()
-            ->route('tally-sheet.auth.show-settings', $user)
+            ->route('tally-sheet.users.edit', $user)
             ->with('toast', ['type' => 'success', 'message' => 'PIN entfernt.']);
     }
 
-    public function deactivate(User $user)
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(User $user)
     {
         $user->delete();
 

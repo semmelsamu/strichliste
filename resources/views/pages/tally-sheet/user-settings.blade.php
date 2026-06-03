@@ -11,9 +11,11 @@
 
             <form
                 method="POST"
-                action="{{ route('tally-sheet.auth.update-username', $user) }}"
+                action="{{ route('tally-sheet.users.update', $user) }}"
             >
                 @csrf
+                @method ("PUT")
+
                 <div class="space-y-2">
                     <label class="block" for="username">
                         Nutzername ändern
@@ -44,9 +46,10 @@
 
             <form
                 method="POST"
-                action="{{ route('tally-sheet.auth.update-pin', $user) }}"
+                action="{{ route('tally-sheet.users.update-pin', $user) }}"
             >
                 @csrf
+
                 <div class="space-y-2">
                     <label class="block" for="pin">
                         @if ($user->pin)
@@ -78,9 +81,10 @@
             @if ($user->pin)
                 <form
                     method="POST"
-                    action="{{ route('tally-sheet.auth.remove-pin', $user) }}"
+                    action="{{ route('tally-sheet.users.remove-pin', $user) }}"
                 >
                     @csrf
+                    @method ("DELETE")
                     <div class="space-y-2">
                         <label class="block">PIN entfernen</label>
                         <button class="button bg-red-800">Pin entfernen</button>
@@ -94,7 +98,7 @@
 
             <form
                 method="POST"
-                action="{{ route("tally-sheet.auth.deactivate", $user->id) }}"
+                action="{{ route("tally-sheet.users.destroy", $user->id) }}"
                 class="flex items-center"
             >
                 @csrf

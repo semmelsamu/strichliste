@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\ArticleController;
-use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\TallySheet;
@@ -33,16 +32,14 @@ Route::middleware('auth')->group(function () {
             Route::post('/login/{user}', 'validatePin')->name('validate-pin');
         });
 
-        Route::name('auth.')->controller(AuthController::class)->group(function () {
+        Route::controller(TallySheet\UserController::class)->group(function () {
 
-            Route::post('/user-settings/{user}/pin', 'updatePin')->name('update-pin');
-            Route::post('/user-settings/{user}/remove-pin', 'removePin')->name('remove-pin');
+            Route::post('/user-settings/{user}/pin', 'updatePin')->name('users.update-pin');
+            Route::delete('/user-settings/{user}/pin', 'removePin')->name('users.remove-pin');
 
-            Route::get('/register', 'registerForm')->name('show-register');
-            Route::post('/register', 'register')->name('register');
-            Route::get('/user-settings/{user}', 'settings')->name('show-settings');
-            Route::post('/user-settings/{user}/username', 'updateUsername')->name('update-username');
-            Route::delete('/user-settings/{user}/deactivate', 'deactivate')->name('deactivate')->withTrashed();
+            Route::resource('users', TallySheet\UserController::class)->only([
+                'edit', 'update', 'create', 'store', 'destroy',
+            ]);
 
         });
 
