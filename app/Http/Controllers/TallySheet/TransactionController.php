@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\TallySheet;
 
 use App\Enums\UserType;
 use App\Models\Article;

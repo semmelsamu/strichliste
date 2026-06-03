@@ -5,7 +5,6 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\TallySheet;
-use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use App\Models\Category;
 use Illuminate\Support\Facades\Route;
@@ -52,10 +51,12 @@ Route::middleware('auth')->group(function () {
 
         });
 
-        Route::prefix('{user}')->controller(TransactionController::class)->group(function () {
+        Route::prefix('{user}')->controller(TallySheet\TransactionController::class)->group(function () {
 
             Route::post('/deposit', 'depositMoney')->name('deposit');
+
             Route::post('/buy', 'buyArticle')->name('buy');
+
             Route::post('/undo', 'undoTransaction')->name('undo');
 
         });
