@@ -40,5 +40,23 @@
                 </tr>
             @endforeach
         </table>
+
+        <h2 class="mt-section mb-inline">Archiv</h2>
+
+        <p class="mb-content text-text-secondary">Diese Artikel wurden archiviert und werden nicht mehr im Kaufmenü angezeigt.</p>
+
+        <table class="table">
+            <tr>
+                <th>Name</th>
+                <th>Gelöscht</th>
+            </tr>
+
+            @foreach ($archivedArticles as $article)
+                <tr class="border-t border-text-secondary/40 *:py-4">
+                    <td>{{ $article->name }}</td>
+                    <td>{{ $article->deleted_at->diffForHumans() }}</td>
+                </tr>
+            @endforeach
+        </table>
     </x-wrapper>
 </x-layouts.main>
