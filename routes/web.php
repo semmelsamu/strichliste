@@ -94,6 +94,7 @@ Route::middleware('auth')->group(function () {
         'index', 'edit', 'update', 'create', 'store', 'destroy',
     ]);
 
+    Route::put('users/{user}/pin', [UserController::class, 'updatePassword'])->name('users.update-password');
     Route::delete('users/{user}/pin', [UserController::class, 'removePin'])->name('users.remove-pin');
 
     Route::resource('users', UserController::class)->only([

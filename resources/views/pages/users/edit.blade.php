@@ -78,5 +78,29 @@
                 PIN entfernen
             </button>
         </form>
+
+        <h3 class="mt-content mb-inline">Passwort setzen</h3>
+        <form
+            action="{{ route("users.update-password", $user->id) }}"
+            method="POST"
+        >
+            @csrf
+            @method ('PUT')
+
+            <label for="password" class="mb-2 block">Neues Passwort</label>
+            <div class="flex items-center gap-inline">
+                <input
+                    id="password"
+                    type="password"
+                    class="text-input w-md"
+                    name="password"
+                />
+
+                <button type="submit" class="button bg-red-800">
+                    <x-lucide-key-round />
+                    Passwort setzen
+                </button>
+            </div>
+        </form>
     </x-wrapper>
 </x-layouts.main>

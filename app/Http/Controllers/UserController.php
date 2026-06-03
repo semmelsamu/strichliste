@@ -85,4 +85,18 @@ class UserController extends Controller
     {
         //
     }
+
+    public function updatePassword(Request $request, User $user)
+    {
+        $validated = $request->validate([
+            'password' => ['string'],
+        ]);
+
+        $user->password = $validated['password'];
+        $user->save();
+
+        return redirect()
+            ->route('users.edit', $user)
+            ->with('toast', ['type' => 'success', 'message' => 'Passwort wurde gespeichert.']);
+    }
 }

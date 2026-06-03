@@ -31,6 +31,7 @@ class User extends Authenticatable
         return [
             'type' => UserType::class,
             'pin' => 'hashed',
+            'password' => 'hashed',
         ];
     }
 
