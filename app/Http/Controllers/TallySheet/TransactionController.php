@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\TallySheet;
 
 use App\Enums\UserType;
+use App\Http\Controllers\Controller;
 use App\Models\Article;
 use App\Models\BuyArticleTransaction;
 use App\Models\Transaction;
