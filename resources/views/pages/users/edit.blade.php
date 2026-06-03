@@ -17,7 +17,7 @@
                 id="name"
                 type="text"
                 class="text-input mb-content w-md"
-                name="name"
+                name="username"
                 value="{{ old('name') ?? $user->name }}"
             />
 
@@ -55,7 +55,7 @@
 
         <form
             method="POST"
-            action="{{ route("categories.destroy", $user->id) }}"
+            action="{{ route("users.destroy", $user->id) }}"
             class="flex items-center"
         >
             @csrf
@@ -63,6 +63,19 @@
             <button type="submit" class="button bg-red-800">
                 <x-lucide-octagon-minus />
                 Nutzer deaktivieren
+            </button>
+        </form>
+
+        <form
+            method="POST"
+            action="{{ route("users.remove-pin", $user->id) }}"
+            class="mt-content flex items-center"
+        >
+            @csrf
+            @method ("DELETE")
+            <button type="submit" class="button bg-red-800">
+                <x-lucide-rotate-ccw-key />
+                PIN entfernen
             </button>
         </form>
     </x-wrapper>
