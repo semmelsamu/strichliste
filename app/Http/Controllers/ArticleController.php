@@ -116,4 +116,14 @@ class ArticleController extends Controller
             'message' => 'Artikel wurde archiviert.',
         ]);
     }
+
+    public function restore(Article $article)
+    {
+        $article->restore();
+
+        return redirect()->route('articles.index', $article->id)->with('toast', [
+            'type' => 'success',
+            'message' => 'Artikel wurde wiederhergestellt.',
+        ]);
+    }
 }

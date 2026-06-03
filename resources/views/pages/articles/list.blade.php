@@ -55,6 +55,18 @@
                 <tr class="border-t border-text-secondary/40 *:py-4">
                     <td>{{ $article->name }}</td>
                     <td>{{ $article->deleted_at->diffForHumans() }}</td>
+                    <td class="flex items-center justify-end">
+                        <form
+                            method="POST"
+                            action="{{ route("articles.restore", $article->id) }}"
+                            class="flex items-center"
+                        >
+                            @csrf
+                            <button type="submit">
+                                <x-lucide-archive-restore />
+                            </button>
+                        </form>
+                    </td>
                 </tr>
             @endforeach
         </table>
