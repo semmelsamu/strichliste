@@ -32,7 +32,7 @@
                         />
                     </td>
 
-                    <td class="w-6">
+                    <td class="flex items-center justify-end">
                         <a href="{{ route("articles.edit", $article->id) }}">
                             <x-lucide-square-pen />
                         </a>

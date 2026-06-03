@@ -79,5 +79,20 @@
                 </tr>
             @endforeach
         </table>
+
+        <h2 class="mt-section mb-content">Danger Zone</h2>
+
+        <form
+            method="POST"
+            action="{{ route("articles.destroy", $article->id) }}"
+            class="flex items-center"
+        >
+            @csrf
+            @method ("DELETE")
+            <button type="submit" class="button bg-red-800">
+                <x-lucide-archive /> Artikel archivieren
+            </button>
+        </form>
+        <p class="mt-2 text-sm text-text-secondary">Dadurch wird der Artikel nicht mehr im Kaufmenü angezeigt.</p>
     </x-wrapper>
 </x-layouts.main>

@@ -103,4 +103,14 @@ class ArticleController extends Controller
             'message' => 'Preis geändert.',
         ]);
     }
+
+    public function destroy(Article $article)
+    {
+        $article->delete();
+
+        return redirect()->route('articles.index', $article->id)->with('toast', [
+            'type' => 'success',
+            'message' => 'Artikel wurde archiviert.',
+        ]);
+    }
 }
