@@ -34,7 +34,9 @@
             <a class="card p-inline" href="{{ route("categories.index") }}">
                 Kategorien bearbeiten
             </a>
-            <a class="card p-inline">Nutzer bearbeiten</a>
+            <a class="card p-inline" href="{{ route("users.index") }}">
+                Nutzer bearbeiten
+            </a>
 
             <p class="mt-content flex items-center gap-2 text-lg font-medium">
                 <x-lucide-boxes />
