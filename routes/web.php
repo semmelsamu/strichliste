@@ -83,24 +83,32 @@ Route::middleware('auth')->group(function () {
         });
     });
 
-    Route::post('articles/{article}/restore', [ArticleController::class, 'restore'])->name('articles.restore')->withTrashed();
+    Route::controller(ArticleController::class)->group(function () {
 
-    Route::post('articles/{article}/price', [ArticleController::class, 'updatePrice'])->name('articles.update-price');
+        Route::post('articles/{article}/restore', 'restore')->name('articles.restore')->withTrashed();
 
-    Route::resource('articles', ArticleController::class)->only([
-        'index', 'edit', 'update', 'create', 'store', 'destroy',
-    ]);
+        Route::post('articles/{article}/price', 'updatePrice')->name('articles.update-price');
+
+        Route::resource('articles', ArticleController::class)->only([
+            'index', 'edit', 'update', 'create', 'store', 'destroy',
+        ]);
+
+    });
 
     Route::resource('categories', CategoryController::class)->only([
         'index', 'edit', 'update', 'create', 'store', 'destroy',
     ]);
 
-    Route::put('users/{user}/pin', [UserController::class, 'updatePassword'])->name('users.update-password')->withTrashed();
-    Route::delete('users/{user}/pin', [UserController::class, 'removePin'])->name('users.remove-pin')->withTrashed();
-    Route::post('users/{user}/restore', [UserController::class, 'restore'])->name('users.restore')->withTrashed();
+    Route::controller(UserController::class)->group(function () {
 
-    Route::resource('users', UserController::class)->only([
-        'index', 'edit', 'update', 'destroy', 'create', 'store',
-    ])->withTrashed();
+        Route::put('users/{user}/pin', 'updatePassword')->name('users.update-password')->withTrashed();
+        Route::delete('users/{user}/pin', 'removePin')->name('users.remove-pin')->withTrashed();
+        Route::post('users/{user}/restore', 'restore')->name('users.restore')->withTrashed();
+
+        Route::resource('users', UserController::class)->only([
+            'index', 'edit', 'update', 'destroy', 'create', 'store',
+        ])->withTrashed();
+
+    });
 
 });
