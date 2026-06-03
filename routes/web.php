@@ -88,7 +88,7 @@ Route::middleware('auth')->group(function () {
     ]);
 
     Route::resource('categories', CategoryController::class)->only([
-        'index', 'edit', 'update', 'create', 'store',
+        'index', 'edit', 'update', 'create', 'store', 'destroy',
     ]);
 
 });

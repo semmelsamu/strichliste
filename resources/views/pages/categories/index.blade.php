@@ -20,10 +20,21 @@
                         @svg ($category->icon)
                     </td>
                     <td class="w-auto">{{ $category->name }}</td>
-                    <td class="w-6">
+                    <td class="flex items-center justify-end gap-content">
                         <a href="{{ route("categories.edit", $category->id) }}">
                             <x-lucide-square-pen />
                         </a>
+                        <form
+                            method="POST"
+                            action="{{ route("categories.destroy", $category->id) }}"
+                            class="flex items-center"
+                        >
+                            @csrf
+                            @method ("DELETE")
+                            <button type="submit">
+                                <x-lucide-trash class="text-red-500" />
+                            </button>
+                        </form>
                     </td>
                 </tr>
             @endforeach

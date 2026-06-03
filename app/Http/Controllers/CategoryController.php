@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use BladeUI\Icons\Exceptions\SvgNotFound;
 use Closure;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -113,8 +114,21 @@ class CategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Category $category)
     {
-        //
+        try {
+            $category->delete();
+
+            return redirect()->route('categories.index')->with('toast', [
+                'type' => 'success',
+                'message' => 'Kategorie wurde gelöscht.',
+            ]);
+        } catch (QueryException) {
+
+            return back()->with('toast', [
+                'type' => 'error',
+                'message' => 'Kategorie konnte nicht gelöscht werden. Stelle sicher, dass keine Artikel die Kategorie verwenden und versuche es nochmal.',
+            ]);
+        }
     }
 }
