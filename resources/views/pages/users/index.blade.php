@@ -40,6 +40,11 @@
                     <td class="text-right">
                         <x-currency :amount="$user->balance" />
                     </td>
+                    <td class="flex items-center justify-end">
+                        <a href="{{ route("users.edit", $user->id) }}">
+                            <x-lucide-square-pen />
+                        </a>
+                    </td>
                 </tr>
             @endforeach
         </table>

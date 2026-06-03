@@ -22,3 +22,11 @@ h3 {
 hr {
     @apply h-px w-full border-none bg-text-secondary;
 }
+
+dl dt {
+    @apply font-medium;
+}
+
+dl dd {
+    @apply ps-inline;
+}
