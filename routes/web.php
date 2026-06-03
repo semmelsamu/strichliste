@@ -4,11 +4,10 @@ use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\TallySheet\TallySheetCoreController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use App\Models\Category;
-use App\Models\Transaction;
-use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/login', [LoginController::class, 'login'])->name('login')->middleware('guest');
@@ -48,38 +47,16 @@ Route::middleware('auth')->group(function () {
             Route::post('/undo', 'undoTransaction')->name('undo');
         });
 
-        Route::prefix('{user}')->group(function () {
+        Route::prefix('{user}')->controller(TallySheetCoreController::class)->group(function () {
 
-            Route::get('/buy', function (User $user) {
-                return view('pages.tally-sheet.buy-overview', [
-                    'categories' => Category::all(),
-                    'user' => $user,
-                ]);
-            })->name('buy-overview');
+            Route::get('/buy', 'showBuyOverview')->name('buy-overview');
 
-            Route::get('/buy/category/{category_id}', function (User $user, $category_id) {
-                return view('pages.tally-sheet.buy-category', [
-                    'category' => Category::with('articles')->firstWhere('id', $category_id),
-                    'user' => $user,
-                ]);
-            })->name('buy-categories');
+            Route::get('/buy/category/{category_id}', 'showBuyCategory')->name('buy-categories');
 
-            Route::get('/deposit', function (User $user) {
-                return view('pages.tally-sheet.deposit', [
-                    'user' => $user,
-                ]);
-            })->name('deposit');
+            Route::get('/deposit', 'showDeposit')->name('deposit');
 
-            Route::get('/history', function (User $user) {
-                return view('pages.tally-sheet.history', [
-                    'normalizedTransactions' => $user->transactions()
-                        ->orderBy('created_at', 'desc')
-                        ->orderBy('id', 'desc')
-                        ->get()
-                        ->map(fn ($t) => Transaction::normalize($t)),
-                    'user' => $user,
-                ]);
-            })->name('history');
+            Route::get('/history', 'showHistory')->name('history');
+
         });
     });
 
