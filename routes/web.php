@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\UserController;
 use App\Models\Category;
 use App\Models\Transaction;
 use App\Models\User;
@@ -91,6 +92,10 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('categories', CategoryController::class)->only([
         'index', 'edit', 'update', 'create', 'store', 'destroy',
+    ]);
+
+    Route::resource('users', UserController::class)->only([
+        'index',
     ]);
 
 });
