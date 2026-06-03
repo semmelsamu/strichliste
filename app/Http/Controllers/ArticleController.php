@@ -14,7 +14,7 @@ class ArticleController extends Controller
      */
     public function index(Request $request)
     {
-        return view('pages.articles.list', [
+        return view('pages.articles.index', [
             'articles' => Article::all(),
             'archivedArticles' => Article::onlyTrashed()->orderBy('deleted_at', 'desc')->get(),
         ]);
