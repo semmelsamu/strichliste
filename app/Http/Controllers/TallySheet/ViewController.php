@@ -7,7 +7,7 @@ use App\Models\Category;
 use App\Models\Transaction;
 use App\Models\User;
 
-class TallySheetCoreController extends Controller
+class ViewController extends Controller
 {
     public function showBuyOverview(User $user)
     {

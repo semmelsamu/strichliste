@@ -4,7 +4,7 @@ use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\LoginController;
-use App\Http\Controllers\TallySheet\TallySheetCoreController;
+use App\Http\Controllers\TallySheet;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use App\Models\Category;
@@ -41,7 +41,7 @@ Route::middleware('auth')->group(function () {
             Route::delete('/user-settings/{user}/deactivate', 'deactivate')->name('deactivate')->withTrashed();
         });
 
-        Route::prefix('{user}')->controller(TallySheetCoreController::class)->group(function () {
+        Route::prefix('{user}')->controller(TallySheet\ViewController::class)->group(function () {
 
             Route::get('/buy', 'showBuyOverview')->name('buy-overview');
             Route::get('/buy/category/{category_id}', 'showBuyCategory')->name('buy-categories');
