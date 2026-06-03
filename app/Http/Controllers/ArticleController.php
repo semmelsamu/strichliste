@@ -9,11 +9,17 @@ use Illuminate\Http\Request;
 
 class ArticleController extends Controller
 {
+    /**
+     * Display the specified resource.
+     */
     public function index(Request $request)
     {
         return view('pages.articles.list', ['articles' => Article::all()]);
     }
 
+    /**
+     * Show the form for creating a new resource.
+     */
     public function create(Request $request)
     {
         return view('pages.articles.create', [
@@ -21,6 +27,9 @@ class ArticleController extends Controller
         ]);
     }
 
+    /**
+     * Store a newly created resource in storage.
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -45,6 +54,9 @@ class ArticleController extends Controller
         ]);
     }
 
+    /**
+     * Show the form for editing the specified resource.
+     */
     public function edit(Request $request, Article $article)
     {
         return view('pages.articles.edit', [
@@ -54,6 +66,9 @@ class ArticleController extends Controller
         ]);
     }
 
+    /**
+     * Update the specified resource in storage.
+     */
     public function update(Request $request, Article $article)
     {
         $validated = $request->validate([
