@@ -21,7 +21,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        return view('pages.tally-sheet.register');
+        return view('pages.tally-sheet.users.register');
     }
 
     /**
@@ -65,7 +65,7 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        return view('pages.tally-sheet.user-settings', ['user' => $user]);
+        return view('pages.tally-sheet.users.user-settings', ['user' => $user]);
     }
 
     /**

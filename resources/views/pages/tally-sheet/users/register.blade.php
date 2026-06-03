@@ -12,7 +12,6 @@
             action="{{ route('tally-sheet.users.store') }}"
         >
             @csrf
-            @method ("PUT")
 
             <div class="flex flex-col gap-2">
                 <label for="username">Nutzername</label>

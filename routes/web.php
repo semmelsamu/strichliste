@@ -19,7 +19,7 @@ Route::middleware('auth')->group(function () {
     })->name('dashboard');
 
     Route::get('/article-list', function () {
-        return view('pages.tally-sheet.article-list', [
+        return view('pages.article-list', [
             'categories' => Category::with('articles')->get(),
         ]);
     })->name('article-list');

@@ -13,7 +13,7 @@ class LoginController extends Controller
 {
     public function listUsers()
     {
-        return view('pages.tally-sheet.login', [
+        return view('pages.tally-sheet.auth.login', [
             'usersByLetter' => User::groupByFirstLetter(
                 User::where('type', UserType::NormalUser)->get()
             ),
@@ -38,7 +38,7 @@ class LoginController extends Controller
     public function login(Request $request, User $user)
     {
         if ($user->pin) {
-            return view('pages.tally-sheet.enter-pin', ['user' => $user]);
+            return view('pages.tally-sheet.auth.enter-pin', ['user' => $user]);
         } else {
             return $this->userStartPage($user);
         }
