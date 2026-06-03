@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use BladeUI\Icons\Exceptions\SvgNotFound;
+use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
@@ -44,17 +47,43 @@ class CategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Category $category)
     {
-        //
+        $category->icon = Str::after($category->icon, 'lucide-');
+
+        return view('pages.categories.edit', [
+            'category' => $category,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Category $category)
     {
-        //
+        $validated = $request->validate([
+            'name' => ['required', 'string'],
+            'icon' => [
+                'required',
+                'string',
+                function (string $attribute, mixed $value, Closure $fail) {
+                    try {
+                        svg('lucide-'.$value);
+                    } catch (SvgNotFound) {
+                        $fail('The specified icon could not be found.');
+                    }
+                },
+            ],
+        ]);
+
+        $category->name = $validated['name'];
+        $category->icon = 'lucide-'.$validated['icon'];
+        $category->save();
+
+        return redirect()->route('categories.index')->with('toast', [
+            'type' => 'success',
+            'message' => 'Änderungen wurden gespeichert.',
+        ]);
     }
 
     /**
