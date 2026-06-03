@@ -49,10 +49,17 @@
         >
             @csrf
             @method ("DELETE")
-            <button type="submit" class="button bg-red-800">
+            <button
+                type="submit"
+                class="button bg-red-800"
+                @disabled ($category->articles->isNotEmpty())
+            >
                 <x-lucide-trash />
                 Kategorie löschen
             </button>
         </form>
+        @if ($category->articles->isNotEmpty())
+            <p class="mt-2 text-sm text-text-secondary">Eine Kategorie kann erst gelöscht werden, wenn sie keine Artikel mehr enthält.</p>
+        @endif
     </x-wrapper>
 </x-layouts.main>
