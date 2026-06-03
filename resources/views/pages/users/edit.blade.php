@@ -24,8 +24,11 @@
             <label for="type" class="mb-2 block">Typ</label>
             <select name="type" id="type" class="text-input">
                 @foreach (UserType::cases() as $type)
-                    <option value="{{ $type }}" @selected ($user->type == $type)
-                        >{{ $type }}
+                    <option
+                        value="{{ $type }}"
+                        @selected ($user->type == $type)
+                    >
+                        {{ $type }}
                     </option>
                 @endforeach
             </select>

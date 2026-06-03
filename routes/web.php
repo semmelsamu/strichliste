@@ -98,7 +98,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('users/{user}/pin', [UserController::class, 'removePin'])->name('users.remove-pin');
 
     Route::resource('users', UserController::class)->only([
-        'index', 'edit', 'update', 'destroy',
+        'index', 'edit', 'update', 'destroy', 'create', 'store',
     ]);
 
 });

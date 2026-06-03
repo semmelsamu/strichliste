@@ -23,7 +23,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        return view('pages.users.create');
     }
 
     /**
@@ -31,7 +31,22 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'username' => ['required', 'string', 'unique:users,name'],
+            'password' => ['required', 'string'],
+            'type' => ['required', 'string', new Enum(UserType::class)],
+        ]);
+
+        $user = new User;
+        $user->name = $validated['username'];
+        $user->password = $validated['password'];
+        $user->type = $validated['type'];
+        $user->save();
+
+        return redirect()->route('users.index')->with('toast', [
+            'type' => 'success',
+            'message' => 'Nutzer wurde erstellt.',
+        ]);
     }
 
     /**

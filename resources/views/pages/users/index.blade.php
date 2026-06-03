@@ -8,7 +8,7 @@
         <h1>Nutzer</h1>
         <a
             class="button ml-auto bg-fsim-light"
-            href="{{ route('categories.create') }}"
+            href="{{ route('users.create') }}"
         >
             <x-lucide-plus />
             Neuen Nutzer erstellen
