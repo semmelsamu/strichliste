@@ -52,13 +52,13 @@
             <button
                 type="submit"
                 class="button bg-red-800"
-                @disabled ($category->articles->isNotEmpty())
+                @disabled ($category->articles()->withTrashed()->get()->isNotEmpty())
             >
                 <x-lucide-trash />
                 Kategorie löschen
             </button>
         </form>
-        @if ($category->articles->isNotEmpty())
+        @if ($category->articles()->withTrashed()->get()->isNotEmpty())
             <p class="mt-2 text-sm text-text-secondary">Eine Kategorie kann erst gelöscht werden, wenn sie keine Artikel mehr enthält.</p>
         @endif
     </x-wrapper>
