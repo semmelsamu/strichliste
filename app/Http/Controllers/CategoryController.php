@@ -25,7 +25,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        //
+        return view('pages.categories.create');
     }
 
     /**
@@ -33,7 +33,31 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => ['required', 'string'],
+            'icon' => [
+                'required',
+                'string',
+                function (string $attribute, mixed $value, Closure $fail) {
+                    try {
+                        svg('lucide-'.$value);
+                    } catch (SvgNotFound) {
+                        $fail('The specified icon could not be found.');
+                    }
+                },
+            ],
+        ]);
+
+        $category = new Category;
+
+        $category->name = $validated['name'];
+        $category->icon = 'lucide-'.$validated['icon'];
+        $category->save();
+
+        return redirect()->route('categories.index')->with('toast', [
+            'type' => 'success',
+            'message' => 'Kategorie wurde erstellt.',
+        ]);
     }
 
     /**

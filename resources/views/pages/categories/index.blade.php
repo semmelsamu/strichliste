@@ -6,7 +6,7 @@
         <h1>Kategorien</h1>
         <a
             class="button ml-auto bg-fsim-light"
-            href="{{ route('articles.create') }}"
+            href="{{ route('categories.create') }}"
         >
             <x-lucide-plus />
             Neue Kategorie erstellen
