@@ -46,15 +46,10 @@
                         <td>
                             <form
                                 method="post"
-                                action="{{ route('tally-sheet.transaction.undo') }}"
+                                action="{{ route('tally-sheet.undo', $user) }}"
                                 class="grid place-items-center"
                             >
                                 @csrf
-                                <input
-                                    type="hidden"
-                                    name="user"
-                                    value="{{ $user->id }}"
-                                />
                                 <input
                                     type="hidden"
                                     name="transaction"

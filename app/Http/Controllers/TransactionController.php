@@ -16,7 +16,7 @@ use Illuminate\Validation\Rule;
 
 class TransactionController extends Controller
 {
-    public function depositMoney(Request $request)
+    public function depositMoney(Request $request, User $user)
     {
         $validated = $request->validate([
             'action' => ['required', Rule::in(['deposit', 'withdraw'])],
@@ -24,16 +24,10 @@ class TransactionController extends Controller
                 'required',
                 Rule::exists('users', 'id')->where('type', UserType::World),
             ],
-            'user' => [
-                'required',
-                'exists:users,id',
-                'bail',
-            ],
             'amount' => [
                 'required',
                 'decimal:0,2',
-                function (string $attribute, mixed $amount, Closure $fail) {
-                    $user = User::find(request()->user);
+                function (string $attribute, mixed $amount, Closure $fail) use ($user) {
                     if (request()->action == 'withdraw') {
                         $amount *= -1;
                     }
@@ -54,7 +48,6 @@ class TransactionController extends Controller
         $action = $validated['action'];
         $amount = $validated['amount'];
         $world = $validated['world'];
-        $user = $validated['user'];
 
         $transaction = new Transaction;
 
@@ -65,7 +58,7 @@ class TransactionController extends Controller
         }
 
         $transaction->from_user_id = $world;
-        $transaction->to_user_id = $user;
+        $transaction->to_user_id = $user->id;
         $transaction->save();
 
         return back()->with('toast', [
@@ -74,15 +67,9 @@ class TransactionController extends Controller
         ]);
     }
 
-    public function buyArticle(Request $request)
+    public function buyArticle(Request $request, User $user)
     {
         $validated = $request->validate([
-            'user' => [
-                'required',
-                'integer',
-                'exists:users,id',
-                'bail',
-            ],
             'vendor' => [
                 'required',
                 'integer',
@@ -92,8 +79,7 @@ class TransactionController extends Controller
                 'required',
                 'integer',
                 'exists:articles,id',
-                function (string $attribute, mixed $value, Closure $fail) {
-                    $user = User::find(request()->user);
+                function (string $attribute, mixed $value, Closure $fail) use ($user) {
                     $article = Article::find($value);
 
                     if ($user->balance < $article->currentPrice) {
@@ -103,7 +89,7 @@ class TransactionController extends Controller
             ],
         ]);
 
-        $userId = $validated['user'];
+        $userId = $user->id;
         $vendorId = $validated['vendor'];
         $article = Article::find($validated['article']);
 
@@ -126,23 +112,17 @@ class TransactionController extends Controller
         ]);
     }
 
-    public function undoTransaction(Request $request)
+    public function undoTransaction(Request $request, User $user)
     {
         $validated = $request->validate([
-            'user' => ['required',
-                'integer',
-                'exists:users,id',
-                'bail',
-            ],
             'transaction' => [
                 'required',
                 'integer',
                 'bail',
                 'exists:transactions,id',
                 Rule::unique('undo_transactions', 'undone_transaction_id'),
-                function (string $attribute, mixed $value, Closure $fail) {
+                function (string $attribute, mixed $value, Closure $fail) use ($user) {
                     $transaction = Transaction::find($value);
-                    $user = User::find(request()->user);
                     if (! $transaction) {
                         $fail('Transaktion wurde nicht gefunden');
                     }

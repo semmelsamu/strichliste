@@ -41,21 +41,22 @@ Route::middleware('auth')->group(function () {
             Route::delete('/user-settings/{user}/deactivate', 'deactivate')->name('deactivate')->withTrashed();
         });
 
-        Route::name('transaction.')->controller(TransactionController::class)->group(function () {
-            Route::post('/deposit', 'depositMoney')->name('deposit');
-            Route::post('/buy', 'buyArticle')->name('buy');
-            Route::post('/undo', 'undoTransaction')->name('undo');
-        });
-
         Route::prefix('{user}')->controller(TallySheetCoreController::class)->group(function () {
 
             Route::get('/buy', 'showBuyOverview')->name('buy-overview');
-
             Route::get('/buy/category/{category_id}', 'showBuyCategory')->name('buy-categories');
 
             Route::get('/deposit', 'showDeposit')->name('deposit');
 
             Route::get('/history', 'showHistory')->name('history');
+
+        });
+
+        Route::prefix('{user}')->controller(TransactionController::class)->group(function () {
+
+            Route::post('/deposit', 'depositMoney')->name('deposit');
+            Route::post('/buy', 'buyArticle')->name('buy');
+            Route::post('/undo', 'undoTransaction')->name('undo');
 
         });
     });
