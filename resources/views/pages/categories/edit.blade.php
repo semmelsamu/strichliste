@@ -39,5 +39,20 @@
                 Änderungen speichern
             </button>
         </form>
+
+        <h2 class="mt-section mb-content">Danger zone</h2>
+
+        <form
+            method="POST"
+            action="{{ route("categories.destroy", $category->id) }}"
+            class="flex items-center"
+        >
+            @csrf
+            @method ("DELETE")
+            <button type="submit" class="button bg-red-800">
+                <x-lucide-trash />
+                Kategorie löschen
+            </button>
+        </form>
     </x-wrapper>
 </x-layouts.main>
