@@ -36,7 +36,11 @@
                                 @break
                         @endswitch
                     </td>
-                    <td class="w-auto">{{ $user->name }}</td>
+                    <td
+                        @class (["w-auto", "text-text-secondary" => $user->trashed()])
+                    >
+                        {{ $user->name }}
+                    </td>
                     <td class="text-right">
                         <x-currency :amount="$user->balance" />
                     </td>

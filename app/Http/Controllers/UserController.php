@@ -15,7 +15,9 @@ class UserController extends Controller
      */
     public function index()
     {
-        return view('pages.users.index', ['users' => User::orderBy('type', 'desc')->get()]);
+        return view('pages.users.index', [
+            'users' => User::orderBy('type', 'desc')->withTrashed()->get(),
+        ]);
     }
 
     /**
@@ -96,9 +98,24 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(User $user)
     {
-        //
+        $user->delete();
+
+        return redirect()->route('users.edit', $user->id)->with('toast', [
+            'type' => 'success',
+            'message' => 'Nutzer wurde deaktiviert.',
+        ]);
+    }
+
+    public function restore(User $user)
+    {
+        $user->restore();
+
+        return redirect()->route('users.edit', $user->id)->with('toast', [
+            'type' => 'success',
+            'message' => 'Nutzer wurde reaktiviert.',
+        ]);
     }
 
     public function updatePassword(Request $request, User $user)

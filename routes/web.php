@@ -94,11 +94,12 @@ Route::middleware('auth')->group(function () {
         'index', 'edit', 'update', 'create', 'store', 'destroy',
     ]);
 
-    Route::put('users/{user}/pin', [UserController::class, 'updatePassword'])->name('users.update-password');
-    Route::delete('users/{user}/pin', [UserController::class, 'removePin'])->name('users.remove-pin');
+    Route::put('users/{user}/pin', [UserController::class, 'updatePassword'])->name('users.update-password')->withTrashed();
+    Route::delete('users/{user}/pin', [UserController::class, 'removePin'])->name('users.remove-pin')->withTrashed();
+    Route::post('users/{user}/restore', [UserController::class, 'restore'])->name('users.restore')->withTrashed();
 
     Route::resource('users', UserController::class)->only([
         'index', 'edit', 'update', 'destroy', 'create', 'store',
-    ]);
+    ])->withTrashed();
 
 });

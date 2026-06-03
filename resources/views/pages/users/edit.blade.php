@@ -56,31 +56,48 @@
 
         <h2 class="mt-section mb-content">Danger zone</h2>
 
-        <form
-            method="POST"
-            action="{{ route("users.destroy", $user->id) }}"
-            class="flex items-center"
-        >
-            @csrf
-            @method ("DELETE")
-            <button type="submit" class="button bg-red-800">
-                <x-lucide-octagon-minus />
-                Nutzer deaktivieren
-            </button>
-        </form>
+        @if ($user->trashed())
+            <form
+                method="POST"
+                action="{{ route("users.restore", $user->id) }}"
+                class="flex items-center"
+            >
+                @csrf
+                <button type="submit" class="button bg-fsim-light">
+                    <x-lucide-user-check />
+                    Nutzer reaktivieren
+                </button>
+            </form>
+        @else
+            <form
+                method="POST"
+                action="{{ route("users.destroy", $user->id) }}"
+                class="flex items-center"
+            >
+                @csrf
+                @method ("DELETE")
+                <button type="submit" class="button bg-red-800">
+                    <x-lucide-octagon-minus />
+                    Nutzer deaktivieren
+                </button>
+            </form>
 
-        <form
-            method="POST"
-            action="{{ route("users.remove-pin", $user->id) }}"
-            class="mt-content flex items-center"
-        >
-            @csrf
-            @method ("DELETE")
-            <button type="submit" class="button bg-red-800">
-                <x-lucide-rotate-ccw-key />
-                PIN entfernen
-            </button>
-        </form>
+        @endif
+
+        @if ($user->pin)
+            <form
+                method="POST"
+                action="{{ route("users.remove-pin", $user->id) }}"
+                class="mt-content flex items-center"
+            >
+                @csrf
+                @method ("DELETE")
+                <button type="submit" class="button bg-red-800">
+                    <x-lucide-rotate-ccw-key />
+                    PIN entfernen
+                </button>
+            </form>
+        @endif
 
         <h3 class="mt-content mb-inline">Passwort setzen</h3>
         <form
