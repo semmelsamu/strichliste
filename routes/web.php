@@ -95,7 +95,7 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::resource('sounds', SoundController::class)->only([
-        'index', 'create',
+        'index', 'create', 'store',
     ]);
 
 });

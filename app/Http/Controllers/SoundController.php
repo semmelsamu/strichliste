@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class SoundController extends Controller
 {
@@ -13,7 +14,11 @@ class SoundController extends Controller
     public function index()
     {
         return view('pages.sounds.index', [
-            'sounds' => Storage::disk('public')->files('sound-effects'),
+            'sounds' => collect(Storage::disk('public')->files('sounds'))
+                ->map(fn ($filename) => [
+                    'name' => pathinfo($filename, PATHINFO_FILENAME),
+                    'path' => $filename,
+                ]),
         ]);
     }
 
@@ -22,7 +27,7 @@ class SoundController extends Controller
      */
     public function create()
     {
-        //
+        return view('pages.sounds.create');
     }
 
     /**
@@ -30,7 +35,28 @@ class SoundController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'sound' => [
+                'required', 'file',
+                'mimes:mp3',
+                'max:5120', // 5MB
+            ],
+        ]);
+
+        $sound = $request->file('sound');
+
+        $originalName = $sound->getClientOriginalName();
+
+        $storedName = Str::slug(pathinfo($originalName, PATHINFO_FILENAME))
+            .'.'
+            .pathinfo($originalName, PATHINFO_EXTENSION);
+
+        $path = $sound->storeAs('sounds', $storedName, 'public');
+
+        return redirect()->route('sounds.index')->with('toast', [
+            'type' => 'success',
+            'message' => 'Sound wurde hochgeladen.',
+        ]);
     }
 
     /**

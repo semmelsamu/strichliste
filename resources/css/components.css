@@ -14,6 +14,10 @@ a.card:not([href]) {
     @apply my-2 h-12 rounded-md px-inline ring ring-offset-2;
 }
 
+.file-input {
+    @apply rounded-md bg-fsim-medium px-inline py-content;
+}
+
 .table {
     @apply w-full;
 }

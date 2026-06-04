@@ -15,7 +15,9 @@
     <x-wrapper>
         <table class="table">
             @forelse ($sounds as $sound)
-                <tr class="border-t border-text-secondary/40 *:py-4"></tr>
+                <tr class="border-t border-text-secondary/40 *:py-4">
+                    <td>{{ $sound["name"] }}</td>
+                </tr>
             @empty
                 <tr>
                     Es wurden noch keine Sounds hochgeladen
