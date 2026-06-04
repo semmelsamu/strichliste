@@ -3,6 +3,7 @@
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\SoundController;
 use App\Http\Controllers\TallySheet;
 use App\Http\Controllers\UserController;
 use App\Models\Category;
@@ -92,5 +93,9 @@ Route::middleware('auth')->group(function () {
         ])->withTrashed();
 
     });
+
+    Route::resource('sounds', SoundController::class)->only([
+        'index', 'create',
+    ]);
 
 });
