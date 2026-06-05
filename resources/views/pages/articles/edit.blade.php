@@ -66,18 +66,28 @@
 
         <h3 class="mt-content mb-inline">Preisverlauf</h3>
         <table class="table w-md">
-            <tr>
-                <th>Preis</th>
-                <th>Effektiv seit</th>
-            </tr>
-            @foreach ($prices as $price)
+            <thead>
                 <tr>
-                    <td>
-                        <x-currency :amount="$price->price" :colors="false" />
-                    </td>
-                    <td>{{ $price->effective_since->diffForHumans() }}</td>
+                    <th>Preis</th>
+                    <th>Effektiv seit</th>
                 </tr>
-            @endforeach
+            </thead>
+            <tbody>
+                @foreach ($prices as $price)
+                    <tr>
+                        <th>
+                            <x-currency
+                                :amount="$price->price"
+                                :colors="false"
+                            />
+                        </th>
+                        <td>{{ $price->effective_since->diffForHumans() }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+            <caption>
+                {{ sizeof($prices) }} Preise gesamt.
+            </caption>
         </table>
 
         <h2 class="mt-section mb-content">Danger Zone</h2>

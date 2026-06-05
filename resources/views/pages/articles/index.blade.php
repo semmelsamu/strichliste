@@ -14,31 +14,46 @@
     </header>
     <x-wrapper>
         <table class="table">
-            <tr>
-                <th>Name</th>
-                <th>Kategorie</th>
-                <th class="text-right">Preis</th>
-            </tr>
-            @foreach ($articles as $article)
-                <tr class="border-t border-text-secondary/40 *:py-4">
-                    <td class="w-auto font-medium">{{ $article->name }}</td>
-
-                    <td>{{ $article->category->name }}</td>
-
-                    <td class="text-right">
-                        <x-currency
-                            :amount="$article->currentPrice"
-                            :colors="false"
-                        />
-                    </td>
-
-                    <td class="flex items-center justify-end">
-                        <a href="{{ route("articles.edit", $article->id) }}">
-                            <x-lucide-square-pen />
-                        </a>
-                    </td>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Kategorie</th>
+                    <th class="text-right">Preis</th>
                 </tr>
-            @endforeach
+            </thead>
+            <tbody>
+                @forelse ($articles as $article)
+                    <tr>
+                        <th class="w-auto">{{ $article->name }}</th>
+
+                        <td>{{ $article->category->name }}</td>
+
+                        <td class="text-right">
+                            <x-currency
+                                :amount="$article->currentPrice"
+                                :colors="false"
+                            />
+                        </td>
+
+                        <td class="flex items-center justify-end">
+                            <a
+                                href="{{ route("articles.edit", $article->id) }}"
+                            >
+                                <x-lucide-square-pen />
+                            </a>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <th colspan="4" class="text-center">
+                            Keine Artikel gefunden.
+                        </th>
+                    </tr>
+                @endforelse
+            </tbody>
+            <caption>
+                {{ sizeof($articles) }} Artikel gesamt.
+            </caption>
         </table>
 
         <h2 class="mt-section mb-inline">Archiv</h2>
@@ -46,29 +61,42 @@
         <p class="mb-content text-text-secondary">Diese Artikel wurden archiviert und werden nicht mehr im Kaufmenü angezeigt.</p>
 
         <table class="table">
-            <tr>
-                <th>Name</th>
-                <th>Gelöscht</th>
-            </tr>
-
-            @foreach ($archivedArticles as $article)
-                <tr class="border-t border-text-secondary/40 *:py-4">
-                    <td>{{ $article->name }}</td>
-                    <td>{{ $article->deleted_at->diffForHumans() }}</td>
-                    <td class="flex items-center justify-end">
-                        <form
-                            method="POST"
-                            action="{{ route("articles.restore", $article->id) }}"
-                            class="flex items-center"
-                        >
-                            @csrf
-                            <button type="submit">
-                                <x-lucide-archive-restore />
-                            </button>
-                        </form>
-                    </td>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Gelöscht</th>
                 </tr>
-            @endforeach
+            </thead>
+            <tbody>
+                @forelse ($archivedArticles as $article)
+                    <tr>
+                        <td>{{ $article->name }}</td>
+                        <td>{{ $article->deleted_at->diffForHumans() }}</td>
+                        <td class="flex items-center justify-end">
+                            <form
+                                method="POST"
+                                action="{{ route("articles.restore", $article->id) }}"
+                                class="flex items-center"
+                            >
+                                @csrf
+                                <button type="submit">
+                                    <x-lucide-archive-restore />
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <th colspan="2" class="text-center">
+                            Keine archivierten Artikel gefunden.
+                        </th>
+                    </tr>
+                @endforelse
+            </tbody>
+
+            <caption>
+                {{ sizeof($archivedArticles) }} archivierte Artikel gesamt.
+            </caption>
         </table>
     </x-wrapper>
 </x-layouts.main>

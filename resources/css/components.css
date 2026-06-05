@@ -22,10 +22,27 @@ a.card:not([href]) {
     @apply w-full;
 }
 
-.table :is(td, th) {
-    @apply p-2;
+.table :is(th, td) {
+    @apply p-inline;
 }
 
 .table th {
-    @apply text-left text-sm font-medium text-text-secondary;
+    @apply text-left font-medium;
+}
+
+.table thead {
+    @apply border-b-2 border-text-secondary/80;
+}
+
+.table thead th {
+    @apply text-left text-sm text-text-secondary;
+}
+
+.table tbody tr:not(:first-child) {
+    @apply border-t border-text-secondary/40;
+}
+
+.table caption {
+    caption-side: bottom;
+    @apply border-t-2 border-text-secondary/80 p-4 text-text-secondary;
 }

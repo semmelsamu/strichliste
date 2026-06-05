@@ -14,15 +14,25 @@
     </header>
     <x-wrapper>
         <table class="table">
-            @forelse ($sounds as $sound)
-                <tr class="border-t border-text-secondary/40 *:py-4">
-                    <td>{{ $sound["name"] }}</td>
-                </tr>
-            @empty
+            <thead>
                 <tr>
-                    Es wurden noch keine Sounds hochgeladen
+                    <th>Sound</th>
                 </tr>
-            @endforelse
+            </thead>
+            <tbody>
+                @forelse ($sounds as $sound)
+                    <tr>
+                        <th>{{ $sound["name"] }}</th>
+                    </tr>
+                @empty
+                    <tr>
+                        Es wurden noch keine Sounds hochgeladen
+                    </tr>
+                @endforelse
+            </tbody>
+            <caption>
+                {{ sizeof($sounds) }} Sounds gesamt.
+            </caption>
         </table>
     </x-wrapper>
 </x-layouts.main>
