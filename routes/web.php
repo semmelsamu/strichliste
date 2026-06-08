@@ -74,6 +74,9 @@ Route::middleware('auth')->group(function () {
 
         Route::post('articles/{article}/sounds', 'updateSounds')->name('articles.update-sounds');
 
+        Route::post('articles/{article}/barcode', 'addBarcode')->name('articles.add-barcode');
+        Route::delete('articles/{article}/barcode/{barcode}', 'removeBarcode')->name('articles.remove-barcode');
+
         Route::resource('articles', ArticleController::class)->only([
             'index', 'edit', 'update', 'create', 'store', 'destroy',
         ]);
@@ -99,5 +102,4 @@ Route::middleware('auth')->group(function () {
     Route::resource('sounds', SoundController::class)->only([
         'index', 'create', 'store', 'destroy',
     ]);
-
 });

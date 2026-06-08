@@ -154,7 +154,10 @@
         </form>
 
         <h2 class="mt-section mb-inline">Barcodes</h2>
-        <form method="POST">
+        <form
+            method="POST"
+            action="{{ route("articles.add-barcode", $article) }}"
+        >
             <label for="barcode" class="mb-2 block">Barcode</label>
             <div class="mr-content flex items-center gap-inline">
                 <input
@@ -179,7 +182,18 @@
             <tbody>
                 @forelse ($article->barcodes as $barcode)
                     <tr>
-                        <td class="flex w-min">{{ $barcode->barcode }}</td>
+                        <th class="flex w-min">{{ $barcode->barcode }}</th>
+                        <td class="w-6">
+                            <form
+                                method="POST"
+                                action="{{ route("articles.remove-barcode", [$article, $barcode]) }}"
+                            >
+                                @method ("DELETE")
+                                <button type="submit" class="flex items-center">
+                                    <x-lucide-trash-2 />
+                                </button>
+                            </form>
+                        </td>
                     </tr>
                 @empty
                     <tr>

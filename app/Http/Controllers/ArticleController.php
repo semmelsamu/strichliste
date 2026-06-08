@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use App\Models\ArticlePrice;
+use App\Models\Barcode;
 use App\Models\Category;
 use App\Models\Sound;
 use Illuminate\Http\Request;
@@ -125,6 +126,33 @@ class ArticleController extends Controller
         return redirect()->route('articles.edit', $article->id)->with('toast', [
             'type' => 'success',
             'message' => 'Sound-Auswahl gespeichert.',
+        ]);
+    }
+
+    public function addBarcode(Request $request, Article $article)
+    {
+        $validated = $request->validate([
+            'barcode' => ['required', 'string', 'unique:barcodes,barcode'],
+        ]);
+
+        $barcode = new Barcode;
+        $barcode->barcode = $validated['barcode'];
+        $barcode->article_id = $article->id;
+        $barcode->save();
+
+        return redirect()->route('articles.edit', $article->id)->with('toast', [
+            'type' => 'success',
+            'message' => 'Barcode wurde verknüpft.',
+        ]);
+    }
+
+    public function removeBarcode(Request $request, Article $article, Barcode $barcode)
+    {
+        $barcode->delete();
+
+        return redirect()->route('articles.edit', $article->id)->with('toast', [
+            'type' => 'success',
+            'message' => 'Barcode wurde entfernt.',
         ]);
     }
 
