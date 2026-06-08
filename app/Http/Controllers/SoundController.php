@@ -88,6 +88,14 @@ class SoundController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        // TODO: Validation as id is passed via URL params any may be harmful
+        $safeName = basename($id);
+
+        Storage::disk('public')->delete('sounds/'.$safeName.'.mp3');
+
+        return back()->with('toast', [
+            'type' => 'success',
+            'message' => 'Sound wurde gelöscht.',
+        ]);
     }
 }

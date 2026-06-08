@@ -16,13 +16,14 @@
         <table class="table">
             <thead>
                 <tr>
+                    <th></th>
                     <th>Sound</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse ($sounds as $sound)
                     <tr>
-                        <td>
+                        <td class="w-6">
                             <button
                                 class="flex items-center"
                                 aria-label="{{ $sound["name"] }} abspielen"
@@ -40,6 +41,19 @@
                             ></audio>
                         </td>
                         <th>{{ $sound["name"] }}</th>
+                        <td class="w-6">
+                            <form
+                                method="POST"
+                                action="{{ route("sounds.destroy", $sound["name"]) }}"
+                                class="flex items-center"
+                            >
+                                @csrf
+                                @method ("DELETE")
+                                <button type="submit" class="flex items-center">
+                                    <x-lucide-trash-2 />
+                                </button>
+                            </form>
+                        </td>
                     </tr>
                 @empty
                     <tr>
