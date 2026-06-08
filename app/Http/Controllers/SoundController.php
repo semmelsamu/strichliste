@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Sound;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class SoundController extends Controller
 {
@@ -40,15 +39,7 @@ class SoundController extends Controller
             ],
         ]);
 
-        $sound = $request->file('sound');
-
-        $originalName = $sound->getClientOriginalName();
-
-        $storedName = Str::slug(pathinfo($originalName, PATHINFO_FILENAME))
-            .'.'
-            .pathinfo($originalName, PATHINFO_EXTENSION);
-
-        $path = $sound->storeAs('sounds', $storedName, 'public');
+        Sound::create($request->file('sound'));
 
         return redirect()->route('sounds.index')->with('toast', [
             'type' => 'success',
@@ -85,10 +76,7 @@ class SoundController extends Controller
      */
     public function destroy(string $id)
     {
-        // TODO: Validation as id is passed via URL params any may be harmful
-        $safeName = basename($id);
-
-        Storage::disk('public')->delete('sounds/'.$safeName.'.mp3');
+        Sound::get($id)->destroy();
 
         return back()->with('toast', [
             'type' => 'success',

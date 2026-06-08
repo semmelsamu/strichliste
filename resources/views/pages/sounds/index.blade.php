@@ -26,7 +26,7 @@
                         <td class="w-6">
                             <button
                                 class="flex items-center"
-                                aria-label="{{ $sound->name }} abspielen"
+                                aria-label="{{ $sound->name() }} abspielen"
                                 onclick="
                                     const audio = this.nextElementSibling;
                                     audio.currentTime = 0;
@@ -37,11 +37,11 @@
                             </button>
                             <audio hidden src="{{ $sound->url() }}"></audio>
                         </td>
-                        <th>{{ $sound->name }}</th>
+                        <th>{{ $sound->name() }}</th>
                         <td class="w-6">
                             <form
                                 method="POST"
-                                action="{{ route("sounds.destroy", $sound->name) }}"
+                                action="{{ route("sounds.destroy", $sound->name()) }}"
                                 class="flex items-center"
                             >
                                 @csrf
