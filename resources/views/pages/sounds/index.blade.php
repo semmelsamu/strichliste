@@ -22,6 +22,23 @@
             <tbody>
                 @forelse ($sounds as $sound)
                     <tr>
+                        <td>
+                            <button
+                                class="flex items-center"
+                                aria-label="{{ $sound["name"] }} abspielen"
+                                onclick="
+                                    const audio = this.nextElementSibling;
+                                    audio.currentTime = 0;
+                                    audio.play();
+                                "
+                            >
+                                <x-lucide-volume-2 />
+                            </button>
+                            <audio
+                                hidden
+                                src="{{ asset("storage/" . $sound["path"]) }}"
+                            ></audio>
+                        </td>
                         <th>{{ $sound["name"] }}</th>
                     </tr>
                 @empty
