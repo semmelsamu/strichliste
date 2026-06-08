@@ -26,5 +26,23 @@
     @foreach ($errors->all() as $error)
         <x-toast type="error">{{ $error }}</x-toast>
     @endforeach
+    @if (session('sound'))
+        <audio
+            id="sound"
+            preload="auto"
+            src="{{ asset('storage/sounds/'.session("sound").".mp3") }}"
+        ></audio>
+        <script>
+            document.addEventListener("DOMContentLoaded", () =>
+                document
+                    .getElementById("sound")
+                    .play()
+                    .catch(function (e) {
+                        // Autoplay still blocked (e.g. user never interacted with the site at all)
+                        console.warn("Sound play failed:", e);
+                    }),
+            );
+        </script>
+    @endif
 </body>
 </html>

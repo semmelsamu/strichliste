@@ -62,10 +62,12 @@ class TransactionController extends Controller
         $transaction->to_user_id = $user->id;
         $transaction->save();
 
-        return back()->with('toast', [
-            'type' => 'success',
-            'message' => ($action == 'deposit' ? 'Aufgeladen: ' : 'Abgehoben: ').Number::currency($amount),
-        ]);
+        return back()
+            ->with('toast', [
+                'type' => 'success',
+                'message' => ($action == 'deposit' ? 'Aufgeladen: ' : 'Abgehoben: ').Number::currency($amount),
+            ])
+            ->with('sound', 'spongebob-moneten');
     }
 
     public function buyArticle(Request $request, User $user)
