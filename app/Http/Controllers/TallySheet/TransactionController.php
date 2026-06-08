@@ -114,7 +114,7 @@ class TransactionController extends Controller
                 'type' => 'success',
                 'message' => 'Gekauft: '.$article->name.' für '.Number::currency($article->currentPrice),
             ])
-            ->with('sound', 'kaching');
+            ->with('sound', collect($article->sounds ?? ['kaching'])->random());
     }
 
     public function undoTransaction(Request $request, User $user)
