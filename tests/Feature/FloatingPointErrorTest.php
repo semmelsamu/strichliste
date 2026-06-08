@@ -17,12 +17,11 @@ test('that when a user has 0,20 € and withdraws 0,20 €, it succeds', functio
         'amount' => 0.2,
     ]);
 
-    $response = $this->post(route('tally-sheet.deposit'), [
+    $this->actingAs($user)->post(route('tally-sheet.deposit', $user), [
         'action' => 'withdraw',
         'world' => $world->id,
-        'user' => $user->id,
         'amount' => 0.2,
     ]);
 
-    expect($user->balance)->toBe(0);
+    expect($user->fresh()->balance)->toBe(0);
 });

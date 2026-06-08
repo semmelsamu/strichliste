@@ -1,9 +1,9 @@
 <?php
 
-test('the application returns a successful response', function () {
+test('guests are redirected from the dashboard to the login page', function () {
     $response = $this->get('/');
 
-    $response->assertStatus(200);
+    $response->assertRedirectToRoute('login');
 });
 
 test('validation errors flash the error sound', function () {
