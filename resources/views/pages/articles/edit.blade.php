@@ -106,7 +106,7 @@
                 <tbody>
                     @forelse ($sounds as $sound)
                         <tr>
-                            <th class="flex w-min">
+                            <td class="flex w-min">
                                 <input
                                     type="checkbox"
                                     class="checkbox"
@@ -114,7 +114,7 @@
                                     name="{{ $sound->name() }}"
                                     id="sound-{{ $sound->name() }}"
                                 />
-                            </th>
+                            </td>
                             <th class="w-auto">
                                 <label for="sound-{{ $sound->name() }}">
                                     {{ $sound->name() }}
@@ -138,7 +138,9 @@
                         </tr>
                     @empty
                         <tr>
-                            Es wurden noch keine Sounds hochgeladen
+                            <td colspan="3" class="text-center">
+                                Es wurden noch keine Sounds hochgeladen
+                            </td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -150,6 +152,47 @@
                 Auswahl speichern
             </button>
         </form>
+
+        <h2 class="mt-section mb-inline">Barcodes</h2>
+        <form method="POST">
+            <label for="barcode" class="mb-2 block">Barcode</label>
+            <div class="mr-content flex items-center gap-inline">
+                <input
+                    type="text"
+                    name="barcode"
+                    id="barcode"
+                    class="text-input w-sm"
+                    required
+                />
+                <button type="submit" class="button bg-fsim-light">
+                    Barcode verknüpfen
+                </button>
+            </div>
+        </form>
+        <h3 class="mt-content mb-inline">Verknüpfte Barcodes</h3>
+        <table class="table w-sm">
+            <thead>
+                <tr>
+                    <th>Barcode</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($article->barcodes as $barcode)
+                    <tr>
+                        <td class="flex w-min">{{ $barcode->barcode }}</td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="1" class="text-center">
+                            Es wurden noch keine Barcodes verknüpft
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+            <caption>
+                {{ sizeof($article->barcodes) }} Barcodes gesamt.
+            </caption>
+        </table>
 
         <h2 class="mt-section mb-content">Danger Zone</h2>
 
