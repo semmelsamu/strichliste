@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Sound;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -14,11 +15,7 @@ class SoundController extends Controller
     public function index()
     {
         return view('pages.sounds.index', [
-            'sounds' => collect(Storage::disk('public')->files('sounds'))
-                ->map(fn ($filename) => [
-                    'name' => pathinfo($filename, PATHINFO_FILENAME),
-                    'path' => $filename,
-                ]),
+            'sounds' => Sound::all(),
         ]);
     }
 

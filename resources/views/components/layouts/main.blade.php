@@ -1,3 +1,5 @@
+@use (\App\Models\Sound)
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -30,7 +32,7 @@
         <audio
             id="sound"
             preload="auto"
-            src="{{ asset('storage/sounds/'.session("sound").".mp3") }}"
+            src="{{ Sound::get(session("sound"))->url() }}"
         ></audio>
         <script>
             document.addEventListener("DOMContentLoaded", () =>
