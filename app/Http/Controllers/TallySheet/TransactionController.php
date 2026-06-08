@@ -67,7 +67,7 @@ class TransactionController extends Controller
                 'type' => 'success',
                 'message' => ($action == 'deposit' ? 'Aufgeladen: ' : 'Abgehoben: ').Number::currency($amount),
             ])
-            ->with('sound', 'spongebob-moneten');
+            ->with('sound', $action == 'deposit' ? 'spongebob-moneten' : 'wobble');
     }
 
     public function buyArticle(Request $request, User $user)
@@ -109,10 +109,12 @@ class TransactionController extends Controller
             $buyArticleTransaction->save();
         });
 
-        return back()->with('toast', [
-            'type' => 'success',
-            'message' => 'Gekauft: '.$article->name.' für '.Number::currency($article->currentPrice),
-        ]);
+        return back()
+            ->with('toast', [
+                'type' => 'success',
+                'message' => 'Gekauft: '.$article->name.' für '.Number::currency($article->currentPrice),
+            ])
+            ->with('sound', 'kaching');
     }
 
     public function undoTransaction(Request $request, User $user)
@@ -155,9 +157,11 @@ class TransactionController extends Controller
 
         });
 
-        return back()->with('toast', [
-            'type' => 'success',
-            'message' => 'Transaktion rückgängig gemacht',
-        ]);
+        return back()
+            ->with('toast', [
+                'type' => 'success',
+                'message' => 'Transaktion rückgängig gemacht',
+            ])
+            ->with('sound', 'wobble');
     }
 }
