@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Article;
 use App\Models\ArticlePrice;
 use App\Models\Category;
+use App\Models\Sound;
 use Illuminate\Http\Request;
 
 class ArticleController extends Controller
@@ -66,6 +67,7 @@ class ArticleController extends Controller
             'article' => $article,
             'categories' => Category::all(),
             'prices' => ArticlePrice::where('article_id', $article->id)->orderByDesc('effective_since')->get(),
+            'sounds' => Sound::all(),
         ]);
     }
 
@@ -104,6 +106,25 @@ class ArticleController extends Controller
         return redirect()->route('articles.edit', $article->id)->with('toast', [
             'type' => 'success',
             'message' => 'Preis geändert.',
+        ]);
+    }
+
+    public function updateSounds(Request $request, Article $article)
+    {
+        $sounds = [];
+
+        foreach (Sound::all() as $sound) {
+            if ($request->input($sound->name())) {
+                array_push($sounds, $sound->name());
+            }
+        }
+
+        $article->sounds = $sounds;
+        $article->save();
+
+        return redirect()->route('articles.edit', $article->id)->with('toast', [
+            'type' => 'success',
+            'message' => 'Sound-Auswahl gespeichert.',
         ]);
     }
 

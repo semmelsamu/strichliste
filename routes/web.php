@@ -72,6 +72,8 @@ Route::middleware('auth')->group(function () {
 
         Route::post('articles/{article}/price', 'updatePrice')->name('articles.update-price');
 
+        Route::post('articles/{article}/sounds', 'updateSounds')->name('articles.update-sounds');
+
         Route::resource('articles', ArticleController::class)->only([
             'index', 'edit', 'update', 'create', 'store', 'destroy',
         ]);

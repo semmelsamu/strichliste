@@ -90,6 +90,67 @@
             </caption>
         </table>
 
+        <h2 class="mt-section mb-inline">Sounds</h2>
+        <p>Beim Kauf wird einer der gewählten Sounds zufällig abgespielt.</p>
+        <form
+            method="POST"
+            action="{{ route("articles.update-sounds", $article->id) }}"
+        >
+            <table class="table w-lg">
+                <thead>
+                    <tr>
+                        <th class="w-0">Aktiv</th>
+                        <th>Sound</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($sounds as $sound)
+                        <tr>
+                            <th class="flex w-min">
+                                <input
+                                    type="checkbox"
+                                    class="checkbox"
+                                    @checked (in_array($sound->name(), $article->sounds ?? []))
+                                    name="{{ $sound->name() }}"
+                                    id="sound-{{ $sound->name() }}"
+                                />
+                            </th>
+                            <th class="w-auto">
+                                <label for="sound-{{ $sound->name() }}">
+                                    {{ $sound->name() }}
+                                </label>
+                            </th>
+                            <td class="w-6">
+                                <button
+                                    type="button"
+                                    class="flex items-center"
+                                    aria-label="{{ $sound->name() }} abspielen"
+                                    onclick="
+                                        const audio = this.nextElementSibling;
+                                        audio.currentTime = 0;
+                                        audio.play();
+                                    "
+                                >
+                                    <x-lucide-volume-2 />
+                                </button>
+                                <audio hidden src="{{ $sound->url() }}"></audio>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            Es wurden noch keine Sounds hochgeladen
+                        </tr>
+                    @endforelse
+                </tbody>
+                <caption>
+                    {{ sizeof($sounds) }} Sounds gesamt.
+                </caption>
+            </table>
+            <button type="submit" class="button bg-fsim-light">
+                Auswahl speichern
+            </button>
+        </form>
+
         <h2 class="mt-section mb-content">Danger Zone</h2>
 
         <form

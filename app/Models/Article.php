@@ -12,6 +12,10 @@ class Article extends Model
 {
     use SoftDeletes;
 
+    protected $casts = [
+        'sounds' => 'array',
+    ];
+
     public function prices(): HasMany
     {
         return $this->hasMany(ArticlePrice::class);

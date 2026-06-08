@@ -46,3 +46,26 @@ a.card:not([href]) {
     caption-side: bottom;
     @apply border-t-2 border-text-secondary/80 p-4 text-text-secondary;
 }
+
+.checkbox {
+    @apply grid h-6 w-6 appearance-none place-items-center rounded-sm bg-fsim-medium;
+}
+
+.checkbox::after {
+    content: "";
+    width: 5px;
+    height: 9px;
+    border: 2px solid white;
+    border-top: none;
+    border-left: none;
+    transform: rotate(45deg) scale(0);
+    margin-bottom: 2px;
+}
+
+.checkbox:checked {
+    @apply border-fsim-light bg-fsim-light;
+}
+
+input[type="checkbox"]:checked::after {
+    transform: rotate(45deg) scale(1.2);
+}
