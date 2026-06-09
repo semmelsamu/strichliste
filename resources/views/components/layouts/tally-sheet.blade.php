@@ -47,5 +47,7 @@
         </x-tab-bar>
     </header>
 
+    <x-scanner />
+
     {{ $slot }}
 </x-layouts.main>
