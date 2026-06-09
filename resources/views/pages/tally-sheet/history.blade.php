@@ -54,7 +54,7 @@
                             <td>
                                 <form
                                     method="post"
-                                    action="{{ route('tally-sheet.undo', $user) }}"
+                                    action="{{ route('tally-sheet.undo') }}"
                                     class="grid place-items-center"
                                 >
                                     @csrf

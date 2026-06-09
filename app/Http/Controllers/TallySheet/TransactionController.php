@@ -9,6 +9,7 @@ use App\Models\Barcode;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Services\TransactionService;
+use App\TallySheetSession;
 use Closure;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -17,10 +18,15 @@ use Illuminate\Validation\Rule;
 
 class TransactionController extends Controller
 {
-    public function __construct(private readonly TransactionService $transactionService) {}
+    public function __construct(
+        private readonly TransactionService $transactionService,
+        private readonly TallySheetSession $tallySheetSession,
+    ) {}
 
-    public function depositMoney(Request $request, User $user): RedirectResponse
+    public function depositMoney(Request $request): RedirectResponse
     {
+        $user = $this->tallySheetSession->currentUser();
+
         $validated = $request->validate([
             'action' => ['required', Rule::in(['deposit', 'withdraw'])],
             'world' => [
@@ -66,8 +72,10 @@ class TransactionController extends Controller
             ->with('sound', $action == 'deposit' ? 'spongebob-moneten' : 'wobble');
     }
 
-    public function buyArticle(Request $request, User $user): RedirectResponse
+    public function buyArticle(Request $request): RedirectResponse
     {
+        $user = $this->tallySheetSession->currentUser();
+
         $validated = $request->validate([
             'vendor' => [
                 'required',
@@ -102,8 +110,10 @@ class TransactionController extends Controller
             ->with('sound', collect($article->sounds ?? ['kaching'])->random());
     }
 
-    public function buyArticleByBarcode(Request $request, User $user): RedirectResponse
+    public function buyArticleByBarcode(Request $request): RedirectResponse
     {
+        $user = $this->tallySheetSession->currentUser();
+
         $validated = $request->validate([
             'vendor' => [
                 'required',
@@ -138,8 +148,10 @@ class TransactionController extends Controller
             ->with('sound', collect($article->sounds ?? ['kaching'])->random());
     }
 
-    public function undoTransaction(Request $request, User $user): RedirectResponse
+    public function undoTransaction(Request $request): RedirectResponse
     {
+        $user = $this->tallySheetSession->currentUser();
+
         $validated = $request->validate([
             'transaction' => [
                 'required',

@@ -8,7 +8,7 @@
         >
             <a
                 class="button bg-fsim-light"
-                href="{{ route('tally-sheet.users.edit', $user->id) }}"
+                href="{{ route('tally-sheet.users.edit') }}"
             >
                 <x-lucide-user />
                 {{ $user->name }}
@@ -16,7 +16,7 @@
             <x-currency class="mr-auto" :amount="$user->balance" />
             <a
                 class="button bg-fsim-light"
-                href="{{ route('tally-sheet.auth.list-users') }}"
+                href="{{ route('tally-sheet.auth.logout') }}"
             >
                 Abmelden
                 <x-lucide-log-out />
@@ -24,21 +24,21 @@
         </div>
         <x-tab-bar class="w-full px-wrapper" activeTab="{{ $activeTab }}">
             <x-tab-bar.tab
-                href="{{ route('tally-sheet.buy-overview', $user->id) }}"
+                href="{{ route('tally-sheet.buy-overview') }}"
                 name="buy"
             >
                 <x-lucide-shopping-cart />
                 Kaufen
             </x-tab-bar.tab>
             <x-tab-bar.tab
-                href="{{ route('tally-sheet.show-deposit', $user->id) }}"
+                href="{{ route('tally-sheet.show-deposit') }}"
                 name="deposit"
             >
                 <x-lucide-coins />
                 Aufladen
             </x-tab-bar.tab>
             <x-tab-bar.tab
-                href="{{ route('tally-sheet.history', $user->id) }}"
+                href="{{ route('tally-sheet.history') }}"
                 name="history"
             >
                 <x-lucide-history />
@@ -50,7 +50,7 @@
     <x-scanner>
         <form
             method="POST"
-            action="{{ route('tally-sheet.buy-by-barcode', $user) }}"
+            action="{{ route('tally-sheet.buy-by-barcode') }}"
             x-ref="form"
         >
             @csrf

@@ -6,6 +6,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SoundController;
 use App\Http\Controllers\TallySheet;
 use App\Http\Controllers\UserController;
+use App\Http\Middleware\EnsureTallySheetUserSelected;
 use App\Models\Category;
 use Illuminate\Support\Facades\Route;
 
@@ -31,20 +32,23 @@ Route::middleware('auth')->group(function () {
             Route::get('/', 'listUsers')->name('list-users');
             Route::get('/login/{user}', 'login')->name('login');
             Route::post('/login/{user}', 'validatePin')->name('validate-pin');
+            Route::get('/logout', 'logout')->name('logout');
         });
 
         Route::controller(TallySheet\UserController::class)->group(function () {
+            Route::get('/users/create', 'create')->name('users.create');
+            Route::post('/users', 'store')->name('users.store');
 
-            Route::post('/user-settings/{user}/pin', 'updatePin')->name('users.update-pin');
-            Route::delete('/user-settings/{user}/pin', 'removePin')->name('users.remove-pin');
-
-            Route::resource('users', TallySheet\UserController::class)->only([
-                'edit', 'update', 'create', 'store', 'destroy',
-            ]);
-
+            Route::middleware(EnsureTallySheetUserSelected::class)->group(function () {
+                Route::get('/user-settings', 'edit')->name('users.edit');
+                Route::put('/user-settings', 'update')->name('users.update');
+                Route::delete('/user-settings', 'destroy')->name('users.destroy');
+                Route::post('/user-settings/pin', 'updatePin')->name('users.update-pin');
+                Route::delete('/user-settings/pin', 'removePin')->name('users.remove-pin');
+            });
         });
 
-        Route::prefix('{user}')->controller(TallySheet\ViewController::class)->group(function () {
+        Route::middleware(EnsureTallySheetUserSelected::class)->controller(TallySheet\ViewController::class)->group(function () {
 
             Route::get('/buy', 'showBuyOverview')->name('buy-overview');
             Route::get('/buy/category/{category_id}', 'showBuyCategory')->name('buy-categories');
@@ -55,7 +59,7 @@ Route::middleware('auth')->group(function () {
 
         });
 
-        Route::prefix('{user}')->controller(TallySheet\TransactionController::class)->group(function () {
+        Route::middleware(EnsureTallySheetUserSelected::class)->controller(TallySheet\TransactionController::class)->group(function () {
 
             Route::post('/deposit', 'depositMoney')->name('deposit');
 

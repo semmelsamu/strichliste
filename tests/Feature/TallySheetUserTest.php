@@ -3,6 +3,7 @@
 use App\Enums\UserType;
 use App\Models\Transaction;
 use App\Models\User;
+use App\TallySheetSession;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 
@@ -28,14 +29,17 @@ test('tally sheet user list groups only normal users by first letter', function 
 test('new tally sheet users can register and are redirected to deposit', function () {
     $admin = testUser();
 
-    $this->actingAs($admin)->post(route('tally-sheet.users.store'), [
+    $response = $this->actingAs($admin)->post(route('tally-sheet.users.store'), [
         'username' => 'new-member',
         'pin' => '1234',
-    ])
-        ->assertRedirectToRoute('tally-sheet.show-deposit', ['user' => User::where('name', 'new-member')->value('id')])
-        ->assertSessionHas('toast.type', 'success');
+    ]);
 
     $user = User::where('name', 'new-member')->firstOrFail();
+
+    $response
+        ->assertRedirectToRoute('tally-sheet.show-deposit')
+        ->assertSessionHas('toast.type', 'success')
+        ->assertSessionHas('tally_sheet.user_id', $user->id);
 
     expect($user->type)->toBe(UserType::NormalUser)
         ->and(Hash::check('1234', $user->pin))->toBeTrue();
@@ -66,10 +70,12 @@ test('users without a pin go directly to their start page', function () {
     ]);
 
     $this->actingAs($admin)->get(route('tally-sheet.auth.login', $userWithNoBalance))
-        ->assertRedirect(route('tally-sheet.show-deposit', $userWithNoBalance));
+        ->assertRedirect(route('tally-sheet.show-deposit'))
+        ->assertSessionHas('tally_sheet.user_id', $userWithNoBalance->id);
 
     $this->actingAs($admin)->get(route('tally-sheet.auth.login', $userWithBalance))
-        ->assertRedirect(route('tally-sheet.buy-overview', $userWithBalance));
+        ->assertRedirect(route('tally-sheet.buy-overview'))
+        ->assertSessionHas('tally_sheet.user_id', $userWithBalance->id);
 });
 
 test('users with a pin must enter it before reaching their start page', function () {
@@ -82,9 +88,10 @@ test('users with a pin must enter it before reaching their start page', function
         ->assertViewHas('user', $user);
 
     $this->actingAs($admin)->post(route('tally-sheet.auth.validate-pin', $user), [
-        'user' => $user->id,
         'pin' => '1234',
-    ])->assertRedirect(route('tally-sheet.show-deposit', $user));
+    ])
+        ->assertRedirect(route('tally-sheet.show-deposit'))
+        ->assertSessionHas('tally_sheet.user_id', $user->id);
 });
 
 test('an incorrect tally sheet pin is rejected', function () {
@@ -92,7 +99,6 @@ test('an incorrect tally sheet pin is rejected', function () {
     $user = testUser(['pin' => '1234']);
 
     $this->actingAs($admin)->post(route('tally-sheet.auth.validate-pin', $user), [
-        'user' => $user->id,
         'pin' => '0000',
     ])->assertSessionHasErrors('pin');
 });
@@ -101,10 +107,10 @@ test('tally sheet users can update their username', function () {
     $admin = testUser();
     $user = testUser(['name' => 'old-name']);
 
-    $this->actingAs($admin)->patch(route('tally-sheet.users.update', $user), [
+    $this->actingAs($admin)->withSession(['tally_sheet.user_id' => $user->id])->put(route('tally-sheet.users.update'), [
         'username' => 'new-name',
     ])
-        ->assertRedirect(route('tally-sheet.users.edit', $user))
+        ->assertRedirect(route('tally-sheet.users.edit'))
         ->assertSessionHas('toast.type', 'success');
 
     expect($user->fresh()->name)->toBe('new-name');
@@ -114,16 +120,16 @@ test('tally sheet users can save and remove their pin', function () {
     $admin = testUser();
     $user = testUser(['pin' => null]);
 
-    $this->actingAs($admin)->post(route('tally-sheet.users.update-pin', $user), [
+    $this->actingAs($admin)->withSession(['tally_sheet.user_id' => $user->id])->post(route('tally-sheet.users.update-pin'), [
         'pin' => '9876',
     ])
-        ->assertRedirect(route('tally-sheet.users.edit', $user))
+        ->assertRedirect(route('tally-sheet.users.edit'))
         ->assertSessionHas('toast.type', 'success');
 
     expect(Hash::check('9876', $user->fresh()->pin))->toBeTrue();
 
-    $this->actingAs($admin)->delete(route('tally-sheet.users.remove-pin', $user))
-        ->assertRedirect(route('tally-sheet.users.edit', $user))
+    $this->actingAs($admin)->withSession(['tally_sheet.user_id' => $user->id])->delete(route('tally-sheet.users.remove-pin'))
+        ->assertRedirect(route('tally-sheet.users.edit'))
         ->assertSessionHas('toast.type', 'success');
 
     expect($user->fresh()->pin)->toBeNull();
@@ -133,9 +139,54 @@ test('tally sheet users can deactivate their account', function () {
     $admin = testUser();
     $user = testUser();
 
-    $this->actingAs($admin)->delete(route('tally-sheet.users.destroy', $user))
+    $this->actingAs($admin)->withSession(['tally_sheet.user_id' => $user->id])->delete(route('tally-sheet.users.destroy'))
         ->assertRedirect(route('tally-sheet.auth.list-users'))
-        ->assertSessionHas('toast.type', 'success');
+        ->assertSessionHas('toast.type', 'success')
+        ->assertSessionMissing('tally_sheet.user_id');
 
     expect($user->fresh()->trashed())->toBeTrue();
 });
+
+test('guarded tally sheet routes redirect to user list without a selected session user', function () {
+    $admin = testUser();
+
+    $this->actingAs($admin)->get(route('tally-sheet.deposit'))
+        ->assertRedirect(route('tally-sheet.auth.list-users'))
+        ->assertSessionMissing('toast');
+});
+
+test('guarded tally sheet routes reject deleted or non normal selected users', function (array $attributes) {
+    $admin = testUser();
+    $selectedUser = testUser($attributes);
+
+    if ($selectedUser->type === UserType::NormalUser) {
+        $selectedUser->delete();
+    }
+
+    $this->actingAs($admin)->withSession(['tally_sheet.user_id' => $selectedUser->id])->get(route('tally-sheet.deposit'))
+        ->assertRedirect(route('tally-sheet.auth.list-users'));
+})->with([
+    'soft deleted normal user' => [['type' => UserType::NormalUser]],
+    'vendor user' => [['type' => UserType::Vendor]],
+    'world user' => [['type' => UserType::World]],
+]);
+
+test('tally sheet logout clears only selected tally user session', function () {
+    $admin = testUser();
+    $user = testUser();
+
+    $this->actingAs($admin)
+        ->withSession(['tally_sheet.user_id' => $user->id, 'kept' => 'value'])
+        ->get(route('tally-sheet.auth.logout'))
+        ->assertRedirect(route('tally-sheet.auth.list-users'))
+        ->assertSessionMissing('tally_sheet.user_id')
+        ->assertSessionHas('kept', 'value');
+
+    $this->assertAuthenticatedAs($admin);
+});
+
+test('tally sheet session refuses to select non normal users', function () {
+    $vendor = testUser(['type' => UserType::Vendor]);
+
+    app(TallySheetSession::class)->selectUser($vendor);
+})->throws(InvalidArgumentException::class);

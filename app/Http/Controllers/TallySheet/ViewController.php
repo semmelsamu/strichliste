@@ -5,35 +5,39 @@ namespace App\Http\Controllers\TallySheet;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Transaction;
-use App\Models\User;
+use App\TallySheetSession;
 
 class ViewController extends Controller
 {
-    public function showBuyOverview(User $user)
+    public function __construct(private readonly TallySheetSession $tallySheetSession) {}
+
+    public function showBuyOverview()
     {
         return view('pages.tally-sheet.buy-overview', [
             'categories' => Category::all(),
-            'user' => $user,
+            'user' => $this->tallySheetSession->currentUser(),
         ]);
     }
 
-    public function showBuyCategory(User $user, $category_id)
+    public function showBuyCategory($category_id)
     {
         return view('pages.tally-sheet.buy-category', [
             'category' => Category::with('articles')->firstWhere('id', $category_id),
-            'user' => $user,
+            'user' => $this->tallySheetSession->currentUser(),
         ]);
     }
 
-    public function showDeposit(User $user)
+    public function showDeposit()
     {
         return view('pages.tally-sheet.deposit', [
-            'user' => $user,
+            'user' => $this->tallySheetSession->currentUser(),
         ]);
     }
 
-    public function showHistory(User $user)
+    public function showHistory()
     {
+        $user = $this->tallySheetSession->currentUser();
+
         return view('pages.tally-sheet.history', [
             'normalizedTransactions' => $user->transactions()
                 ->orderBy('created_at', 'desc')

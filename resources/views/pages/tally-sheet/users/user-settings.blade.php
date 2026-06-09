@@ -1,6 +1,6 @@
 <x-layouts.main title="Account-Einstellungen">
     <header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
-        <a class="button" href="{{ route('tally-sheet.buy-overview', $user) }}">
+        <a class="button" href="{{ route('tally-sheet.buy-overview') }}">
             <x-lucide-arrow-left />
         </a>
         <h1>Account-Einstellungen</h1>
@@ -11,7 +11,7 @@
 
             <form
                 method="POST"
-                action="{{ route('tally-sheet.users.update', $user) }}"
+                action="{{ route('tally-sheet.users.update') }}"
             >
                 @csrf
                 @method ("PUT")
@@ -46,7 +46,7 @@
 
             <form
                 method="POST"
-                action="{{ route('tally-sheet.users.update-pin', $user) }}"
+                action="{{ route('tally-sheet.users.update-pin') }}"
             >
                 @csrf
 
@@ -81,7 +81,7 @@
             @if ($user->pin)
                 <form
                     method="POST"
-                    action="{{ route('tally-sheet.users.remove-pin', $user) }}"
+                    action="{{ route('tally-sheet.users.remove-pin') }}"
                 >
                     @csrf
                     @method ("DELETE")
@@ -98,7 +98,7 @@
 
             <form
                 method="POST"
-                action="{{ route("tally-sheet.users.destroy", $user->id) }}"
+                action="{{ route('tally-sheet.users.destroy') }}"
                 class="flex items-center"
             >
                 @csrf
