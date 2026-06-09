@@ -5,12 +5,16 @@ namespace App\Http\Controllers\TallySheet;
 use App\Enums\UserType;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\TallySheetSession;
 use Closure;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
+    public function __construct(private readonly TallySheetSession $tallySheetSession) {}
+
     public function listUsers()
     {
         return view('pages.tally-sheet.auth.login', [
@@ -20,46 +24,55 @@ class LoginController extends Controller
         ]);
     }
 
-    private function userStartPage($user)
+    private function userStartPage(User $user): RedirectResponse
     {
+        $this->tallySheetSession->selectUser($user);
+
         if ($user->balance <= 0) {
-            return redirect()
-                ->route('tally-sheet.deposit', [
-                    'user' => $user,
-                ]);
-        } else {
-            return redirect()
-                ->route('tally-sheet.buy-overview', [
-                    'user' => $user,
-                ]);
+            return redirect()->route('tally-sheet.deposit');
         }
+
+        return redirect()->route('tally-sheet.buy-overview');
     }
 
     public function login(Request $request, User $user)
     {
+        if ($user->type !== UserType::NormalUser) {
+            return redirect()->route('tally-sheet.auth.list-users');
+        }
+
         if ($user->pin) {
             return view('pages.tally-sheet.auth.enter-pin', ['user' => $user]);
-        } else {
-            return $this->userStartPage($user);
         }
+
+        return $this->userStartPage($user);
     }
 
-    public function validatePin(Request $request)
+    public function validatePin(Request $request, User $user): RedirectResponse
     {
-        $validated = $request->validate([
-            'user' => ['required', 'exists:users,id'],
+        if ($user->type !== UserType::NormalUser) {
+            return redirect()->route('tally-sheet.auth.list-users');
+        }
+
+        $request->validate([
             'pin' => [
                 'required',
                 'string',
-                function (string $attribute, mixed $value, Closure $fail) use ($request) {
-                    $user = User::find($request->user);
-                    if (! $user || ! Hash::check($value, $user->pin)) {
+                function (string $attribute, mixed $value, Closure $fail) use ($user) {
+                    if (! Hash::check($value, $user->pin)) {
                         $fail('The provided PIN is incorrect.');
                     }
                 },
             ],
         ]);
 
-        return $this->userStartPage(User::find($validated['user']));
+        return $this->userStartPage($user);
+    }
+
+    public function logout(): RedirectResponse
+    {
+        $this->tallySheetSession->forgetUser();
+
+        return redirect()->route('tally-sheet.auth.list-users');
     }
 }

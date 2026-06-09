@@ -2,12 +2,18 @@
 
 namespace App\Http\Controllers\TallySheet;
 
+use App\Enums\UserType;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\TallySheetSession;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
+    public function __construct(private readonly TallySheetSession $tallySheetSession) {}
+
     /**
      * Display a listing of the resource.
      */
@@ -40,12 +46,13 @@ class UserController extends Controller
         $user = new User;
         $user->name = $username;
         $user->pin = $pin;
+        $user->type = UserType::NormalUser;
         $user->save();
 
+        $this->tallySheetSession->selectUser($user);
+
         return redirect()
-            ->route('tally-sheet.deposit', [
-                'user' => $user->id,
-            ])
+            ->route('tally-sheet.deposit')
             ->with('toast', [
                 'type' => 'success',
                 'message' => 'Willkommen, '.$user->name.'!',
@@ -63,30 +70,34 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(User $user)
+    public function edit()
     {
-        return view('pages.tally-sheet.users.user-settings', ['user' => $user]);
+        return view('pages.tally-sheet.users.user-settings', ['user' => $this->tallySheetSession->currentUser()]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request): RedirectResponse
     {
+        $user = $this->tallySheetSession->currentUser();
+
         $validated = $request->validate([
-            'username' => ['required', 'string', 'min:3', 'unique:users,name'],
+            'username' => ['required', 'string', 'min:3', Rule::unique('users', 'name')->ignore($user)],
         ]);
 
         $user->name = $validated['username'];
         $user->save();
 
         return redirect()
-            ->route('tally-sheet.users.edit', $user)
+            ->route('tally-sheet.users.edit')
             ->with('toast', ['type' => 'success', 'message' => 'Nutzername geändert.']);
     }
 
-    public function updatePin(Request $request, User $user)
+    public function updatePin(Request $request): RedirectResponse
     {
+        $user = $this->tallySheetSession->currentUser();
+
         $validated = $request->validate([
             'pin' => ['required', 'string'],
         ]);
@@ -95,26 +106,31 @@ class UserController extends Controller
         $user->save();
 
         return redirect()
-            ->route('tally-sheet.users.edit', $user)
+            ->route('tally-sheet.users.edit')
             ->with('toast', ['type' => 'success', 'message' => 'PIN geändert.']);
     }
 
-    public function removePin(User $user)
+    public function removePin(): RedirectResponse
     {
+        $user = $this->tallySheetSession->currentUser();
+
         $user->pin = null;
         $user->save();
 
         return redirect()
-            ->route('tally-sheet.users.edit', $user)
+            ->route('tally-sheet.users.edit')
             ->with('toast', ['type' => 'success', 'message' => 'PIN entfernt.']);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $user)
+    public function destroy(): RedirectResponse
     {
+        $user = $this->tallySheetSession->currentUser();
+
         $user->delete();
+        $this->tallySheetSession->forgetUser();
 
         return redirect()->route('tally-sheet.auth.list-users')->with('toast', [
             'type' => 'success',

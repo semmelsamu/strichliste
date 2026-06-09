@@ -15,7 +15,7 @@ pest()->use(RefreshDatabase::class);
 test('a user can buy an article by scanning its barcode', function () {
     [$user, $vendor, $article] = createBarcodePurchaseFixtures(userBalance: 5.00, articlePrice: 1.50);
 
-    $response = $this->actingAs($user)->post(route('tally-sheet.buy-by-barcode', $user), [
+    $response = $this->actingAs($user)->withSession(['tally_sheet.user_id' => $user->id])->post(route('tally-sheet.buy-by-barcode'), [
         'vendor' => $vendor->id,
         'barcode' => '1234567890',
     ]);
@@ -41,7 +41,7 @@ test('a user can buy an article by scanning its barcode', function () {
 test('a user cannot buy an article by barcode without enough balance', function () {
     [$user, $vendor] = createBarcodePurchaseFixtures(userBalance: 1.00, articlePrice: 1.50);
 
-    $response = $this->actingAs($user)->post(route('tally-sheet.buy-by-barcode', $user), [
+    $response = $this->actingAs($user)->withSession(['tally_sheet.user_id' => $user->id])->post(route('tally-sheet.buy-by-barcode'), [
         'vendor' => $vendor->id,
         'barcode' => '1234567890',
     ]);

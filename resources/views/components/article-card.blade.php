@@ -1,4 +1,4 @@
-<form class="card" method="POST" action="{{ route('tally-sheet.buy', $user) }}">
+<form class="card" method="POST" action="{{ route('tally-sheet.buy') }}">
     @csrf
     <input type="hidden" name="vendor" value="3" />
     <input type="hidden" name="article" value="{{ $article->id }}" />
