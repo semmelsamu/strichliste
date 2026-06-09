@@ -18,22 +18,6 @@
 
                 <div class="grid grid-cols-2 gap-content border-t p-content">
                     <div class="space-y-inline">
-                        <label for="vendor" class="block">
-                            Vendor-Nutzer anpassen
-                        </label>
-                        <select
-                            name="vendor"
-                            id="vendor"
-                            class="text-input w-full"
-                        >
-                            @foreach ($vendors as $user)
-                                <option value="{{ $user->id }}">
-                                    {{ $user->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="space-y-inline">
                         <label for="world" class="block">
                             World-Nutzer anpassen
                         </label>
@@ -43,6 +27,22 @@
                             class="text-input w-full"
                         >
                             @foreach ($worlds as $user)
+                                <option value="{{ $user->id }}">
+                                    {{ $user->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="space-y-inline">
+                        <label for="vendor" class="block">
+                            Vendor-Nutzer anpassen
+                        </label>
+                        <select
+                            name="vendor"
+                            id="vendor"
+                            class="text-input w-full"
+                        >
+                            @foreach ($vendors as $user)
                                 <option value="{{ $user->id }}">
                                     {{ $user->name }}
                                 </option>
