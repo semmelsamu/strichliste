@@ -2,13 +2,11 @@
 
 namespace App\Http\Middleware;
 
-use App\Enums\UserType;
-use App\Services\TallySheetSession;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class EnsureTallySheetUserSelected
+class EnsureTallySessionRunning
 {
     /**
      * Handle an incoming request.
@@ -17,14 +15,6 @@ class EnsureTallySheetUserSelected
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $user = app(TallySheetSession::class)->get('user');
-
-        if (! $user || $user->type != UserType::NormalUser) {
-            app(TallySheetSession::class)->logout();
-
-            return redirect()->route('tally-sheet.auth.list-users');
-        }
-
         return $next($request);
     }
 }

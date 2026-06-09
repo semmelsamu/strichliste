@@ -8,8 +8,8 @@ use App\Models\Article;
 use App\Models\Barcode;
 use App\Models\Transaction;
 use App\Models\User;
+use App\Services\TallySheetSession;
 use App\Services\TransactionService;
-use App\TallySheetSession;
 use Closure;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -25,7 +25,7 @@ class TransactionController extends Controller
 
     public function depositMoney(Request $request): RedirectResponse
     {
-        $user = $this->tallySheetSession->currentUser();
+        $user = $this->tallySheetSession->get('user');
 
         $validated = $request->validate([
             'action' => ['required', Rule::in(['deposit', 'withdraw'])],
@@ -74,7 +74,7 @@ class TransactionController extends Controller
 
     public function buyArticle(Request $request): RedirectResponse
     {
-        $user = $this->tallySheetSession->currentUser();
+        $user = $this->tallySheetSession->get('user');
 
         $validated = $request->validate([
             'vendor' => [
@@ -112,7 +112,7 @@ class TransactionController extends Controller
 
     public function buyArticleByBarcode(Request $request): RedirectResponse
     {
-        $user = $this->tallySheetSession->currentUser();
+        $user = $this->tallySheetSession->get('user');
 
         $validated = $request->validate([
             'vendor' => [
@@ -150,7 +150,7 @@ class TransactionController extends Controller
 
     public function undoTransaction(Request $request): RedirectResponse
     {
-        $user = $this->tallySheetSession->currentUser();
+        $user = $this->tallySheetSession->get('user');
 
         $validated = $request->validate([
             'transaction' => [

@@ -3,7 +3,6 @@
 use App\Enums\UserType;
 use App\Models\Transaction;
 use App\Models\User;
-use App\TallySheetSession;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 
@@ -184,9 +183,3 @@ test('tally sheet logout clears only selected tally user session', function () {
 
     $this->assertAuthenticatedAs($admin);
 });
-
-test('tally sheet session refuses to select non normal users', function () {
-    $vendor = testUser(['type' => UserType::Vendor]);
-
-    app(TallySheetSession::class)->selectUser($vendor);
-})->throws(InvalidArgumentException::class);

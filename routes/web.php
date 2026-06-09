@@ -7,6 +7,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SoundController;
 use App\Http\Controllers\TallySheet;
 use App\Http\Controllers\UserController;
+use App\Http\Middleware\EnsureTallySessionRunning;
 use App\Http\Middleware\EnsureTallySheetUserSelected;
 use App\Models\Category;
 use App\Models\User;
@@ -28,14 +29,14 @@ Route::middleware('auth')->group(function () {
         ]);
     })->name('article-list');
 
-    Route::name('tally-sheet.')->prefix('tally-sheet')->group(function () {
+    Route::get('tally-sheet/start-session', function () {
+        return view('pages.tally-sheet.start-session', [
+            'vendors' => User::where('type', UserType::Vendor)->get(),
+            'worlds' => User::where('type', UserType::World)->get(),
+        ]);
+    })->name('tally-sheet.start-session');
 
-        Route::get('/start-session', function () {
-            return view('pages.tally-sheet.start-session', [
-                'vendors' => User::where('type', UserType::Vendor)->get(),
-                'worlds' => User::where('type', UserType::World)->get(),
-            ]);
-        })->name('start-session');
+    Route::middleware(EnsureTallySessionRunning::class)->name('tally-sheet.')->prefix('tally-sheet')->group(function () {
 
         Route::name('auth.')->controller(TallySheet\LoginController::class)->group(function () {
             Route::get('/', 'listUsers')->name('list-users');
