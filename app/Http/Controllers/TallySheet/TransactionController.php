@@ -5,6 +5,7 @@ namespace App\Http\Controllers\TallySheet;
 use App\Enums\UserType;
 use App\Http\Controllers\Controller;
 use App\Models\Article;
+use App\Models\Barcode;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Services\TransactionService;
@@ -89,6 +90,42 @@ class TransactionController extends Controller
 
         $vendor = User::findOrFail($validated['vendor']);
         $article = Article::findOrFail($validated['article']);
+
+        $this->transactionService->buyArticle($user, $vendor, $article);
+
+        return back()
+            ->with('toast', [
+                'type' => 'success',
+                'message' => 'Gekauft: '.$article->name.' für '.Number::currency($article->currentPrice),
+            ])
+            ->with('sound', collect($article->sounds ?? ['kaching'])->random());
+    }
+
+    public function buyArticleByBarcode(Request $request, User $user): RedirectResponse
+    {
+        $validated = $request->validate([
+            'vendor' => [
+                'required',
+                'integer',
+                Rule::exists('users', 'id')->where('type', UserType::Vendor->value),
+            ],
+            'barcode' => [
+                'required',
+                'string',
+                'bail',
+                'exists:barcodes,barcode',
+                function (string $attribute, mixed $value, Closure $fail) use ($user) {
+                    $article = Barcode::where('barcode', $value)->first()?->article;
+
+                    if ($user->balance < $article->currentPrice) {
+                        $fail('Nicht genügend Guthaben.');
+                    }
+                },
+            ],
+        ]);
+
+        $vendor = User::findOrFail($validated['vendor']);
+        $article = Barcode::where('barcode', $validated['barcode'])->firstOrFail()->article;
 
         $this->transactionService->buyArticle($user, $vendor, $article);
 
