@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers\TallySheet;
 
-use App\Enums\UserType;
 use App\Http\Controllers\Controller;
 use App\Models\Article;
 use App\Models\Barcode;
 use App\Models\Transaction;
-use App\Models\User;
 use App\Services\TallySheetSessionService;
 use App\Services\TransactionService;
 use Closure;
@@ -29,10 +27,6 @@ class TransactionController extends Controller
 
         $validated = $request->validate([
             'action' => ['required', Rule::in(['deposit', 'withdraw'])],
-            'world' => [
-                'required',
-                Rule::exists('users', 'id')->where('type', UserType::World),
-            ],
             'amount' => [
                 'required',
                 'decimal:0,2',
@@ -56,7 +50,7 @@ class TransactionController extends Controller
 
         $action = $validated['action'];
         $amount = $validated['amount'];
-        $world = User::findOrFail($validated['world']);
+        $world = $this->tallySheetSessionService->get('world');
 
         $this->transactionService->transferMoney(
             user: $user,
@@ -77,11 +71,6 @@ class TransactionController extends Controller
         $user = $this->tallySheetSessionService->get('user');
 
         $validated = $request->validate([
-            'vendor' => [
-                'required',
-                'integer',
-                Rule::exists('users', 'id')->where('type', UserType::Vendor->value),
-            ],
             'article' => [
                 'required',
                 'integer',
@@ -97,7 +86,7 @@ class TransactionController extends Controller
             ],
         ]);
 
-        $vendor = User::findOrFail($validated['vendor']);
+        $vendor = $this->tallySheetSessionService->get('vendor');
         $article = Article::findOrFail($validated['article']);
 
         $this->transactionService->buyArticle($user, $vendor, $article);
@@ -115,11 +104,6 @@ class TransactionController extends Controller
         $user = $this->tallySheetSessionService->get('user');
 
         $validated = $request->validate([
-            'vendor' => [
-                'required',
-                'integer',
-                Rule::exists('users', 'id')->where('type', UserType::Vendor->value),
-            ],
             'barcode' => [
                 'required',
                 'string',
@@ -135,7 +119,7 @@ class TransactionController extends Controller
             ],
         ]);
 
-        $vendor = User::findOrFail($validated['vendor']);
+        $vendor = $this->tallySheetSessionService->get('vendor');
         $article = Barcode::where('barcode', $validated['barcode'])->firstOrFail()->article;
 
         $this->transactionService->buyArticle($user, $vendor, $article);
