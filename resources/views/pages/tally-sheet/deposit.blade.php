@@ -1,8 +1,4 @@
-<x-layouts.tally-sheet
-    title="Geld ein- und auszahlen"
-    activeTab="deposit"
-    :user="$user"
->
+<x-layouts.tally-sheet title="Geld ein- und auszahlen" activeTab="deposit">
     <x-wrapper class="space-y-section">
         <section class="space-y-content">
             <h2>Betrag eingeben</h2>

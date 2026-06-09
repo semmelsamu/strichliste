@@ -12,9 +12,12 @@
                 href="{{ route('tally-sheet.users.edit') }}"
             >
                 <x-lucide-user />
-                {{ $user->name }}
+                {{ tally_session('user')->name }}
             </a>
-            <x-currency class="mr-auto" :amount="$user->balance" />
+            <x-currency
+                class="mr-auto"
+                :amount="tally_session('user')->balance"
+            />
             <p class="text-text-secondary">
                 {{ tally_session('world')->name }} &#8594; {{ tally_session('vendor')->name }}
             </p>
