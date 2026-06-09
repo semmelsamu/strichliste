@@ -47,7 +47,17 @@
         </x-tab-bar>
     </header>
 
-    <x-scanner />
+    <x-scanner>
+        <form
+            method="POST"
+            action="{{ route('tally-sheet.buy-by-barcode', $user) }}"
+            x-ref="form"
+        >
+            @csrf
+            <input type="hidden" name="vendor" value="3" />
+            <input type="hidden" name="barcode" x-ref="barcode" />
+        </form>
+    </x-scanner>
 
     {{ $slot }}
 </x-layouts.main>
