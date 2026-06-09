@@ -5,222 +5,240 @@
         </a>
         <h1>Artikel bearbeiten</h1>
     </header>
-    <x-wrapper>
-        <h2 class="mb-inline">Generelle Informationen</h2>
-        <form
-            action="{{ route("articles.update", $article->id) }}"
-            method="POST"
-        >
-            @csrf
-            @method ('PUT')
-
-            <label for="name" class="mb-2 block">Name</label>
-            <input
-                id="name"
-                type="text"
-                class="text-input mb-content w-md"
-                name="name"
-                value="{{ $article->name }}"
-            />
-
-            <label for="category" class="mb-2 block">Kategorie</label>
-            <select name="category" id="category" class="text-input">
-                @foreach ($categories as $category)
-                    <option
-                        value="{{ $category->id }}"
-                        @selected ($category->is($article->category))
-                    >
-                        {{ $category->name }}
-                    </option>
-                @endforeach
-            </select>
-            <p class="mt-2 text-sm text-text-secondary">Kategorien können im Hauptmenü unter "Artikel bearbeiten" > "Kategorien" bearbeitet werden.</p>
-            <button type="submit" class="button mt-content bg-fsim-light">
-                Änderungen speichern
-            </button>
-        </form>
-
-        <h2 class="mt-section mb-inline">Preis</h2>
-
-        <form
-            method="POST"
-            action="{{ route("articles.update-price", $article->id) }}"
-        >
-            <label for="price" class="mb-2 block">Neuen Preis festlegen</label>
-            <div class="mr-content flex items-center gap-inline">
+    <x-wrapper
+        class="space-y-section *:rounded-2xl *:border-4 *:border-fsim-medium *:p-content"
+    >
+        <section>
+            <h2 class="mb-inline">Generelle Informationen</h2>
+            <form
+                action="{{ route("articles.update", $article->id) }}"
+                method="POST"
+            >
+                @csrf
+                @method ('PUT')
+                <label for="name" class="mb-2 block">Name</label>
                 <input
-                    type="number"
-                    name="price"
-                    id="price"
-                    min="0"
-                    step="0.01"
-                    class="text-input w-40"
-                    required
+                    id="name"
+                    type="text"
+                    class="text-input mb-content w-md"
+                    name="name"
+                    value="{{ $article->name }}"
                 />
-                €
-                <button type="submit" class="button bg-fsim-light">
-                    Preis aktualisieren
+                <label for="category" class="mb-2 block">Kategorie</label>
+                <select name="category" id="category" class="text-input">
+                    @foreach ($categories as $category)
+                        <option
+                            value="{{ $category->id }}"
+                            @selected ($category->is($article->category))
+                        >
+                            {{ $category->name }}
+                        </option>
+                    @endforeach
+                </select>
+                <p class="mt-2 text-sm text-text-secondary">Kategorien können im Hauptmenü unter "Artikel bearbeiten" > "Kategorien" bearbeitet werden.</p>
+                <button type="submit" class="button mt-content bg-fsim-light">
+                    Änderungen speichern
                 </button>
-            </div>
-        </form>
+            </form>
+        </section>
 
-        <h3 class="mt-content mb-inline">Preisverlauf</h3>
-        <table class="table w-md">
-            <thead>
-                <tr>
-                    <th>Preis</th>
-                    <th>Effektiv seit</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($prices as $price)
-                    <tr>
-                        <th>
-                            <x-currency
-                                :amount="$price->price"
-                                :colors="false"
-                            />
-                        </th>
-                        <td>{{ $price->effective_since->diffForHumans() }}</td>
-                    </tr>
-                @endforeach
-            </tbody>
-            <caption>
-                {{ sizeof($prices) }} Preise gesamt.
-            </caption>
-        </table>
-
-        <h2 class="mt-section mb-inline">Sounds</h2>
-        <p>Beim Kauf wird einer der gewählten Sounds zufällig abgespielt.</p>
-        <form
-            method="POST"
-            action="{{ route("articles.update-sounds", $article->id) }}"
-        >
-            <table class="table w-lg">
+        <section>
+            <h2 class="mb-inline">Preis</h2>
+            <form
+                method="POST"
+                action="{{ route("articles.update-price", $article->id) }}"
+            >
+                <label for="price" class="mb-2 block"
+                    >Neuen Preis festlegen</label
+                >
+                <div class="mr-content flex items-center gap-inline">
+                    <input
+                        type="number"
+                        name="price"
+                        id="price"
+                        min="0"
+                        step="0.01"
+                        class="text-input w-40"
+                        required
+                    />
+                    €
+                    <button type="submit" class="button bg-fsim-light">
+                        Preis aktualisieren
+                    </button>
+                </div>
+            </form>
+            <h3 class="mt-content mb-inline">Preisverlauf</h3>
+            <table class="table w-md">
                 <thead>
                     <tr>
-                        <th class="w-0">Aktiv</th>
-                        <th>Sound</th>
+                        <th>Preis</th>
+                        <th>Effektiv seit</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ($sounds as $sound)
+                    @foreach ($prices as $price)
                         <tr>
-                            <td class="flex w-min">
-                                <input
-                                    type="checkbox"
-                                    class="checkbox"
-                                    @checked (in_array($sound->name(), $article->sounds ?? []))
-                                    name="{{ $sound->name() }}"
-                                    id="sound-{{ $sound->name() }}"
+                            <th>
+                                <x-currency
+                                    :amount="$price->price"
+                                    :colors="false"
                                 />
-                            </td>
-                            <th class="w-auto">
-                                <label for="sound-{{ $sound->name() }}">
-                                    {{ $sound->name() }}
-                                </label>
                             </th>
+                            <td>
+                                {{ $price->effective_since->diffForHumans() }}
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+                <caption>
+                    {{ sizeof($prices) }} Preise gesamt.
+                </caption>
+            </table>
+        </section>
+
+        <section>
+            <h2 class="mb-inline">Sounds</h2>
+            <p>Beim Kauf wird einer der gewählten Sounds zufällig abgespielt.</p>
+            <form
+                method="POST"
+                action="{{ route("articles.update-sounds", $article->id) }}"
+            >
+                <table class="table w-lg">
+                    <thead>
+                        <tr>
+                            <th class="w-0">Aktiv</th>
+                            <th>Sound</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($sounds as $sound)
+                            <tr>
+                                <td class="flex w-min">
+                                    <input
+                                        type="checkbox"
+                                        class="checkbox"
+                                        @checked (in_array($sound->name(), $article->sounds ?? []))
+                                        name="{{ $sound->name() }}"
+                                        id="sound-{{ $sound->name() }}"
+                                    />
+                                </td>
+                                <th class="w-auto">
+                                    <label for="sound-{{ $sound->name() }}">
+                                        {{ $sound->name() }}
+                                    </label>
+                                </th>
+                                <td class="w-6">
+                                    <button
+                                        type="button"
+                                        class="flex items-center"
+                                        aria-label="{{ $sound->name() }} abspielen"
+                                        onclick="
+                                            const audio =
+                                                this.nextElementSibling;
+                                            audio.currentTime = 0;
+                                            audio.play();
+                                        "
+                                    >
+                                        <x-lucide-volume-2 />
+                                    </button>
+                                    <audio
+                                        hidden
+                                        src="{{ $sound->url() }}"
+                                    ></audio>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="3" class="text-center">
+                                    Es wurden noch keine Sounds hochgeladen
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                    <caption>
+                        {{ sizeof($sounds) }} Sounds gesamt.
+                    </caption>
+                </table>
+                <button type="submit" class="button bg-fsim-light">
+                    Auswahl speichern
+                </button>
+            </form>
+        </section>
+
+        <section>
+            <h2 class="mb-inline">Barcodes</h2>
+            <form
+                method="POST"
+                action="{{ route("articles.add-barcode", $article) }}"
+            >
+                <label for="barcode" class="mb-2 block">Barcode</label>
+                <div class="mr-content flex items-center gap-inline">
+                    <input
+                        type="text"
+                        name="barcode"
+                        id="barcode"
+                        class="text-input w-sm"
+                        required
+                    />
+                    <button type="submit" class="button bg-fsim-light">
+                        Barcode verknüpfen
+                    </button>
+                </div>
+            </form>
+            <h3 class="mt-content mb-inline">Verknüpfte Barcodes</h3>
+            <table class="table w-sm">
+                <thead>
+                    <tr>
+                        <th>Barcode</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($article->barcodes as $barcode)
+                        <tr>
+                            <th class="flex w-min">{{ $barcode->barcode }}</th>
                             <td class="w-6">
-                                <button
-                                    type="button"
-                                    class="flex items-center"
-                                    aria-label="{{ $sound->name() }} abspielen"
-                                    onclick="
-                                        const audio = this.nextElementSibling;
-                                        audio.currentTime = 0;
-                                        audio.play();
-                                    "
+                                <form
+                                    method="POST"
+                                    action="{{ route("articles.remove-barcode", [$article, $barcode]) }}"
                                 >
-                                    <x-lucide-volume-2 />
-                                </button>
-                                <audio hidden src="{{ $sound->url() }}"></audio>
+                                    @method ("DELETE")
+                                    <button
+                                        type="submit"
+                                        class="flex items-center"
+                                    >
+                                        <x-lucide-trash-2 />
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="3" class="text-center">
-                                Es wurden noch keine Sounds hochgeladen
+                            <td colspan="1" class="text-center">
+                                Es wurden noch keine Barcodes verknüpft
                             </td>
                         </tr>
                     @endforelse
                 </tbody>
                 <caption>
-                    {{ sizeof($sounds) }} Sounds gesamt.
+                    {{ sizeof($article->barcodes) }} Barcodes gesamt.
                 </caption>
             </table>
-            <button type="submit" class="button bg-fsim-light">
-                Auswahl speichern
-            </button>
-        </form>
+        </section>
 
-        <h2 class="mt-section mb-inline">Barcodes</h2>
-        <form
-            method="POST"
-            action="{{ route("articles.add-barcode", $article) }}"
-        >
-            <label for="barcode" class="mb-2 block">Barcode</label>
-            <div class="mr-content flex items-center gap-inline">
-                <input
-                    type="text"
-                    name="barcode"
-                    id="barcode"
-                    class="text-input w-sm"
-                    required
-                />
-                <button type="submit" class="button bg-fsim-light">
-                    Barcode verknüpfen
+        <section class="border-red-900!">
+            <h2 class="mb-content">Danger Zone</h2>
+            <form
+                method="POST"
+                action="{{ route("articles.destroy", $article->id) }}"
+                class="flex items-center"
+            >
+                @csrf
+                @method ("DELETE")
+                <button type="submit" class="button bg-red-800">
+                    <x-lucide-archive /> Artikel archivieren
                 </button>
-            </div>
-        </form>
-        <h3 class="mt-content mb-inline">Verknüpfte Barcodes</h3>
-        <table class="table w-sm">
-            <thead>
-                <tr>
-                    <th>Barcode</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse ($article->barcodes as $barcode)
-                    <tr>
-                        <th class="flex w-min">{{ $barcode->barcode }}</th>
-                        <td class="w-6">
-                            <form
-                                method="POST"
-                                action="{{ route("articles.remove-barcode", [$article, $barcode]) }}"
-                            >
-                                @method ("DELETE")
-                                <button type="submit" class="flex items-center">
-                                    <x-lucide-trash-2 />
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="1" class="text-center">
-                            Es wurden noch keine Barcodes verknüpft
-                        </td>
-                    </tr>
-                @endforelse
-            </tbody>
-            <caption>
-                {{ sizeof($article->barcodes) }} Barcodes gesamt.
-            </caption>
-        </table>
-
-        <h2 class="mt-section mb-content">Danger Zone</h2>
-
-        <form
-            method="POST"
-            action="{{ route("articles.destroy", $article->id) }}"
-            class="flex items-center"
-        >
-            @csrf
-            @method ("DELETE")
-            <button type="submit" class="button bg-red-800">
-                <x-lucide-archive /> Artikel archivieren
-            </button>
-        </form>
-        <p class="mt-2 text-sm text-text-secondary">Dadurch wird der Artikel nicht mehr im Kaufmenü angezeigt.</p>
+            </form>
+            <p class="mt-2 text-sm text-text-secondary">Dadurch wird der Artikel nicht mehr im Kaufmenü angezeigt.</p>
+        </section>
     </x-wrapper>
 </x-layouts.main>
