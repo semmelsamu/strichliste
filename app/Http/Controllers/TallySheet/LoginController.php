@@ -29,7 +29,7 @@ class LoginController extends Controller
         $this->tallySheetSession->selectUser($user);
 
         if ($user->balance <= 0) {
-            return redirect()->route('tally-sheet.deposit');
+            return redirect()->route('tally-sheet.show-deposit');
         }
 
         return redirect()->route('tally-sheet.buy-overview');

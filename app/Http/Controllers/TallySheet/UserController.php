@@ -52,7 +52,7 @@ class UserController extends Controller
         $this->tallySheetSession->selectUser($user);
 
         return redirect()
-            ->route('tally-sheet.deposit')
+            ->route('tally-sheet.show-deposit')
             ->with('toast', [
                 'type' => 'success',
                 'message' => 'Willkommen, '.$user->name.'!',

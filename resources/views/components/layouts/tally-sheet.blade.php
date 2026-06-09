@@ -31,7 +31,7 @@
                 Kaufen
             </x-tab-bar.tab>
             <x-tab-bar.tab
-                href="{{ route('tally-sheet.deposit') }}"
+                href="{{ route('tally-sheet.show-deposit') }}"
                 name="deposit"
             >
                 <x-lucide-coins />

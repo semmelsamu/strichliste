@@ -37,7 +37,7 @@ test('new tally sheet users can register and are redirected to deposit', functio
     $user = User::where('name', 'new-member')->firstOrFail();
 
     $response
-        ->assertRedirectToRoute('tally-sheet.deposit')
+        ->assertRedirectToRoute('tally-sheet.show-deposit')
         ->assertSessionHas('toast.type', 'success')
         ->assertSessionHas('tally_sheet.user_id', $user->id);
 
@@ -70,7 +70,7 @@ test('users without a pin go directly to their start page', function () {
     ]);
 
     $this->actingAs($admin)->get(route('tally-sheet.auth.login', $userWithNoBalance))
-        ->assertRedirect(route('tally-sheet.deposit'))
+        ->assertRedirect(route('tally-sheet.show-deposit'))
         ->assertSessionHas('tally_sheet.user_id', $userWithNoBalance->id);
 
     $this->actingAs($admin)->get(route('tally-sheet.auth.login', $userWithBalance))
@@ -90,7 +90,7 @@ test('users with a pin must enter it before reaching their start page', function
     $this->actingAs($admin)->post(route('tally-sheet.auth.validate-pin', $user), [
         'pin' => '1234',
     ])
-        ->assertRedirect(route('tally-sheet.deposit'))
+        ->assertRedirect(route('tally-sheet.show-deposit'))
         ->assertSessionHas('tally_sheet.user_id', $user->id);
 });
 

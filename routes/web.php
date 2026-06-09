@@ -53,7 +53,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/buy', 'showBuyOverview')->name('buy-overview');
             Route::get('/buy/category/{category_id}', 'showBuyCategory')->name('buy-categories');
 
-            Route::get('/deposit', 'showDeposit')->name('deposit');
+            Route::get('/deposit', 'showDeposit')->name('show-deposit');
 
             Route::get('/history', 'showHistory')->name('history');
 
