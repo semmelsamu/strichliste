@@ -7,24 +7,41 @@
         >
             <button
                 type="submit"
-                class="card my-sectionm mx-auto flex flex-col items-center gap-inline bg-fsim-medium px-section py-content text-center"
+                class="card my-sectionm mx-auto flex flex-col items-center gap-inline bg-fsim-light px-section py-content text-center"
             >
                 <x-lucide-play />
                 Strichliste starten
             </button>
 
-            <div class="grid grid-cols-2">
-                <div class="flex gap-inline">
-                    <input
-                        id="world-override"
-                        type="checkbox"
-                        class="checkbox"
-                    />
+            <details class="overflow-clip rounded-md bg-fsim-medium">
+                <summary class="p-content font-medium">Erweitert</summary>
+
+                <div class="grid grid-cols-2 gap-content border-t p-content">
+                    <div class="space-y-inline">
+                        <label for="vendor-override" class="block">
+                            Vendor-Nutzer anpassen
+                        </label>
+                        <select
+                            name="vendor-override"
+                            id="type"
+                            class="text-input w-full"
+                        >
+                            @foreach ($vendors as $user)
+                                <option value="{{ $user->id }}">
+                                    {{ $user->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
                     <div class="space-y-inline">
                         <label for="world-override" class="block">
-                            Welt-Nutzer anpassen
+                            World-Nutzer anpassen
                         </label>
-                        <select name="type" id="type" class="text-input">
+                        <select
+                            name="world-override"
+                            id="type"
+                            class="text-input w-full"
+                        >
                             @foreach ($worlds as $user)
                                 <option value="{{ $user->id }}">
                                     {{ $user->name }}
@@ -33,27 +50,7 @@
                         </select>
                     </div>
                 </div>
-
-                <div class="flex gap-inline">
-                    <input
-                        id="vendor-override"
-                        type="checkbox"
-                        class="checkbox"
-                    />
-                    <div class="space-y-inline">
-                        <label for="vendor-override" class="block">
-                            Vendor-Nutzer anpassen
-                        </label>
-                        <select name="type" id="type" class="text-input">
-                            @foreach ($vendors as $user)
-                                <option value="{{ $user->id }}">
-                                    {{ $user->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-            </div>
+            </details>
         </form>
     </x-wrapper>
 </x-layouts.main>
