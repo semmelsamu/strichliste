@@ -98,6 +98,7 @@ in
         APP_URL = "${if cfg.settings.expectSSL then "https" else "http"}://${cfg.settings.domain}";
         DB_CONNECTION = "${cfg.database.type}";
         DB_DATABASE = "${cfg.paths.database}";
+        APP_BASE_PATH = "${cfg.paths.storage}";
       };
     in
     mkIf cfg.enable {
@@ -108,17 +109,23 @@ in
           let
             php = lib.getExe pkgs.php;
             sudo = lib.getExe' pkgs.sudo "sudo";
-            bash = lib.getExe pkgs.bash;
 
             nonRootScript = pkgs.writeShellScript "setup" ''
+              set -euo pipefail
+
               if [ -f "${cfg.paths.rootDir}/.is_setup" ]; then
               exit
               fi
 
+              mkdir -p ${cfg.paths.storage}
+              cp -r ${cfg.package}/storage/* "${cfg.paths.storage}"
+
+              mkdir -p ${cfg.paths.storage}/bootstrap/cache
+
               cd "${cfg.package}"
 
               ${php} artisan migrate --force
-              ${php} artisan db:seed
+              ${php} artisan db:seed --force
 
               cd "${cfg.paths.rootDir}"
               touch .is_setup
@@ -133,7 +140,7 @@ in
 
             chown ${config.services.nginx.user} ${cfg.paths.rootDir}
 
-            ${sudo} -u ${config.services.nginx.user} ${nonRootScript}
+            ${sudo} -E -u ${config.services.nginx.user} ${nonRootScript}
 
           '';
 
