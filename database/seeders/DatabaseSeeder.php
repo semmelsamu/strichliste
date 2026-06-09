@@ -2,11 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Enums\UserType;
-use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -17,15 +14,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::create([
-            'name' => 'root',
-            'password' => Hash::make('root'),
-            'type' => UserType::NormalUser,
-        ]);
+        $this->call(RootUserSeeder::class);
 
-        $this->call(UserSeeder::class);
-        $this->call(CategorySeeder::class);
-        $this->call(ArticleSeeder::class);
-        $this->call(TransactionSeeder::class);
+        if (! app()->isProduction()) {
+            $this->call(UserSeeder::class);
+            $this->call(CategorySeeder::class);
+            $this->call(ArticleSeeder::class);
+            $this->call(TransactionSeeder::class);
+        }
     }
 }
