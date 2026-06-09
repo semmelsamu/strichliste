@@ -1,5 +1,6 @@
 @use (Illuminate\Support\Facades\Auth)
 @use (App\Models\User)
+@use (App\Services\TallySheetSessionService)
 
 <x-layouts.main :title="$title">
     <header class="space-y-content bg-fsim-medium">
@@ -11,9 +12,15 @@
                 href="{{ route('tally-sheet.users.edit') }}"
             >
                 <x-lucide-user />
-                {{ $user->name }}
+                {{ tally_session()->get('user')->name }}
             </a>
-            <x-currency class="mr-auto" :amount="$user->balance" />
+            <x-currency
+                class="mr-auto"
+                :amount="tally_session()->get('user')->balance"
+            />
+            <p class="text-text-secondary">
+                {{ tally_session()->get('world')->name }} &#8594; {{ tally_session()->get('vendor')->name }}
+            </p>
             <a
                 class="button bg-fsim-light"
                 href="{{ route('tally-sheet.auth.logout') }}"

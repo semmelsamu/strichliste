@@ -5,14 +5,14 @@ namespace App\Http\Controllers\TallySheet;
 use App\Enums\UserType;
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\TallySheetSession;
+use App\Services\TallySheetSessionService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
-    public function __construct(private readonly TallySheetSession $tallySheetSession) {}
+    public function __construct(private readonly TallySheetSessionService $tallySheetSessionService) {}
 
     /**
      * Display a listing of the resource.
@@ -49,7 +49,7 @@ class UserController extends Controller
         $user->type = UserType::NormalUser;
         $user->save();
 
-        $this->tallySheetSession->selectUser($user);
+        $this->tallySheetSessionService->login($user);
 
         return redirect()
             ->route('tally-sheet.show-deposit')
@@ -72,7 +72,9 @@ class UserController extends Controller
      */
     public function edit()
     {
-        return view('pages.tally-sheet.users.user-settings', ['user' => $this->tallySheetSession->currentUser()]);
+        return view('pages.tally-sheet.users.user-settings', [
+            'user' => $this->tallySheetSessionService->get('user'),
+        ]);
     }
 
     /**
@@ -80,7 +82,7 @@ class UserController extends Controller
      */
     public function update(Request $request): RedirectResponse
     {
-        $user = $this->tallySheetSession->currentUser();
+        $user = $this->tallySheetSessionService->get('user');
 
         $validated = $request->validate([
             'username' => ['required', 'string', 'min:3', Rule::unique('users', 'name')->ignore($user)],
@@ -96,7 +98,7 @@ class UserController extends Controller
 
     public function updatePin(Request $request): RedirectResponse
     {
-        $user = $this->tallySheetSession->currentUser();
+        $user = $this->tallySheetSessionService->get('user');
 
         $validated = $request->validate([
             'pin' => ['required', 'string'],
@@ -112,7 +114,7 @@ class UserController extends Controller
 
     public function removePin(): RedirectResponse
     {
-        $user = $this->tallySheetSession->currentUser();
+        $user = $this->tallySheetSessionService->get('user');
 
         $user->pin = null;
         $user->save();
@@ -127,10 +129,10 @@ class UserController extends Controller
      */
     public function destroy(): RedirectResponse
     {
-        $user = $this->tallySheetSession->currentUser();
+        $user = $this->tallySheetSessionService->get('user');
 
         $user->delete();
-        $this->tallySheetSession->forgetUser();
+        $this->tallySheetSessionService->logout();
 
         return redirect()->route('tally-sheet.auth.list-users')->with('toast', [
             'type' => 'success',

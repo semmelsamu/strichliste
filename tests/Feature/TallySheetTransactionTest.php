@@ -22,7 +22,7 @@ function transactionUsers(): array
 test('users can deposit money from a world account', function () {
     ['admin' => $admin, 'world' => $world, 'user' => $user] = transactionUsers();
 
-    $this->actingAs($admin)->withSession(['tally_sheet.user_id' => $user->id])->post(route('tally-sheet.deposit'), [
+    $this->actingAs($admin)->withSession(tallySheetSession($user, $world ?? null, $vendor ?? null))->post(route('tally-sheet.deposit'), [
         'action' => 'deposit',
         'world' => $world->id,
         'amount' => '10.50',
@@ -48,7 +48,7 @@ test('users can withdraw money without going below zero', function () {
         'amount' => 5,
     ]);
 
-    $this->actingAs($admin)->withSession(['tally_sheet.user_id' => $user->id])->post(route('tally-sheet.deposit'), [
+    $this->actingAs($admin)->withSession(tallySheetSession($user, $world ?? null, $vendor ?? null))->post(route('tally-sheet.deposit'), [
         'action' => 'withdraw',
         'world' => $world->id,
         'amount' => '3.50',
@@ -72,7 +72,7 @@ test('users can withdraw their exact balance to zero', function () {
         'amount' => 0.20,
     ]);
 
-    $this->actingAs($admin)->withSession(['tally_sheet.user_id' => $user->id])->post(route('tally-sheet.deposit'), [
+    $this->actingAs($admin)->withSession(tallySheetSession($user, $world ?? null, $vendor ?? null))->post(route('tally-sheet.deposit'), [
         'action' => 'withdraw',
         'world' => $world->id,
         'amount' => '0.20',
@@ -90,7 +90,7 @@ test('withdrawals cannot exceed the users balance', function () {
         'amount' => 2,
     ]);
 
-    $this->actingAs($admin)->withSession(['tally_sheet.user_id' => $user->id])->post(route('tally-sheet.deposit'), [
+    $this->actingAs($admin)->withSession(tallySheetSession($user, $world ?? null, $vendor ?? null))->post(route('tally-sheet.deposit'), [
         'action' => 'withdraw',
         'world' => $world->id,
         'amount' => '2.01',
@@ -108,7 +108,7 @@ test('users already in debt cannot withdraw more money', function () {
         'amount' => 1,
     ]);
 
-    $this->actingAs($admin)->withSession(['tally_sheet.user_id' => $user->id])->post(route('tally-sheet.deposit'), [
+    $this->actingAs($admin)->withSession(tallySheetSession($user, $world ?? null, $vendor ?? null))->post(route('tally-sheet.deposit'), [
         'action' => 'withdraw',
         'world' => $world->id,
         'amount' => '0.01',
@@ -117,7 +117,7 @@ test('users already in debt cannot withdraw more money', function () {
     expect(Transaction::count())->toBe(1);
 });
 
-test('deposit requests validate action world account and amount', function (array $payload, array $errors) {
+test('deposit requests validate action and amount', function (array $payload, array $errors) {
     ['admin' => $admin, 'world' => $world, 'vendor' => $vendor, 'user' => $user] = transactionUsers();
 
     $payload = array_replace([
@@ -130,12 +130,10 @@ test('deposit requests validate action world account and amount', function (arra
         ->map(fn ($value) => $value instanceof Closure ? $value() : $value)
         ->all();
 
-    $this->actingAs($admin)->withSession(['tally_sheet.user_id' => $user->id])->post(route('tally-sheet.deposit'), $payload)
+    $this->actingAs($admin)->withSession(tallySheetSession($user, $world ?? null, $vendor ?? null))->post(route('tally-sheet.deposit'), $payload)
         ->assertSessionHasErrors($errors);
 })->with([
     'invalid action' => [['action' => 'refund'], ['action']],
-    'missing world' => [['world' => null], ['world']],
-    'non world account' => [['world' => fn () => testUser(['type' => UserType::Vendor])->id], ['world']],
     'missing amount' => [['amount' => null], ['amount']],
     'too many decimals' => [['amount' => '1.234'], ['amount']],
 ]);
@@ -150,7 +148,7 @@ test('users can buy articles when they have enough balance', function () {
         'amount' => 5,
     ]);
 
-    $this->actingAs($admin)->withSession(['tally_sheet.user_id' => $user->id])->post(route('tally-sheet.buy'), [
+    $this->actingAs($admin)->withSession(tallySheetSession($user, $world ?? null, $vendor ?? null))->post(route('tally-sheet.buy'), [
         'vendor' => $vendor->id,
         'article' => $article->id,
     ])
@@ -171,7 +169,7 @@ test('users cannot buy articles without enough balance', function () {
     ['admin' => $admin, 'vendor' => $vendor, 'user' => $user] = transactionUsers();
     $article = testArticle(price: 1.20);
 
-    $this->actingAs($admin)->withSession(['tally_sheet.user_id' => $user->id])->post(route('tally-sheet.buy'), [
+    $this->actingAs($admin)->withSession(tallySheetSession($user, $world ?? null, $vendor ?? null))->post(route('tally-sheet.buy'), [
         'vendor' => $vendor->id,
         'article' => $article->id,
     ])->assertSessionHasErrors('article');
@@ -180,7 +178,7 @@ test('users cannot buy articles without enough balance', function () {
         ->and(Transaction::count())->toBe(0);
 });
 
-test('article purchases validate vendor and article ids', function (array $payload, array $errors) {
+test('article purchases validate article ids', function (array $payload, array $errors) {
     ['admin' => $admin, 'world' => $world, 'vendor' => $vendor, 'user' => $user] = transactionUsers();
     $article = testArticle(price: 1.20);
 
@@ -199,11 +197,9 @@ test('article purchases validate vendor and article ids', function (array $paylo
         ->map(fn ($value) => $value instanceof Closure ? $value() : $value)
         ->all();
 
-    $this->actingAs($admin)->withSession(['tally_sheet.user_id' => $user->id])->post(route('tally-sheet.buy'), $payload)
+    $this->actingAs($admin)->withSession(tallySheetSession($user, $world ?? null, $vendor ?? null))->post(route('tally-sheet.buy'), $payload)
         ->assertSessionHasErrors($errors);
 })->with([
-    'missing vendor' => [['vendor' => null], ['vendor']],
-    'non vendor account' => [['vendor' => fn () => testUser(['type' => UserType::NormalUser])->id], ['vendor']],
     'missing article' => [['article' => null], ['article']],
     'unknown article' => [['article' => 9999], ['article']],
 ]);
@@ -217,7 +213,7 @@ test('users can undo one of their recent transactions', function () {
         'amount' => 5,
     ]);
 
-    $this->actingAs($admin)->withSession(['tally_sheet.user_id' => $user->id])->post(route('tally-sheet.undo'), [
+    $this->actingAs($admin)->withSession(tallySheetSession($user, $world ?? null, $vendor ?? null))->post(route('tally-sheet.undo'), [
         'transaction' => $deposit->id,
     ])
         ->assertRedirect()
@@ -242,11 +238,11 @@ test('transactions cannot be undone twice', function () {
         'amount' => 5,
     ]);
 
-    $this->actingAs($admin)->withSession(['tally_sheet.user_id' => $user->id])->post(route('tally-sheet.undo'), [
+    $this->actingAs($admin)->withSession(tallySheetSession($user, $world ?? null, $vendor ?? null))->post(route('tally-sheet.undo'), [
         'transaction' => $deposit->id,
     ])->assertRedirect();
 
-    $this->actingAs($admin)->withSession(['tally_sheet.user_id' => $user->id])->post(route('tally-sheet.undo'), [
+    $this->actingAs($admin)->withSession(tallySheetSession($user, $world ?? null, $vendor ?? null))->post(route('tally-sheet.undo'), [
         'transaction' => $deposit->id,
     ])->assertSessionHasErrors('transaction');
 });
@@ -261,7 +257,7 @@ test('users cannot undo transactions that do not belong to them', function () {
         'amount' => 5,
     ]);
 
-    $this->actingAs($admin)->withSession(['tally_sheet.user_id' => $user->id])->post(route('tally-sheet.undo'), [
+    $this->actingAs($admin)->withSession(tallySheetSession($user, $world ?? null, $vendor ?? null))->post(route('tally-sheet.undo'), [
         'transaction' => $deposit->id,
     ])->assertSessionHasErrors('transaction');
 });
@@ -276,7 +272,7 @@ test('old transactions cannot be undone', function () {
         'created_at' => Carbon::now()->subMinutes(6),
     ]);
 
-    $this->actingAs($admin)->withSession(['tally_sheet.user_id' => $user->id])->post(route('tally-sheet.undo'), [
+    $this->actingAs($admin)->withSession(tallySheetSession($user, $world ?? null, $vendor ?? null))->post(route('tally-sheet.undo'), [
         'transaction' => $deposit->id,
     ])->assertSessionHasErrors('transaction');
 });
@@ -298,7 +294,7 @@ test('history view returns normalized transactions newest first', function () {
         'created_at' => Carbon::now(),
     ]);
 
-    $this->actingAs($admin)->withSession(['tally_sheet.user_id' => $user->id])->get(route('tally-sheet.history'))
+    $this->actingAs($admin)->withSession(tallySheetSession($user, $world ?? null, $vendor ?? null))->get(route('tally-sheet.history'))
         ->assertSuccessful()
         ->assertViewIs('pages.tally-sheet.history')
         ->assertViewHas('normalizedTransactions', function ($transactions) use ($newerPositive, $olderNegative, $world, $user) {

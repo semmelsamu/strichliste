@@ -2,7 +2,7 @@
 @use (App\Enums\UserType)
 @use (App\Models\Transaction)
 
-<x-layouts.tally-sheet title="Verlauf" activeTab="history" :user="$user">
+<x-layouts.tally-sheet title="Verlauf" activeTab="history">
     <x-wrapper class="space-y-section">
         <table class="table">
             <thead>
@@ -39,7 +39,7 @@
                                 Geld bei {{$transaction->fromUser->name }} eingezahlt
                             @elseif ($transaction->toUser->type == UserType::World->value)
                                 Geld bei {{$transaction->toUser->name }} ausgezahlt
-                            @elseif ($transaction->fromUser->is($user))
+                            @elseif ($transaction->fromUser->is(tally_session()->get('user')))
                                 Geld an {{ $transaction->toUser->name }} gesendet
                             @else
                                 Geld von {{ $transaction->fromUser->name }} empfangen
@@ -47,7 +47,7 @@
                         </th>
                         <td class="text-right">
                             <x-currency
-                                :amount="$transaction->fromUser->is($user) ? -1 * $transaction->amount : $transaction->amount"
+                                :amount="$transaction->fromUser->is(tally_session()->get('user')) ? -1 * $transaction->amount : $transaction->amount"
                             />
                         </td>
                         @if ($transaction->created_at->gt(now()->subMinutes(5)) && !$transaction->undone()->exists())

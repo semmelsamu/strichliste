@@ -7,7 +7,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class EnsureTallySheetUserSelected
+class EnsureTallySessionRunning
 {
     public function __construct(private readonly TallySheetSessionService $tallySheetSessionService) {}
 
@@ -18,8 +18,8 @@ class EnsureTallySheetUserSelected
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (! $this->tallySheetSessionService->isLoggedIn()) {
-            return redirect()->route('tally-sheet.auth.list-users');
+        if (! $this->tallySheetSessionService->isRunning()) {
+            return redirect()->route('tally-sheet.start-session');
         }
 
         return $next($request);

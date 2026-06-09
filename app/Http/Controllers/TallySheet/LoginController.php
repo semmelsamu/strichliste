@@ -5,7 +5,7 @@ namespace App\Http\Controllers\TallySheet;
 use App\Enums\UserType;
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\TallySheetSession;
+use App\Services\TallySheetSessionService;
 use Closure;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
-    public function __construct(private readonly TallySheetSession $tallySheetSession) {}
+    public function __construct(private readonly TallySheetSessionService $tallySheetSessionService) {}
 
     public function listUsers()
     {
@@ -26,7 +26,7 @@ class LoginController extends Controller
 
     private function userStartPage(User $user): RedirectResponse
     {
-        $this->tallySheetSession->selectUser($user);
+        $this->tallySheetSessionService->login($user);
 
         if ($user->balance <= 0) {
             return redirect()->route('tally-sheet.show-deposit');
@@ -71,7 +71,7 @@ class LoginController extends Controller
 
     public function logout(): RedirectResponse
     {
-        $this->tallySheetSession->forgetUser();
+        $this->tallySheetSessionService->logout();
 
         return redirect()->route('tally-sheet.auth.list-users');
     }
