@@ -2,7 +2,6 @@
 
 namespace App\Http\Middleware;
 
-use App\Enums\UserType;
 use App\Services\TallySheetSessionService;
 use Closure;
 use Illuminate\Http\Request;
@@ -19,11 +18,7 @@ class EnsureTallySheetUserSelected
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $user = $this->tallySheetSessionService->get('user');
-
-        if (! $user || $user->type != UserType::NormalUser) {
-            $this->tallySheetSessionService->logout();
-
+        if (! $this->tallySheetSessionService->isLoggedIn()) {
             return redirect()->route('tally-sheet.auth.list-users');
         }
 

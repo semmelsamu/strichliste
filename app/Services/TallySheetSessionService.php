@@ -16,6 +16,8 @@ class TallySheetSessionService
 
     public function initialize(User $world, User $vendor)
     {
+        $this->clear();
+
         if ($world->type !== UserType::World || $world->trashed()) {
             throw new InvalidArgumentException('The given world user is invalid.');
         }
@@ -76,5 +78,15 @@ class TallySheetSessionService
         } else {
             return $session;
         }
+    }
+
+    public function isRunning(): bool
+    {
+        return $this->get('world') && $this->get('vendor');
+    }
+
+    public function isLoggedIn(): bool
+    {
+        return (bool) $this->get('user');
     }
 }

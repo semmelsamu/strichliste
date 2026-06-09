@@ -18,7 +18,9 @@ class EnsureTallySessionRunning
      */
     public function handle(Request $request, Closure $next): Response
     {
-        dd($this->tallySheetSessionService->get());
+        if (! $this->tallySheetSessionService->isRunning()) {
+            return redirect()->route('tally-sheet.start-session');
+        }
 
         return $next($request);
     }
