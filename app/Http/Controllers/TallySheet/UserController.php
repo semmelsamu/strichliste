@@ -43,7 +43,7 @@ class UserController extends Controller
         $user->save();
 
         return redirect()
-            ->route('tally-sheet.deposit', [
+            ->route('tally-sheet.show-deposit', [
                 'user' => $user->id,
             ])
             ->with('toast', [

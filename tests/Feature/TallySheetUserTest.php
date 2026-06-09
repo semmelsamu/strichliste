@@ -32,7 +32,7 @@ test('new tally sheet users can register and are redirected to deposit', functio
         'username' => 'new-member',
         'pin' => '1234',
     ])
-        ->assertRedirectToRoute('tally-sheet.deposit', ['user' => User::where('name', 'new-member')->value('id')])
+        ->assertRedirectToRoute('tally-sheet.show-deposit', ['user' => User::where('name', 'new-member')->value('id')])
         ->assertSessionHas('toast.type', 'success');
 
     $user = User::where('name', 'new-member')->firstOrFail();
@@ -66,7 +66,7 @@ test('users without a pin go directly to their start page', function () {
     ]);
 
     $this->actingAs($admin)->get(route('tally-sheet.auth.login', $userWithNoBalance))
-        ->assertRedirect(route('tally-sheet.deposit', $userWithNoBalance));
+        ->assertRedirect(route('tally-sheet.show-deposit', $userWithNoBalance));
 
     $this->actingAs($admin)->get(route('tally-sheet.auth.login', $userWithBalance))
         ->assertRedirect(route('tally-sheet.buy-overview', $userWithBalance));
@@ -84,7 +84,7 @@ test('users with a pin must enter it before reaching their start page', function
     $this->actingAs($admin)->post(route('tally-sheet.auth.validate-pin', $user), [
         'user' => $user->id,
         'pin' => '1234',
-    ])->assertRedirect(route('tally-sheet.deposit', $user));
+    ])->assertRedirect(route('tally-sheet.show-deposit', $user));
 });
 
 test('an incorrect tally sheet pin is rejected', function () {

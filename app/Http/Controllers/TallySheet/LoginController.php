@@ -24,7 +24,7 @@ class LoginController extends Controller
     {
         if ($user->balance <= 0) {
             return redirect()
-                ->route('tally-sheet.deposit', [
+                ->route('tally-sheet.show-deposit', [
                     'user' => $user,
                 ]);
         } else {
