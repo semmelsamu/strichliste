@@ -18,12 +18,12 @@
 
                 <div class="grid grid-cols-2 gap-content border-t p-content">
                     <div class="space-y-inline">
-                        <label for="vendor-override" class="block">
+                        <label for="vendor" class="block">
                             Vendor-Nutzer anpassen
                         </label>
                         <select
-                            name="vendor-override"
-                            id="type"
+                            name="vendor"
+                            id="vendor"
                             class="text-input w-full"
                         >
                             @foreach ($vendors as $user)
@@ -34,12 +34,12 @@
                         </select>
                     </div>
                     <div class="space-y-inline">
-                        <label for="world-override" class="block">
+                        <label for="world" class="block">
                             World-Nutzer anpassen
                         </label>
                         <select
-                            name="world-override"
-                            id="type"
+                            name="world"
+                            id="world"
                             class="text-input w-full"
                         >
                             @foreach ($worlds as $user)

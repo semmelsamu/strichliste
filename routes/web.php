@@ -29,12 +29,7 @@ Route::middleware('auth')->group(function () {
         ]);
     })->name('article-list');
 
-    Route::get('tally-sheet/start-session', function () {
-        return view('pages.tally-sheet.start-session', [
-            'vendors' => User::where('type', UserType::Vendor)->get(),
-            'worlds' => User::where('type', UserType::World)->get(),
-        ]);
-    })->name('tally-sheet.start-session');
+    Route::get('tally-sheet/start-session', [TallySheet\SessionController::class, "startSession"])->name('tally-sheet.start-session');
 
     Route::middleware(EnsureTallySessionRunning::class)->name('tally-sheet.')->prefix('tally-sheet')->group(function () {
 
