@@ -1,5 +1,6 @@
 @use (Illuminate\Support\Facades\Auth)
 @use (App\Models\User)
+@use (App\Services\TallySheetSessionService)
 
 <x-layouts.main :title="$title">
     <header class="space-y-content bg-fsim-medium">
@@ -14,6 +15,7 @@
                 {{ $user->name }}
             </a>
             <x-currency class="mr-auto" :amount="$user->balance" />
+            <p class="text-text-secondary">{{ app(TallySheetSessionService::class)->get('world')->name }} &#8594; {{ app(TallySheetSessionService::class)->get('vendor')->name }}</p>
             <a
                 class="button bg-fsim-light"
                 href="{{ route('tally-sheet.auth.logout') }}"
