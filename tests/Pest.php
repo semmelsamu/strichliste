@@ -1,5 +1,9 @@
 <?php
 
+use App\Models\Article;
+use App\Models\ArticlePrice;
+use App\Models\Category;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -44,7 +48,37 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+function testUser(array $attributes = []): User
 {
-    // ..
+    return User::factory()->create(array_merge([
+        'name' => fake()->unique()->userName(),
+    ], $attributes));
+}
+
+function testCategory(array $attributes = []): Category
+{
+    $category = new Category;
+    $category->name = $attributes['name'] ?? fake()->unique()->word();
+    $category->icon = $attributes['icon'] ?? 'lucide-circle';
+    $category->save();
+
+    return $category;
+}
+
+function testArticle(array $attributes = [], ?float $price = 1.20): Article
+{
+    $article = new Article;
+    $article->name = $attributes['name'] ?? fake()->unique()->word();
+    $article->category_id = $attributes['category_id'] ?? testCategory()->id;
+    $article->sounds = $attributes['sounds'] ?? null;
+    $article->save();
+
+    if ($price !== null) {
+        $articlePrice = new ArticlePrice;
+        $articlePrice->article_id = $article->id;
+        $articlePrice->price = $price;
+        $articlePrice->save();
+    }
+
+    return $article;
 }
