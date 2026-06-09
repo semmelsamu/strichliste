@@ -9,13 +9,13 @@ use App\Services\TallySheetSessionService;
 
 class ViewController extends Controller
 {
-    public function __construct(private readonly TallySheetSessionService $tallySheetSession) {}
+    public function __construct(private readonly TallySheetSessionService $tallySheetSessionService) {}
 
     public function showBuyOverview()
     {
         return view('pages.tally-sheet.buy-overview', [
             'categories' => Category::all(),
-            'user' => $this->tallySheetSession->get('user'),
+            'user' => $this->tallySheetSessionService->get('user'),
         ]);
     }
 
@@ -23,20 +23,20 @@ class ViewController extends Controller
     {
         return view('pages.tally-sheet.buy-category', [
             'category' => Category::with('articles')->firstWhere('id', $category_id),
-            'user' => $this->tallySheetSession->get('user'),
+            'user' => $this->tallySheetSessionService->get('user'),
         ]);
     }
 
     public function showDeposit()
     {
         return view('pages.tally-sheet.deposit', [
-            'user' => $this->tallySheetSession->get('user'),
+            'user' => $this->tallySheetSessionService->get('user'),
         ]);
     }
 
     public function showHistory()
     {
-        $user = $this->tallySheetSession->get('user');
+        $user = $this->tallySheetSessionService->get('user');
 
         return view('pages.tally-sheet.history', [
             'normalizedTransactions' => $user->transactions()

@@ -20,12 +20,12 @@ class TransactionController extends Controller
 {
     public function __construct(
         private readonly TransactionService $transactionService,
-        private readonly TallySheetSessionService $tallySheetSession,
+        private readonly TallySheetSessionService $tallySheetSessionService,
     ) {}
 
     public function depositMoney(Request $request): RedirectResponse
     {
-        $user = $this->tallySheetSession->get('user');
+        $user = $this->tallySheetSessionService->get('user');
 
         $validated = $request->validate([
             'action' => ['required', Rule::in(['deposit', 'withdraw'])],
@@ -74,7 +74,7 @@ class TransactionController extends Controller
 
     public function buyArticle(Request $request): RedirectResponse
     {
-        $user = $this->tallySheetSession->get('user');
+        $user = $this->tallySheetSessionService->get('user');
 
         $validated = $request->validate([
             'vendor' => [
@@ -112,7 +112,7 @@ class TransactionController extends Controller
 
     public function buyArticleByBarcode(Request $request): RedirectResponse
     {
-        $user = $this->tallySheetSession->get('user');
+        $user = $this->tallySheetSessionService->get('user');
 
         $validated = $request->validate([
             'vendor' => [
@@ -150,7 +150,7 @@ class TransactionController extends Controller
 
     public function undoTransaction(Request $request): RedirectResponse
     {
-        $user = $this->tallySheetSession->get('user');
+        $user = $this->tallySheetSessionService->get('user');
 
         $validated = $request->validate([
             'transaction' => [
