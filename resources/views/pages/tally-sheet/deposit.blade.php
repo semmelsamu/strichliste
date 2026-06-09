@@ -8,8 +8,6 @@
                 action="{{ route('tally-sheet.deposit') }}"
             >
                 @csrf
-                <input type="hidden" name="world" value="2" />
-
                 <div class="mr-content flex items-center gap-inline">
                     <input
                         type="number"
@@ -64,7 +62,6 @@
                             action="{{ route('tally-sheet.deposit') }}"
                         >
                             @csrf
-                            <input type="hidden" name="world" value="2" />
                             <input
                                 type="hidden"
                                 name="amount"
