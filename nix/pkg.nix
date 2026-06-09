@@ -1,16 +1,20 @@
 {
   php,
   buildNpmPackage,
+  stdenv,
   lib,
   pkgs,
   ...
 }:
 let
-  frontend = buildNpmPackage rec {
+  version = "0.1";
+  name = "strichliste";
 
-    name = "strichliste-frontend";
-    version = "0.1";
-    pname = "${name}-${version}";
+  npmDrv = buildNpmPackage {
+
+    inherit version;
+    name = "${name}-npm";
+    pname = "${name}-npm-${version}";
 
     src = ../.;
 
@@ -23,29 +27,46 @@ let
       cp -r public/build/* $out
     '';
   };
+
+  phpDrv = php.buildComposerProject {
+    inherit version;
+
+    src = ../.;
+    name = "${name}-php";
+    pname = "${name}-php-${version}";
+
+    vendorHash = "sha256-VVISoVd1LAG1c5m8mvopGRhg/Ds8hUe0AGIHPfm77Jg=";
+
+    nativeBuildInputs = [
+      pkgs.php
+    ];
+
+    # installPhase = ''
+    #   mkdir -p $out
+    #   cp -r * $out
+
+    #   mkdir -p $out/public/build
+    #   cp -r ${frontend}/* $out/public/build/
+    # '';
+
+    fixupPhase = ''
+      php artisan optimize
+      php artisan icons:cache
+    '';
+  };
+
 in
+stdenv.mkDerivation {
+  inherit name version;
 
-php.buildComposerProject rec {
-  src = ../.;
-  name = "strichliste";
-  version = "0.1";
-  pname = "${name}-${version}";
-  vendorHash = "sha256-VVISoVd1LAG1c5m8mvopGRhg/Ds8hUe0AGIHPfm77Jg=";
-
-  nativeBuildInputs = with pkgs; [
-    php
-  ];
+  src = phpDrv;
 
   installPhase = ''
     mkdir -p $out
-
-    cp -r * $out
+    cp -r share/php/${name}-php-${version}/* $out
 
     mkdir -p $out/public/build
-    cp -r ${frontend}/* $out/public/build/
+    cp -r ${npmDrv}/* $out/public/build
   '';
 
-  # fixupPhase = ''
-  #   php artisan optimize
-  # '';
 }
