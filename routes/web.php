@@ -47,35 +47,39 @@ Route::middleware('auth')->group(function () {
         Route::controller(TallySheet\UserController::class)->group(function () {
             Route::get('/users/create', 'create')->name('users.create');
             Route::post('/users', 'store')->name('users.store');
+        });
 
-            Route::middleware(EnsureTallySheetUserSelected::class)->group(function () {
+        Route::middleware(EnsureTallySheetUserSelected::class)->group(function () {
+
+            Route::controller(TallySheet\UserController::class)->group(function () {
                 Route::get('/user-settings', 'edit')->name('users.edit');
                 Route::put('/user-settings', 'update')->name('users.update');
                 Route::delete('/user-settings', 'destroy')->name('users.destroy');
                 Route::post('/user-settings/pin', 'updatePin')->name('users.update-pin');
                 Route::delete('/user-settings/pin', 'removePin')->name('users.remove-pin');
             });
-        });
 
-        Route::middleware(EnsureTallySheetUserSelected::class)->controller(TallySheet\ViewController::class)->group(function () {
+            Route::controller(TallySheet\ViewController::class)->group(function () {
 
-            Route::get('/buy', 'showBuyOverview')->name('buy-overview');
-            Route::get('/buy/category/{category_id}', 'showBuyCategory')->name('buy-categories');
+                Route::get('/buy', 'showBuyOverview')->name('buy-overview');
+                Route::get('/buy/category/{category_id}', 'showBuyCategory')->name('buy-categories');
 
-            Route::get('/deposit', 'showDeposit')->name('show-deposit');
+                Route::get('/deposit', 'showDeposit')->name('show-deposit');
 
-            Route::get('/history', 'showHistory')->name('history');
+                Route::get('/history', 'showHistory')->name('history');
 
-        });
+            });
 
-        Route::middleware(EnsureTallySheetUserSelected::class)->controller(TallySheet\TransactionController::class)->group(function () {
+            Route::controller(TallySheet\TransactionController::class)->group(function () {
 
-            Route::post('/deposit', 'depositMoney')->name('deposit');
+                Route::post('/deposit', 'depositMoney')->name('deposit');
 
-            Route::post('/buy', 'buyArticle')->name('buy');
-            Route::post('/buy-by-barcode', 'buyArticleByBarcode')->name('buy-by-barcode');
+                Route::post('/buy', 'buyArticle')->name('buy');
+                Route::post('/buy-by-barcode', 'buyArticleByBarcode')->name('buy-by-barcode');
 
-            Route::post('/undo', 'undoTransaction')->name('undo');
+                Route::post('/undo', 'undoTransaction')->name('undo');
+
+            });
 
         });
     });
