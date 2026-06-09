@@ -44,4 +44,15 @@ class SessionController extends Controller
 
         return redirect()->route('tally-sheet.auth.list-users');
     }
+
+    public function stopSession()
+    {
+        $this->tallySheetSession->clear();
+
+        return redirect()->route('dashboard')
+            ->with('toast', [
+                'type' => 'success',
+                'message' => 'Strichlisten-Session beendet.',
+            ]);
+    }
 }

@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\UserType;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\LoginController;
@@ -10,7 +9,6 @@ use App\Http\Controllers\UserController;
 use App\Http\Middleware\EnsureTallySessionRunning;
 use App\Http\Middleware\EnsureTallySheetUserSelected;
 use App\Models\Category;
-use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/login', [LoginController::class, 'login'])->name('login')->middleware('guest');
@@ -29,9 +27,11 @@ Route::middleware('auth')->group(function () {
         ]);
     })->name('article-list');
 
-    Route::get('tally-sheet/start-session', [TallySheet\SessionController::class, "startSession"])->name('tally-sheet.start-session');
+    Route::get('tally-sheet/start-session', [TallySheet\SessionController::class, 'startSession'])->name('tally-sheet.start-session');
 
     Route::middleware(EnsureTallySessionRunning::class)->name('tally-sheet.')->prefix('tally-sheet')->group(function () {
+
+        Route::get('stop-session', [TallySheet\SessionController::class, 'stopSession'])->name('stop-session');
 
         Route::name('auth.')->controller(TallySheet\LoginController::class)->group(function () {
             Route::get('/', 'listUsers')->name('list-users');
