@@ -5,11 +5,11 @@ namespace App\Http\Controllers\TallySheet;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Transaction;
-use App\Services\TallySheetSession;
+use App\Services\TallySheetSessionService;
 
 class ViewController extends Controller
 {
-    public function __construct(private readonly TallySheetSession $tallySheetSession) {}
+    public function __construct(private readonly TallySheetSessionService $tallySheetSession) {}
 
     public function showBuyOverview()
     {

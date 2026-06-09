@@ -5,7 +5,7 @@ namespace App\Http\Controllers\TallySheet;
 use App\Enums\UserType;
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Services\TallySheetSession;
+use App\Services\TallySheetSessionService;
 use Closure;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
-    public function __construct(private readonly TallySheetSession $tallySheetSession) {}
+    public function __construct(private readonly TallySheetSessionService $tallySheetSession) {}
 
     public function listUsers()
     {

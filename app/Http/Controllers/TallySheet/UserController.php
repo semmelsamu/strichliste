@@ -5,14 +5,14 @@ namespace App\Http\Controllers\TallySheet;
 use App\Enums\UserType;
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Services\TallySheetSession;
+use App\Services\TallySheetSessionService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
-    public function __construct(private readonly TallySheetSession $tallySheetSession) {}
+    public function __construct(private readonly TallySheetSessionService $tallySheetSession) {}
 
     /**
      * Display a listing of the resource.

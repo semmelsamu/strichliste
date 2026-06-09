@@ -5,14 +5,14 @@ namespace App\Http\Controllers\TallySheet;
 use App\Enums\UserType;
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Services\TallySheetSession;
+use App\Services\TallySheetSessionService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 class SessionController extends Controller
 {
     public function __construct(
-        private readonly TallySheetSession $tallySheetSession,
+        private readonly TallySheetSessionService $tallySheetSession,
     ) {}
 
     public function startSession(Request $request)

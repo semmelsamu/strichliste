@@ -8,7 +8,7 @@ use App\Models\Article;
 use App\Models\Barcode;
 use App\Models\Transaction;
 use App\Models\User;
-use App\Services\TallySheetSession;
+use App\Services\TallySheetSessionService;
 use App\Services\TransactionService;
 use Closure;
 use Illuminate\Http\RedirectResponse;
@@ -20,7 +20,7 @@ class TransactionController extends Controller
 {
     public function __construct(
         private readonly TransactionService $transactionService,
-        private readonly TallySheetSession $tallySheetSession,
+        private readonly TallySheetSessionService $tallySheetSession,
     ) {}
 
     public function depositMoney(Request $request): RedirectResponse

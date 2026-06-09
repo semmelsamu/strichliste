@@ -6,7 +6,7 @@ use App\Enums\UserType;
 use App\Models\User;
 use InvalidArgumentException;
 
-class TallySheetSession
+class TallySheetSessionService
 {
     public const WORLD_SESSION_KEY = 'tally_sheet.world_id';
 
