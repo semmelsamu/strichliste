@@ -5,19 +5,20 @@ namespace App\Http\Controllers\TallySheet;
 use App\Enums\UserType;
 use App\Http\Controllers\Controller;
 use App\Models\Article;
-use App\Models\BuyArticleTransaction;
 use App\Models\Transaction;
-use App\Models\UndoTransaction;
 use App\Models\User;
+use App\Services\TransactionService;
 use Closure;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Number;
 use Illuminate\Validation\Rule;
 
 class TransactionController extends Controller
 {
-    public function depositMoney(Request $request, User $user)
+    public function __construct(private readonly TransactionService $transactionService) {}
+
+    public function depositMoney(Request $request, User $user): RedirectResponse
     {
         $validated = $request->validate([
             'action' => ['required', Rule::in(['deposit', 'withdraw'])],
@@ -48,19 +49,13 @@ class TransactionController extends Controller
 
         $action = $validated['action'];
         $amount = $validated['amount'];
-        $world = $validated['world'];
+        $world = User::findOrFail($validated['world']);
 
-        $transaction = new Transaction;
-
-        if ($action == 'deposit') {
-            $transaction->amount = $amount;
-        } else {
-            $transaction->amount = -1 * $amount;
-        }
-
-        $transaction->from_user_id = $world;
-        $transaction->to_user_id = $user->id;
-        $transaction->save();
+        $this->transactionService->transferMoney(
+            user: $user,
+            world: $world,
+            amount: $action == 'deposit' ? $amount : -1 * $amount,
+        );
 
         return back()
             ->with('toast', [
@@ -70,7 +65,7 @@ class TransactionController extends Controller
             ->with('sound', $action == 'deposit' ? 'spongebob-moneten' : 'wobble');
     }
 
-    public function buyArticle(Request $request, User $user)
+    public function buyArticle(Request $request, User $user): RedirectResponse
     {
         $validated = $request->validate([
             'vendor' => [
@@ -92,22 +87,10 @@ class TransactionController extends Controller
             ],
         ]);
 
-        $userId = $user->id;
-        $vendorId = $validated['vendor'];
-        $article = Article::find($validated['article']);
+        $vendor = User::findOrFail($validated['vendor']);
+        $article = Article::findOrFail($validated['article']);
 
-        DB::transaction(function () use ($userId, $vendorId, $article) {
-            $transaction = new Transaction;
-            $transaction->from_user_id = $userId;
-            $transaction->to_user_id = $vendorId;
-            $transaction->amount = $article->currentPrice;
-            $transaction->save();
-
-            $buyArticleTransaction = new BuyArticleTransaction;
-            $buyArticleTransaction->transaction_id = $transaction->id;
-            $buyArticleTransaction->article_id = $article->id;
-            $buyArticleTransaction->save();
-        });
+        $this->transactionService->buyArticle($user, $vendor, $article);
 
         return back()
             ->with('toast', [
@@ -117,7 +100,7 @@ class TransactionController extends Controller
             ->with('sound', collect($article->sounds ?? ['kaching'])->random());
     }
 
-    public function undoTransaction(Request $request, User $user)
+    public function undoTransaction(Request $request, User $user): RedirectResponse
     {
         $validated = $request->validate([
             'transaction' => [
@@ -141,21 +124,9 @@ class TransactionController extends Controller
             ],
         ]);
 
-        $transactionToUndo = Transaction::find($validated['transaction']);
+        $transactionToUndo = Transaction::findOrFail($validated['transaction']);
 
-        DB::transaction(function () use ($transactionToUndo) {
-            $transaction = new Transaction;
-            $transaction->from_user_id = $transactionToUndo->from_user_id;
-            $transaction->to_user_id = $transactionToUndo->to_user_id;
-            $transaction->amount = -$transactionToUndo->amount;
-            $transaction->save();
-
-            $undoTransaction = new UndoTransaction;
-            $undoTransaction->transaction_id = $transaction->id;
-            $undoTransaction->undone_transaction_id = $transactionToUndo->id;
-            $undoTransaction->save();
-
-        });
+        $this->transactionService->undoTransaction($transactionToUndo);
 
         return back()
             ->with('toast', [

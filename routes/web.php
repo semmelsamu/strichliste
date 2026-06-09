@@ -60,6 +60,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/deposit', 'depositMoney')->name('deposit');
 
             Route::post('/buy', 'buyArticle')->name('buy');
+            Route::post('/buy-by-barcode', 'buyArticleByBarcode')->name('buy-by-barcode');
 
             Route::post('/undo', 'undoTransaction')->name('undo');
 
