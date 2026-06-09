@@ -1,9 +1,11 @@
 <?php
 
+use App\Enums\UserType;
 use App\Models\Article;
 use App\Models\ArticlePrice;
 use App\Models\Category;
 use App\Models\User;
+use App\Services\TallySheetSessionService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -63,6 +65,30 @@ function testCategory(array $attributes = []): Category
     $category->save();
 
     return $category;
+}
+
+/**
+ * @return array<string, int>
+ */
+function tallySheetRunningSession(?User $world = null, ?User $vendor = null): array
+{
+    $world ??= testUser(['type' => UserType::World]);
+    $vendor ??= testUser(['type' => UserType::Vendor]);
+
+    return [
+        TallySheetSessionService::WORLD_SESSION_KEY => $world->id,
+        TallySheetSessionService::VENDOR_SESSION_KEY => $vendor->id,
+    ];
+}
+
+/**
+ * @return array<string, int>
+ */
+function tallySheetSession(User $user, ?User $world = null, ?User $vendor = null): array
+{
+    return array_merge(tallySheetRunningSession($world, $vendor), [
+        TallySheetSessionService::USER_SESSION_KEY => $user->id,
+    ]);
 }
 
 function testArticle(array $attributes = [], ?float $price = 1.20): Article

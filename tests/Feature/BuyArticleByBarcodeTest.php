@@ -13,9 +13,9 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 pest()->use(RefreshDatabase::class);
 
 test('a user can buy an article by scanning its barcode', function () {
-    [$user, $vendor, $article] = createBarcodePurchaseFixtures(userBalance: 5.00, articlePrice: 1.50);
+    [$user, $world, $vendor, $article] = createBarcodePurchaseFixtures(userBalance: 5.00, articlePrice: 1.50);
 
-    $response = $this->actingAs($user)->withSession(['tally_sheet.user_id' => $user->id])->post(route('tally-sheet.buy-by-barcode'), [
+    $response = $this->actingAs($user)->withSession(tallySheetSession($user, $world, $vendor))->post(route('tally-sheet.buy-by-barcode'), [
         'vendor' => $vendor->id,
         'barcode' => '1234567890',
     ]);
@@ -39,9 +39,9 @@ test('a user can buy an article by scanning its barcode', function () {
 });
 
 test('a user cannot buy an article by barcode without enough balance', function () {
-    [$user, $vendor] = createBarcodePurchaseFixtures(userBalance: 1.00, articlePrice: 1.50);
+    [$user, $world, $vendor] = createBarcodePurchaseFixtures(userBalance: 1.00, articlePrice: 1.50);
 
-    $response = $this->actingAs($user)->withSession(['tally_sheet.user_id' => $user->id])->post(route('tally-sheet.buy-by-barcode'), [
+    $response = $this->actingAs($user)->withSession(tallySheetSession($user, $world, $vendor))->post(route('tally-sheet.buy-by-barcode'), [
         'vendor' => $vendor->id,
         'barcode' => '1234567890',
     ]);
@@ -56,7 +56,7 @@ test('a user cannot buy an article by barcode without enough balance', function 
 });
 
 /**
- * @return array{0: User, 1: User, 2: Article}
+ * @return array{0: User, 1: User, 2: User, 3: Article}
  */
 function createBarcodePurchaseFixtures(float $userBalance, float $articlePrice): array
 {
@@ -90,5 +90,5 @@ function createBarcodePurchaseFixtures(float $userBalance, float $articlePrice):
     $barcode->barcode = '1234567890';
     $barcode->save();
 
-    return [$user, $vendor, $article];
+    return [$user, $world, $vendor, $article];
 }
