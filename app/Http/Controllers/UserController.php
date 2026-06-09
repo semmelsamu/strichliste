@@ -131,4 +131,14 @@ class UserController extends Controller
             ->route('users.edit', $user)
             ->with('toast', ['type' => 'success', 'message' => 'Passwort wurde gespeichert.']);
     }
+
+    public function removePin(User $user)
+    {
+        $user->pin = null;
+        $user->save();
+
+        return redirect()
+            ->route('users.edit', $user)
+            ->with('toast', ['type' => 'success', 'message' => 'PIN entfernt.']);
+    }
 }

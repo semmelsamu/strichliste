@@ -76,6 +76,7 @@ class TransactionController extends Controller
             'article' => [
                 'required',
                 'integer',
+                'bail',
                 'exists:articles,id',
                 function (string $attribute, mixed $value, Closure $fail) use ($user) {
                     $article = Article::find($value);
