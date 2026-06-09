@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\TallySheet;
 
 use App\Http\Controllers\Controller;
+use App\Models\Article;
 use App\Models\Category;
 use App\Models\Transaction;
 use App\Services\TallySheetSessionService;
@@ -13,8 +14,21 @@ class ViewController extends Controller
 
     public function showBuyOverview()
     {
+        $user = $this->tallySheetSessionService->get('user');
+
         return view('pages.tally-sheet.buy-overview', [
             'categories' => Category::all(),
+            'mostFrequentArticles' => Article::query()
+                ->select('articles.*')
+                ->selectRaw('COUNT(buy_article_transactions.transaction_id) as purchases_count')
+                ->join('buy_article_transactions', 'articles.id', '=', 'buy_article_transactions.article_id')
+                ->join('transactions', 'buy_article_transactions.transaction_id', '=', 'transactions.id')
+                ->where('transactions.from_user_id', $user->id)
+                ->where('transactions.created_at', '>=', now()->subMonths(3))
+                ->groupBy('articles.id')
+                ->orderByDesc('purchases_count')
+                ->limit(3)
+                ->get(),
         ]);
     }
 

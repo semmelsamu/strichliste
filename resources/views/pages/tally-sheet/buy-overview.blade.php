@@ -7,9 +7,11 @@
         <section class="space-y-inline">
             <h2>Häufig gekauft</h2>
             <div class="grid grid-cols-3 gap-inline">
-                @foreach (($categories->first()?->articles?->take(3)) ?? [] as $article)
+                @forelse ($mostFrequentArticles as $article)
                     <x-article-card :article="$article" />
-                @endforeach
+                @empty
+                    <p class="col-span-full p-section text-center text-text-secondary">Häufig gekaufte Artikel werden hier angezeigt, allerdings hast du noch keine Artikel gekauft.</p>
+                @endforelse
             </div>
         </section>
         <section class="space-y-inline">
