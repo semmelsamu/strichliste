@@ -2,9 +2,9 @@
 
 use App\Services\TallySheetSessionService;
 
-if (! function_exists('tally_session')) {
-    function tally_session(?string $key = null)
+if (! function_exists('tally_session()')) {
+    function tally_session()
     {
-        return app(TallySheetSessionService::class)->get($key);
+        return app(TallySheetSessionService::class);
     }
 }
