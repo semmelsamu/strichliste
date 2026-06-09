@@ -2,12 +2,15 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\TallySheetSessionService;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class EnsureTallySessionRunning
 {
+    public function __construct(private readonly TallySheetSessionService $tallySheetSessionService) {}
+
     /**
      * Handle an incoming request.
      *
@@ -15,6 +18,8 @@ class EnsureTallySessionRunning
      */
     public function handle(Request $request, Closure $next): Response
     {
+        dd($this->tallySheetSessionService->get());
+
         return $next($request);
     }
 }

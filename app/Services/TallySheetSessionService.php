@@ -50,7 +50,7 @@ class TallySheetSessionService
         session()->forget(self::VENDOR_SESSION_KEY);
     }
 
-    public function get(?string $key)
+    public function get(?string $key = null)
     {
         $worldId = session(self::WORLD_SESSION_KEY);
         $vendorId = session(self::VENDOR_SESSION_KEY);

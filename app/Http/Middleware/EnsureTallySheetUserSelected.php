@@ -10,6 +10,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class EnsureTallySheetUserSelected
 {
+    public function __construct(private readonly TallySheetSessionService $tallySheetSessionService) {}
+
     /**
      * Handle an incoming request.
      *
@@ -17,10 +19,10 @@ class EnsureTallySheetUserSelected
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $user = app(TallySheetSessionService::class)->get('user');
+        $user = $this->tallySheetSessionService->get('user');
 
         if (! $user || $user->type != UserType::NormalUser) {
-            app(TallySheetSessionService::class)->logout();
+            $this->tallySheetSessionService->logout();
 
             return redirect()->route('tally-sheet.auth.list-users');
         }
