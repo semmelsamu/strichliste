@@ -15,7 +15,9 @@
                 {{ $user->name }}
             </a>
             <x-currency class="mr-auto" :amount="$user->balance" />
-            <p class="text-text-secondary">{{ app(TallySheetSessionService::class)->get('world')->name }} &#8594; {{ app(TallySheetSessionService::class)->get('vendor')->name }}</p>
+            <p class="text-text-secondary">
+                {{ tally_session('world')->name }} &#8594; {{ tally_session('vendor')->name }}
+            </p>
             <a
                 class="button bg-fsim-light"
                 href="{{ route('tally-sheet.auth.logout') }}"
