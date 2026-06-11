@@ -29,6 +29,11 @@ in
   options.services.semmelstrichliste = {
     enable = mkEnableOption "enable the strichliste";
 
+    stateVersion = mkOption {
+      type = types.enum [ 1 ];
+      description = "The stateversion of the setup";
+    };
+
     package = mkOption {
       type = types.package;
       default = self.packages.x86_64-linux.default;
@@ -99,9 +104,22 @@ in
         DB_CONNECTION = "${cfg.database.type}";
         DB_DATABASE = "${cfg.paths.database}";
         APP_BASE_PATH = "${cfg.paths.storage}";
+        # APP_LOCALE = "de";
+        # APP_CURRENCY = "EUR";
       };
     in
     mkIf cfg.enable {
+      environment.systemPackages = [
+        (pkgs.writeShellScriptBin "semmelstrichliste-php" ''
+          ${lib.concatMapAttrsStringSep "\n" (name: value: "export ${name}=${value}") envVars}
+
+          cd "${cfg.package}"
+
+          export PATH=$PATH:${pkgs.php}/bin:${pkgs.sqlite}/bin
+
+          "$@"
+        '')
+      ];
       systemd.services."strichliste-setup" = {
         environment = envVars;
 
@@ -118,14 +136,23 @@ in
               fi
 
               mkdir -p ${cfg.paths.storage}
-              cp -r ${cfg.package}/storage/* "${cfg.paths.storage}"
+              cp -u -r ${cfg.package}/storage/* "${cfg.paths.storage}"
 
-              mkdir -p ${cfg.paths.storage}/bootstrap/cache
+              mkdir -p ${cfg.paths.storage}/bootstrap/
+              cp -r ${cfg.package}/bootstrap/* ${cfg.paths.storage}/bootstrap
+
+
+              chmod -R 755 ${cfg.paths.storage}
 
               cd "${cfg.package}"
 
+              echo "Migrating..."
               ${php} artisan migrate --force
+
+              echo "Seeding..."
               ${php} artisan db:seed --force
+
+              echo "Done :)"
 
               cd "${cfg.paths.rootDir}"
               touch .is_setup
@@ -179,7 +206,7 @@ in
 
                 extraConfig = ''
                   fastcgi_pass 127.0.0.1:${toString cfg.settings.port};
-                  include fastcgi_params;
+                  include ${config.services.nginx.package}/conf/fastcgi_params;
                   fastcgi_hide_header X-Powered-By;
                 '';
               };

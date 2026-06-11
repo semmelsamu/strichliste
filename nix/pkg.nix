@@ -41,14 +41,6 @@ let
       pkgs.php
     ];
 
-    # installPhase = ''
-    #   mkdir -p $out
-    #   cp -r * $out
-
-    #   mkdir -p $out/public/build
-    #   cp -r ${frontend}/* $out/public/build/
-    # '';
-
     fixupPhase = ''
       php artisan optimize
       php artisan icons:cache
