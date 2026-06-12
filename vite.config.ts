@@ -11,17 +11,7 @@ export default defineConfig({
             fonts: [
                 local("Rubik", {
                     alias: "rubik",
-                    variants: [
-                        {
-                            src: "resources/fonts/Rubik/Rubik-VariableFont_wght.ttf",
-                            weight: "100 900",
-                        },
-                        {
-                            src: "resources/fonts/Rubik/Rubik-Italic-VariableFont_wght.ttf",
-                            weight: "100 900",
-                            style: "italic",
-                        },
-                    ],
+                    src: "resources/fonts/rubik/*.ttf",
                     fallbacks: ["ui-sans-serif", "system-ui", "sans-serif"],
                 }),
             ],
