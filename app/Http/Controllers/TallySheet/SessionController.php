@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\TallySheet;
 
-use App\Enums\UserType;
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Rules\UserHasRole;
 use App\Services\TallySheetSessionService;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class SessionController extends Controller
 {
@@ -19,8 +19,8 @@ class SessionController extends Controller
     {
         if (! $request->query('world') || ! $request->query('vendor')) {
             return view('pages.tally-sheet.start-session', [
-                'vendors' => User::where('type', UserType::Vendor)->get(),
-                'worlds' => User::where('type', UserType::World)->get(),
+                'vendors' => User::role(UserRole::Vendor)->get(),
+                'worlds' => User::role(UserRole::World)->get(),
             ]);
         }
 
@@ -28,12 +28,12 @@ class SessionController extends Controller
             'world' => [
                 'required',
                 'integer',
-                Rule::exists('users', 'id')->where('type', UserType::World->value),
+                new UserHasRole(UserRole::World->value),
             ],
             'vendor' => [
                 'required',
                 'integer',
-                Rule::exists('users', 'id')->where('type', UserType::Vendor->value),
+                new UserHasRole(UserRole::Vendor->value),
             ],
         ]);
 
