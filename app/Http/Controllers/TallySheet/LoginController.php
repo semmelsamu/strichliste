@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\TallySheet;
 
-use App\Enums\UserType;
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\TallySheetSessionService;
@@ -19,7 +19,7 @@ class LoginController extends Controller
     {
         return view('pages.tally-sheet.auth.login', [
             'usersByLetter' => User::groupByFirstLetter(
-                User::where('type', UserType::NormalUser)->get()
+                User::role(UserRole::TallyUser)->get()
             ),
         ]);
     }
@@ -37,7 +37,7 @@ class LoginController extends Controller
 
     public function login(Request $request, User $user)
     {
-        if ($user->type !== UserType::NormalUser) {
+        if (! $user->role(UserRole::TallyUser)) {
             return redirect()->route('tally-sheet.auth.list-users');
         }
 
@@ -50,7 +50,7 @@ class LoginController extends Controller
 
     public function validatePin(Request $request, User $user): RedirectResponse
     {
-        if ($user->type !== UserType::NormalUser) {
+        if (! $user->role(UserRole::TallyUser)) {
             return redirect()->route('tally-sheet.auth.list-users');
         }
 
