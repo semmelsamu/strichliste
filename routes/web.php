@@ -80,6 +80,10 @@ Route::middleware('auth')->group(function () {
         });
     });
 
+});
+
+Route::middleware('role:admin')->group(function () {
+
     Route::controller(ArticleController::class)->group(function () {
 
         Route::post('articles/{article}/restore', 'restore')->name('articles.restore')->withTrashed();
