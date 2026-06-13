@@ -8,6 +8,7 @@
 
     <title>{{ $title }} | Strichliste der FSIM</title>
 
+    @fonts
     @vite (['resources/css/app.css', 'resources/js/app.ts'])
 </head>
 <body

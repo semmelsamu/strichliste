@@ -1,11 +1,9 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
-@import "../fonts/Rubik/Rubik.css";
-
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
+@source "../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php";
+@source "../../storage/framework/views/*.php";
+@source "../**/*.blade.php";
+@source "../**/*.js";
 
 @import "./utilities.css";
 @import "./theme.css" layer(theme);
