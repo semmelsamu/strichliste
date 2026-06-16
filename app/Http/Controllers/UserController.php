@@ -6,7 +6,6 @@ use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rules\Enum;
 
 class UserController extends Controller
 {
@@ -36,7 +35,6 @@ class UserController extends Controller
         $validated = $request->validate([
             'username' => ['required', 'string', 'unique:users,name'],
             'password' => ['required', 'string'],
-            'type' => ['required', 'string', new Enum(UserRole::class)],
         ]);
 
         $user = new User;
@@ -44,9 +42,7 @@ class UserController extends Controller
         $user->password = $validated['password'];
         $user->save();
 
-        $user->roles()->attach(UserRole::from($validated['type']));
-
-        return redirect()->route('users.index')->with('toast', [
+        return redirect()->route('users.edit', $user)->with('toast', [
             'type' => 'success',
             'message' => 'Nutzer wurde erstellt.',
         ]);
