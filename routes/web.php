@@ -108,6 +108,7 @@ Route::middleware('role:admin')->group(function () {
     Route::controller(UserController::class)->group(function () {
 
         Route::put('users/{user}/pin', 'updatePassword')->name('users.update-password')->withTrashed();
+        Route::put('users/{user}/roles', 'updateRoles')->name('users.update-roles')->withTrashed();
         Route::delete('users/{user}/pin', 'removePin')->name('users.remove-pin')->withTrashed();
         Route::post('users/{user}/restore', 'restore')->name('users.restore')->withTrashed();
 

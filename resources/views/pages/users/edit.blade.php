@@ -1,4 +1,4 @@
-@use (App\Enums\UserType)
+@use (App\Enums\UserRole)
 
 <x-layouts.main title="Nutzer bearbeiten">
     <header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
@@ -21,38 +21,63 @@
                 value="{{ old('name') ?? $user->name }}"
             />
 
-            <label for="type" class="mb-2 block">Typ</label>
-            <select name="type" id="type" class="text-input">
-                @foreach (UserType::cases() as $type)
-                    <option
-                        value="{{ $type }}"
-                        @selected ($user->type == $type)
-                    >
-                        {{ $type }}
-                    </option>
-                @endforeach
-            </select>
-            <dl class="mt-inline max-w-prose *:text-text-secondary">
-                <dt>world</dt>
-                <dd>
-                    Wird Geld auf ein Konto eingezahlt, wird eine Transaktion
-                    von einem
-                    <code>world</code>
-                    -Nutzer zum Nutzerkonto erstellt.
-                </dd>
-                <dt>vendor</dt>
-                <dd>
-                    Ein Kauf eines Artikels wird mit einer Transaktion von einem
-                    Nutzerkonto auf ein
-                    <code>vendor</code>
-                    -Konto erfasst.
-                </dd>
-            </dl>
-
-            <button type="submit" class="button mt-content bg-fsim-light">
-                Änderungen speichern
+            <button type="submit" class="button bg-fsim-light">
+                Nutzername speichern
             </button>
         </form>
+
+        <section class="my-section">
+            <h2 class="mb-inline">Rollen</h2>
+            <form
+                method="POST"
+                action="{{ route("users.update-roles", $user->id) }}"
+            >
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th class="w-0">Aktiv</th>
+                            <th>Rolle</th>
+                            <th>Beschreibung</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse (UserRole::cases() as $role)
+                            <tr>
+                                <td class="align-middle">
+                                    <input
+                                        type="checkbox"
+                                        class="checkbox"
+                                        @checked ($user->hasRole($role))
+                                        name="{{ $role->value }}"
+                                        id="role-{{ $role->value }}"
+                                    />
+                                </td>
+                                <th>
+                                    <label for="role-{{ $role->value }}">
+                                        {{ $role->displayName() }}
+                                    </label>
+                                </th>
+                                <td class="max-w-prose text-text-secondary">
+                                    {{ $role->description() }}
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="3" class="text-center">
+                                    Es sind keine Rollen verfügbar.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                    <caption>
+                        {{ sizeof(UserRole::cases()) }} Rollen gesamt.
+                    </caption>
+                </table>
+                <button type="submit" class="button bg-fsim-light">
+                    Rollen speichern
+                </button>
+            </form>
+        </section>
 
         <h2 class="mt-section mb-content">Danger zone</h2>
 
