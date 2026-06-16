@@ -1,3 +1,5 @@
+@use (App\Enums\UserRole)
+
 <x-layouts.main title="Preisliste">
     <x-wrapper class="space-y-content">
         <header class="space-y-inline">
@@ -33,31 +35,33 @@
                 Preisliste
             </a>
 
-            <p class="mt-content flex items-center gap-2 text-lg font-medium">
-                <x-lucide-pencil-ruler />
-                Administration
-            </p>
+            @if (auth()->user()->hasRole(UserRole::Admin->value))
+                <p class="mt-content flex items-center gap-2 text-lg font-medium">
+                    <x-lucide-pencil-ruler />
+                    Administration
+                </p>
+                <a class="card p-inline" href="{{ route("articles.index") }}">
+                    Artikel bearbeiten
+                </a>
+                <a class="card p-inline" href="{{ route("categories.index") }}">
+                    Kategorien bearbeiten
+                </a>
+                <a class="card p-inline" href="{{ route("users.index") }}">
+                    Nutzer bearbeiten
+                </a>
+                <a class="card p-inline" href="{{ route("sounds.index") }}">
+                    Sounds bearbeiten
+                </a>
+            @endif
 
-            <a class="card p-inline" href="{{ route("articles.index") }}">
-                Artikel bearbeiten
-            </a>
-            <a class="card p-inline" href="{{ route("categories.index") }}">
-                Kategorien bearbeiten
-            </a>
-            <a class="card p-inline" href="{{ route("users.index") }}">
-                Nutzer bearbeiten
-            </a>
-            <a class="card p-inline" href="{{ route("sounds.index") }}">
-                Sounds bearbeiten
-            </a>
-
-            <p class="mt-content flex items-center gap-2 text-lg font-medium">
-                <x-lucide-boxes />
-                Modi
-            </p>
-
-            <a class="card p-inline">Kassen-Modus</a>
-            <a class="card p-inline">Helfer-Modus</a>
+            @if (auth()->user()->hasRole(UserRole::Admin->value))
+                <p class="mt-content flex items-center gap-2 text-lg font-medium">
+                    <x-lucide-boxes />
+                    Modi
+                </p>
+                <a class="card p-inline">Kassen-Modus</a>
+                <a class="card p-inline">Helfer-Modus</a>
+            @endif
 
             <p class="mt-content flex items-center gap-2 text-lg font-medium">
                 <x-lucide-circle-user-round />
