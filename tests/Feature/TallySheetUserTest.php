@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\UserType;
+use App\Enums\UserRole;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -9,11 +9,11 @@ use Illuminate\Support\Facades\Hash;
 pest()->use(RefreshDatabase::class);
 
 test('tally sheet user list groups only normal users by first letter', function () {
-    $admin = testUser(['type' => UserType::Vendor]);
-    $alice = testUser(['name' => 'Alice', 'type' => UserType::NormalUser]);
-    $bob = testUser(['name' => 'Bob', 'type' => UserType::NormalUser]);
-    testUser(['name' => 'Vendor', 'type' => UserType::Vendor]);
-    testUser(['name' => 'World', 'type' => UserType::World]);
+    $admin = testUser(['type' => UserRole::Vendor]);
+    $alice = testUser(['name' => 'Alice', 'type' => UserRole::Customer]);
+    $bob = testUser(['name' => 'Bob', 'type' => UserRole::Customer]);
+    testUser(['name' => 'Vendor', 'type' => UserRole::Vendor]);
+    testUser(['name' => 'World', 'type' => UserRole::World]);
 
     $this->actingAs($admin)->withSession(tallySheetRunningSession())->get(route('tally-sheet.auth.list-users'))
         ->assertSuccessful()
@@ -40,7 +40,7 @@ test('new tally sheet users can register and are redirected to deposit', functio
         ->assertSessionHas('toast.type', 'success')
         ->assertSessionHas('tally_sheet.user_id', $user->id);
 
-    expect($user->type)->toBe(UserType::NormalUser)
+    expect($user->type)->toBe(UserRole::Customer)
         ->and(Hash::check('1234', $user->pin))->toBeTrue();
 });
 
@@ -58,7 +58,7 @@ test('tally sheet registration validates username and unique names', function (a
 
 test('users without a pin go directly to their start page', function () {
     $admin = testUser();
-    $world = testUser(['type' => UserType::World]);
+    $world = testUser(['type' => UserRole::World]);
     $userWithNoBalance = testUser(['pin' => null]);
     $userWithBalance = testUser(['pin' => null]);
 
@@ -158,16 +158,16 @@ test('guarded tally sheet routes reject deleted or non normal selected users', f
     $admin = testUser();
     $selectedUser = testUser($attributes);
 
-    if ($selectedUser->type === UserType::NormalUser) {
+    if ($selectedUser->type === UserRole::Customer) {
         $selectedUser->delete();
     }
 
     $this->actingAs($admin)->withSession(tallySheetSession($selectedUser))->get(route('tally-sheet.deposit'))
         ->assertRedirect(route('tally-sheet.auth.list-users'));
 })->with([
-    'soft deleted normal user' => [['type' => UserType::NormalUser]],
-    'vendor user' => [['type' => UserType::Vendor]],
-    'world user' => [['type' => UserType::World]],
+    'soft deleted normal user' => [['type' => UserRole::Customer]],
+    'vendor user' => [['type' => UserRole::Vendor]],
+    'world user' => [['type' => UserRole::World]],
 ]);
 
 test('tally sheet logout clears only selected tally user session', function () {

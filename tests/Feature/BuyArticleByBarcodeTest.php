@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\UserType;
+use App\Enums\UserRole;
 use App\Models\Article;
 use App\Models\ArticlePrice;
 use App\Models\Barcode;
@@ -60,9 +60,9 @@ test('a user cannot buy an article by barcode without enough balance', function 
  */
 function createBarcodePurchaseFixtures(float $userBalance, float $articlePrice): array
 {
-    $world = User::factory()->create(['type' => UserType::World]);
-    $vendor = User::factory()->create(['type' => UserType::Vendor]);
-    $user = User::factory()->create(['type' => UserType::NormalUser]);
+    $world = User::factory()->create(['type' => UserRole::World]);
+    $vendor = User::factory()->create(['type' => UserRole::Vendor]);
+    $user = User::factory()->create(['type' => UserRole::Customer]);
 
     Transaction::factory()->create([
         'from_user_id' => $world->id,

@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\UserType;
+use App\Enums\UserRole;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 
@@ -21,7 +21,7 @@ test('guests can view the login form', function () {
 test('users can authenticate with their name and password', function () {
     $user = testUser([
         'password' => Hash::make('secret-password'),
-        'type' => UserType::NormalUser,
+        'type' => UserRole::Customer,
     ]);
 
     $this->post(route('authenticate'), [

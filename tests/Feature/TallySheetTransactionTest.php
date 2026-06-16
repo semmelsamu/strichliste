@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\UserType;
+use App\Enums\UserRole;
 use App\Models\BuyArticleTransaction;
 use App\Models\Transaction;
 use App\Models\UndoTransaction;
@@ -13,9 +13,9 @@ function transactionUsers(): array
 {
     return [
         'admin' => testUser(),
-        'world' => testUser(['type' => UserType::World]),
-        'vendor' => testUser(['type' => UserType::Vendor]),
-        'user' => testUser(['type' => UserType::NormalUser]),
+        'world' => testUser(['type' => UserRole::World]),
+        'vendor' => testUser(['type' => UserRole::Vendor]),
+        'user' => testUser(['type' => UserRole::Customer]),
     ];
 }
 

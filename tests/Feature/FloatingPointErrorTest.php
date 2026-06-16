@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\UserType;
+use App\Enums\UserRole;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -8,9 +8,9 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 pest()->use(RefreshDatabase::class);
 
 test('that when a user has 0,20 € and withdraws 0,20 €, it succeds', function () {
-    $world = User::factory()->create(['type' => UserType::World]);
-    $vendor = User::factory()->create(['type' => UserType::Vendor]);
-    $user = User::factory()->create(['type' => UserType::NormalUser]);
+    $world = User::factory()->create(['type' => UserRole::World]);
+    $vendor = User::factory()->create(['type' => UserRole::Vendor]);
+    $user = User::factory()->create(['type' => UserRole::Customer]);
 
     Transaction::factory()->create([
         'from_user_id' => $world->id,

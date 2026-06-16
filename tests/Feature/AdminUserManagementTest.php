@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\UserType;
+use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
@@ -9,8 +9,8 @@ pest()->use(RefreshDatabase::class);
 
 test('admin user index includes active and deactivated users', function () {
     $admin = testUser();
-    $activeUser = testUser(['type' => UserType::NormalUser]);
-    $deactivatedUser = testUser(['type' => UserType::Vendor]);
+    $activeUser = testUser(['type' => UserRole::Customer]);
+    $deactivatedUser = testUser(['type' => UserRole::Vendor]);
     $deactivatedUser->delete();
 
     $response = $this->actingAs($admin)->get(route('users.index'));
@@ -27,14 +27,14 @@ test('admins can create users with a hashed password and explicit type', functio
     $this->actingAs($admin)->post(route('users.store'), [
         'username' => 'vendor-user',
         'password' => 'vendor-password',
-        'type' => UserType::Vendor->value,
+        'type' => UserRole::Vendor->value,
     ])
         ->assertRedirect(route('users.index'))
         ->assertSessionHas('toast.type', 'success');
 
     $createdUser = User::where('name', 'vendor-user')->firstOrFail();
 
-    expect($createdUser->type)->toBe(UserType::Vendor)
+    expect($createdUser->type)->toBe(UserRole::Vendor)
         ->and(Hash::check('vendor-password', $createdUser->password))->toBeTrue();
 });
 
@@ -45,25 +45,25 @@ test('admin user creation validates required unique fields and enum type', funct
     $this->actingAs($admin)->post(route('users.store'), $payload)
         ->assertSessionHasErrors($errors);
 })->with([
-    'missing username' => [['password' => 'secret', 'type' => UserType::NormalUser->value], ['username']],
-    'duplicate username' => [['username' => 'existing-user', 'password' => 'secret', 'type' => UserType::NormalUser->value], ['username']],
-    'missing password' => [['username' => 'new-user', 'type' => UserType::NormalUser->value], ['password']],
+    'missing username' => [['password' => 'secret', 'type' => UserRole::Customer->value], ['username']],
+    'duplicate username' => [['username' => 'existing-user', 'password' => 'secret', 'type' => UserRole::Customer->value], ['username']],
+    'missing password' => [['username' => 'new-user', 'type' => UserRole::Customer->value], ['password']],
     'invalid type' => [['username' => 'new-user', 'password' => 'secret', 'type' => 'admin'], ['type']],
 ]);
 
 test('admins can update user names and types', function () {
     $admin = testUser();
-    $user = testUser(['type' => UserType::NormalUser]);
+    $user = testUser(['type' => UserRole::Customer]);
 
     $this->actingAs($admin)->patch(route('users.update', $user), [
         'username' => 'renamed-vendor',
-        'type' => UserType::Vendor->value,
+        'type' => UserRole::Vendor->value,
     ])
         ->assertRedirect(route('users.index'))
         ->assertSessionHas('toast.type', 'success');
 
     expect($user->fresh()->name)->toBe('renamed-vendor')
-        ->and($user->fresh()->type)->toBe(UserType::Vendor);
+        ->and($user->fresh()->type)->toBe(UserRole::Vendor);
 });
 
 test('admins cannot rename a user to another users existing name', function () {
@@ -73,7 +73,7 @@ test('admins cannot rename a user to another users existing name', function () {
 
     $this->actingAs($admin)->patch(route('users.update', $secondUser), [
         'username' => $firstUser->name,
-        'type' => UserType::NormalUser->value,
+        'type' => UserRole::Customer->value,
     ])
         ->assertSessionHas('toast.type', 'error');
 
