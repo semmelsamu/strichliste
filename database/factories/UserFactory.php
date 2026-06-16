@@ -20,6 +20,6 @@ class UserFactory extends Factory
 
     public function tally_user(): static
     {
-        return $this->afterCreating(fn (User $user) => $user->assignRole(UserRole::TallyUser));
+        return $this->afterCreating(fn (User $user) => $user->assignRole(UserRole::Customer));
     }
 }

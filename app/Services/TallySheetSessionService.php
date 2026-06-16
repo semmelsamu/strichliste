@@ -33,7 +33,7 @@ class TallySheetSessionService
 
     public function login(User $user): void
     {
-        if (! $user->hasRole(UserRole::TallyUser) || $user->trashed()) {
+        if (! $user->hasRole(UserRole::Customer) || $user->trashed()) {
             throw new InvalidArgumentException('Only active tally users can be selected for the tally sheet session.');
         }
 
@@ -69,7 +69,7 @@ class TallySheetSessionService
                 ->first(),
             'user' => User::query()
                 ->whereKey($userId)
-                ->role(UserRole::TallyUser)
+                ->role(UserRole::Customer)
                 ->first(),
         ];
 

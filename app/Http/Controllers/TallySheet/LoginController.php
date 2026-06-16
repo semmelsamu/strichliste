@@ -19,7 +19,7 @@ class LoginController extends Controller
     {
         return view('pages.tally-sheet.auth.login', [
             'usersByLetter' => User::groupByFirstLetter(
-                User::role(UserRole::TallyUser)->get()
+                User::role(UserRole::Customer)->get()
             ),
         ]);
     }
@@ -37,7 +37,7 @@ class LoginController extends Controller
 
     public function login(Request $request, User $user)
     {
-        if (! $user->role(UserRole::TallyUser)) {
+        if (! $user->role(UserRole::Customer)) {
             return redirect()->route('tally-sheet.auth.list-users');
         }
 
@@ -50,7 +50,7 @@ class LoginController extends Controller
 
     public function validatePin(Request $request, User $user): RedirectResponse
     {
-        if (! $user->role(UserRole::TallyUser)) {
+        if (! $user->role(UserRole::Customer)) {
             return redirect()->route('tally-sheet.auth.list-users');
         }
 

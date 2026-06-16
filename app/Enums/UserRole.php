@@ -4,26 +4,29 @@ namespace App\Enums;
 
 enum UserRole: string
 {
-    case TallyUser = 'tally_user';
+    case Customer = 'customer';
     case Admin = 'admin';
+    case TallyHost = 'tally_host';
     case Vendor = 'vendor';
     case World = 'world';
 
     public function displayName(): string
     {
         return match ($this) {
-            UserRole::TallyUser => 'Tally User',
+            UserRole::Customer => 'Kunde',
             UserRole::Admin => 'Administrator',
-            UserRole::Vendor => 'Vendor',
-            UserRole::World => 'World',
+            UserRole::TallyHost => 'Strichlisten-Host',
+            UserRole::Vendor => 'Verkäufer',
+            UserRole::World => 'Außenwelt',
         };
     }
 
     public function icon(): ?string
     {
         return match ($this) {
-            UserRole::TallyUser => null,
+            UserRole::Customer => null,
             UserRole::Admin => 'lucide-shield',
+            UserRole::TallyHost => 'lucide-tally-5',
             UserRole::Vendor => 'lucide-store',
             UserRole::World => 'lucide-globe',
         };
@@ -32,10 +35,11 @@ enum UserRole: string
     public function description(): string
     {
         return match ($this) {
-            UserRole::TallyUser => 'Nutzer mit dieser Rolle können sich in der Strichliste anmelden, Geld aufladen und Artikel kaufen.',
+            UserRole::Customer => 'Nutzer mit dieser Rolle können sich in der Strichliste anmelden, Geld aufladen und Artikel kaufen.',
             UserRole::Admin => 'Administratoren haben alle Rechte zum Verwalten der Strichliste.',
-            UserRole::Vendor => 'Ein Kauf eines Artikels wird mit einer Transaktion von einem Nutzerkonto auf ein Vendor-Konto erfasst.',
-            UserRole::World => 'Wird Geld auf ein Konto eingezahlt, wird eine Transaktion von einem World-Nutzer zum Nutzerkonto erstellt.',
+            UserRole::Vendor => 'Ein Kauf eines Artikels wird mit einer Transaktion von einem Nutzerkonto auf ein Verkäuferkonto erfasst.',
+            UserRole::World => 'Wird Geld auf ein Konto eingezahlt, wird eine Transaktion der Außenwelt zum Nutzerkonto erstellt.',
+            UserRole::TallyHost => 'Strichlisten-Hosts haben die Berechtigung, eine Strichlisten-Session zu starten.',
         };
     }
 }
