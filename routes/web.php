@@ -27,9 +27,9 @@ Route::middleware('auth')->group(function () {
         ]);
     })->name('article-list');
 
-    Route::get('tally-sheet/start-session', [TallySheet\SessionController::class, 'startSession'])->name('tally-sheet.start-session');
+    Route::get('tally-sheet/start-session', [TallySheet\SessionController::class, 'startSession'])->middleware('role:admin|tally_host')->name('tally-sheet.start-session');
 
-    Route::middleware(EnsureTallySessionRunning::class)->name('tally-sheet.')->prefix('tally-sheet')->group(function () {
+    Route::middleware(['role:admin|tally_host', EnsureTallySessionRunning::class])->name('tally-sheet.')->prefix('tally-sheet')->group(function () {
 
         Route::get('stop-session', [TallySheet\SessionController::class, 'stopSession'])->name('stop-session');
 

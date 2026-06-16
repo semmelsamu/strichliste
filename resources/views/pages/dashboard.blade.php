@@ -15,22 +15,25 @@
                 Hauptfunktionen
             </p>
 
-            <div class="flex gap-inline">
-                <a
-                    class="card flex-1 p-inline"
-                    href="{{ route('tally-sheet.auth.list-users') }}"
-                >
-                    Strichliste
-                </a>
-                @if (tally_session()->isRunning())
+            @if (auth()->user()->hasAnyRole([UserRole::Admin->value, UserRole::TallyHost->value]))
+                <div class="flex gap-inline">
                     <a
-                        class="card bg-red-800 p-inline"
-                        href="{{ route('tally-sheet.stop-session') }}"
+                        class="card flex-1 p-inline"
+                        href="{{ route('tally-sheet.auth.list-users') }}"
                     >
-                        <x-lucide-square />
+                        Strichliste
                     </a>
-                @endif
-            </div>
+                    @if (tally_session()->isRunning())
+                        <a
+                            class="card bg-red-800 p-inline"
+                            href="{{ route('tally-sheet.stop-session') }}"
+                        >
+                            <x-lucide-square />
+                        </a>
+                    @endif
+                </div>
+            @endif
+
             <a class="card p-inline" href="{{ route('article-list') }}">
                 Preisliste
             </a>
