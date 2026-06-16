@@ -18,7 +18,7 @@
         class="flex w-full items-center justify-center gap-inline bg-black p-inline"
     >
         <img src="{{ asset('fsim-logo.svg') }}" class="h-6 w-6" />
-        <a href="{{ route('dashboard') }}">Strichliste der FSIM</a>
+        <a href="/">Strichliste der FSIM</a>
     </nav>
     {{ $slot }}
     @if (session('toast'))
@@ -26,7 +26,7 @@
             {{ session('toast.message') }}
         </x-toast>
     @endif
-    @foreach ($errors->all() as $error)
+    @foreach (isset($errors) ? $errors->all() : [] as $error)
         <x-toast type="error">{{ $error }}</x-toast>
     @endforeach
     @if (session('sound'))
