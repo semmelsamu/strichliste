@@ -32,7 +32,7 @@
                             {{ $user->name }}
                         </th>
                         <td>
-                            @foreach ($user->roles->map(fn ($role) => UserRole::from($role->name)) as $role)
+                            @foreach ($user->roles->map(fn ($role) => UserRole::tryFrom($role->name))->filter() as $role)
                                 <div class="badge">
                                     @if ($role->icon())
                                         @svg ($role->icon())
