@@ -16,7 +16,7 @@ class UserController extends Controller
     public function index()
     {
         return view('pages.users.index', [
-            'users' => User::orderBy('type', 'desc')->withTrashed()->get(),
+            'users' => User::with('roles')->withTrashed()->get(),
         ]);
     }
 
