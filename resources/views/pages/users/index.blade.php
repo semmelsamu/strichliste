@@ -32,27 +32,12 @@
                             {{ $user->name }}
                         </th>
                         <td>
-                            @foreach ($user->roles->map(fn ($role) => $role->name) as $role)
+                            @foreach ($user->roles->map(fn ($role) => UserRole::from($role->name)) as $role)
                                 <div class="badge">
-                                    @switch ($role)
-                                        @case (UserRole::Admin->value)
-                                            <x-lucide-star />
-                                            Admin
-                                            @break
-                                        @case (UserRole::World->value)
-                                            <x-lucide-globe />
-                                            Tally User
-                                            @break
-                                        @case (UserRole::Vendor->value)
-                                            <x-lucide-banknote />
-                                            Vendor
-                                            @break
-                                        @case (UserRole::TallyUser->value)
-                                            Tally User
-                                            @break
-                                        @default
-                                            {{ $role }}
-                                    @endswitch
+                                    @if ($role->icon())
+                                        @svg ($role->icon())
+                                    @endif
+                                    {{ $role->displayName() }}
                                 </div>
                             @endforeach
                         </td>
