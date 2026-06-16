@@ -75,12 +75,10 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             'username' => ['required', 'string'],
-            'type' => ['required', 'string', new Enum(UserRole::class)],
         ]);
 
         try {
             $user->name = $validated['username'];
-            $user->type = $validated['type'];
             $user->save();
 
             return redirect()->route('users.index')->with('toast', [
@@ -131,6 +129,23 @@ class UserController extends Controller
         return redirect()
             ->route('users.edit', $user)
             ->with('toast', ['type' => 'success', 'message' => 'Passwort wurde gespeichert.']);
+    }
+
+    public function updateRoles(Request $request, User $user)
+    {
+        $roles = [];
+
+        foreach (UserRole::cases() as $role) {
+            if ($request->input($role->value)) {
+                array_push($roles, $role->value);
+            }
+        }
+
+        $user->syncRoles($roles);
+
+        return redirect()
+            ->route('users.edit', $user)
+            ->with('toast', ['type' => 'success', 'message' => 'Rollen wurden aktualisiert.']);
     }
 
     public function removePin(User $user)

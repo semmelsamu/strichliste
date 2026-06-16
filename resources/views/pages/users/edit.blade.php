@@ -32,6 +32,7 @@
                 method="POST"
                 action="{{ route("users.update-roles", $user->id) }}"
             >
+                @method ('PUT')
                 <table class="table">
                     <thead>
                         <tr>
