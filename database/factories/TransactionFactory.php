@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\UserRole;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -18,7 +19,7 @@ class TransactionFactory extends Factory
      */
     public function definition(): array
     {
-        $users = User::inRandomOrder()->limit(2)->pluck('id');
+        $users = User::role(UserRole::Customer->value)->inRandomOrder()->limit(2)->pluck('id');
 
         return [
             'amount' => fake()->randomFloat(1, 0.2, 10),
