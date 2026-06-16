@@ -54,7 +54,13 @@
                                     />
                                 </td>
                                 <th>
-                                    <label for="role-{{ $role->value }}">
+                                    <label
+                                        class="flex items-center gap-2"
+                                        for="role-{{ $role->value }}"
+                                    >
+                                        @if ($role->icon())
+                                            @svg ($role->icon())
+                                        @endif
                                         {{ $role->displayName() }}
                                     </label>
                                 </th>
