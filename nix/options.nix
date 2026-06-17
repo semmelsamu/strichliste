@@ -23,6 +23,43 @@ let
         options = sub-cfg;
       };
     };
+
+  nginxUser = config.services.nginx.user;
+
+  isSqlite = cfg.database.type == "sqlite";
+
+  appKeyFile = "${cfg.paths.rootDir}/app_key";
+  setupMarker = "${cfg.paths.rootDir}/.is_setup";
+
+  # Everything that goes into the runtime `.env` except APP_KEY, which is
+  # generated once and persisted (see the setup service below).
+  envSettings = {
+    APP_NAME = cfg.settings.name;
+    APP_ENV = "production";
+    APP_DEBUG = if cfg.settings.debug then "true" else "false";
+    APP_URL = "${if cfg.settings.expectSSL then "https" else "http"}://${cfg.settings.domain}";
+    APP_LOCALE = cfg.settings.locale;
+
+    LOG_CHANNEL = "stderr";
+
+    DB_CONNECTION = cfg.database.type;
+
+    SESSION_DRIVER = "database";
+    CACHE_STORE = "database";
+    QUEUE_CONNECTION = "database";
+  }
+  // lib.optionalAttrs isSqlite {
+    DB_DATABASE = cfg.paths.database;
+  };
+
+  envFile = pkgs.writeText "strichliste.env" (
+    lib.concatStringsSep "\n" (lib.mapAttrsToList (name: value: "${name}=${value}") envSettings) + "\n"
+  );
+
+  php = lib.getExe pkgs.php;
+  rsync = lib.getExe pkgs.rsync;
+  sudo = lib.getExe' pkgs.sudo "sudo";
+  coreutils = pkgs.coreutils;
 in
 
 {
@@ -48,22 +85,24 @@ in
 
       application = mkOption {
         type = types.path;
-        description = "Path of the application directory";
+        description = "Path of the (writable) application directory";
         default = "${cfg.paths.rootDir}/application";
       };
 
       database = mkOption {
-        type = types.path;
+        type = types.nullOr types.path;
         description = "Path of the database file (only used when using sqlite)";
-        default =
-          if (cfg.database.configure && cfg.database.type == "sqlite") then
-            "${cfg.paths.rootDir}/database.db"
-          else
-            null;
+        default = if isSqlite then "${cfg.paths.rootDir}/database.db" else null;
       };
     };
 
     settings = mkSubmoduleOption {
+      name = mkOption {
+        type = types.str;
+        description = "The application name";
+        default = "Strichliste";
+      };
+
       domain = mkOption {
         type = types.str;
         description = "The domain of the app";
@@ -72,11 +111,25 @@ in
       expectSSL = mkOption {
         type = types.bool;
         description = "Should the app expect https or not";
+        default = true;
+      };
+
+      debug = mkOption {
+        type = types.bool;
+        description = "Run the application in debug mode (verbose error pages)";
+        default = false;
+      };
+
+      locale = mkOption {
+        type = types.str;
+        description = "The application locale";
+        default = "de";
       };
 
       port = mkOption {
         type = types.port;
-        description = "The port of phpfpm pool";
+        description = "The port of the phpfpm pool";
+        default = 9123;
       };
     };
 
@@ -92,150 +145,164 @@ in
           "sqlite"
           "postgres"
         ];
+        default = "sqlite";
       };
     };
   };
 
-  config =
-    let
-      envVars = {
+  config = mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = isSqlite;
+        message = "services.semmelstrichliste currently only supports the sqlite database backend.";
+      }
+    ];
 
-        APP_URL = "${if cfg.settings.expectSSL then "https" else "http"}://${cfg.settings.domain}";
-        DB_CONNECTION = "${cfg.database.type}";
-        DB_DATABASE = "${cfg.paths.database}";
-        # APP_BASE_PATH = "${cfg.paths.application}";
-        # APP_LOCALE = "de";
-        # APP_CURRENCY = "EUR";
-      };
-    in
-    mkIf cfg.enable {
-      environment.systemPackages = [
-        (pkgs.writeShellScriptBin "semmelstrichliste-php" ''
-          ${lib.concatMapAttrsStringSep "\n" (name: value: "export ${name}=${value}") envVars}
+    # Convenience wrapper to run artisan against the live deployment, e.g.
+    # `semmelstrichliste-php artisan tinker`.
+    environment.systemPackages = [
+      (pkgs.writeShellScriptBin "semmelstrichliste-php" ''
+        cd "${cfg.paths.application}"
+        export PATH=$PATH:${pkgs.php}/bin:${pkgs.sqlite}/bin
+        exec ${php} "$@"
+      '')
+    ];
 
-          cd "${cfg.package}"
-
-          export PATH=$PATH:${pkgs.php}/bin:${pkgs.sqlite}/bin:${pkgs.phpPackages.composer}/bin
-
-          "$@"
-        '')
+    systemd.services.strichliste-setup = {
+      description = "Deploy and migrate the strichliste application";
+      wantedBy = [ "multi-user.target" ];
+      before = [
+        "phpfpm-strichliste.service"
+        "nginx.service"
       ];
 
-      systemd.services."strichliste-setup" = {
-        environment = envVars;
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+      };
 
-        script =
-          let
-            php = lib.getExe pkgs.php;
-            sudo = lib.getExe' pkgs.sudo "sudo";
-            rsync = lib.getExe pkgs.rsync;
+      path = [
+        pkgs.php
+        pkgs.sqlite
+        coreutils
+      ];
 
-            nonRootScript = pkgs.writeShellScript "setup" ''
-              set -euo pipefail
-
-              mkdir -p ${cfg.paths.application}
-              ${rsync} -ahq --progress ${cfg.package}/* ${cfg.paths.application}
-
-              if [ -f "${cfg.paths.rootDir}/.is_setup" ]; then
-              exit
-              fi
-
-              chmod -R 755 ${cfg.paths.rootDir}
-
-              cd "${cfg.package}"
-
-              echo "Migrating..."
-              ${php} artisan migrate --force
-
-              echo "Seeding..."
-              ${php} artisan db:seed --force
-
-              echo "Done :)"
-
-              cd "${cfg.paths.rootDir}"
-              touch .is_setup
-            '';
-          in
-          ''
+      script =
+        let
+          # Runs unprivileged as the nginx user, in the writable app directory.
+          deployScript = pkgs.writeShellScript "strichliste-deploy" ''
             set -euo pipefail
 
-            if [ ! -d "${cfg.paths.rootDir}" ]; then
-                mkdir "${cfg.paths.rootDir}"
+            # Generate and persist an application key on first run so that
+            # sessions/encrypted data survive restarts and redeploys.
+            if [ ! -f "${appKeyFile}" ]; then
+              echo "base64:$(${coreutils}/bin/head -c 32 /dev/urandom | ${coreutils}/bin/base64)" > "${appKeyFile}"
+              chmod 600 "${appKeyFile}"
             fi
 
-            chown ${config.services.nginx.user} ${cfg.paths.rootDir}
+            # Sync the immutable package into the writable state directory.
+            # --chmod ensures the copy is writable even though the Nix store is
+            # read-only (storage/ and bootstrap/cache/ must be writable).
+            mkdir -p "${cfg.paths.application}"
+            ${rsync} -rlt --delete --chmod=Du+rwx,Fu+rw \
+              "${cfg.package}/" "${cfg.paths.application}/"
 
-            ${sudo} -E -u ${config.services.nginx.user} ${nonRootScript}
+            cd "${cfg.paths.application}"
 
+            # Write the runtime environment file (base settings + persisted key).
+            ${coreutils}/bin/cat ${envFile} > .env
+            echo "APP_KEY=$(${coreutils}/bin/cat "${appKeyFile}")" >> .env
+            chmod 600 .env
+
+            echo "Migrating database..."
+            ${php} artisan migrate --force
+
+            if [ ! -f "${setupMarker}" ]; then
+              echo "Seeding database..."
+              ${php} artisan db:seed --force
+              touch "${setupMarker}"
+            fi
+
+            # Cache config/routes/views/events now that a real .env exists and
+            # bootstrap/cache is writable.
+            echo "Optimizing..."
+            ${php} artisan optimize
+            ${php} artisan icons:cache
+
+            echo "Done :)"
           '';
+        in
+        ''
+          set -euo pipefail
 
-        wantedBy = [ "multi-user.target" ];
+          mkdir -p "${cfg.paths.rootDir}"
+          chown -R ${nginxUser} "${cfg.paths.rootDir}"
+
+          ${sudo} -u ${nginxUser} ${deployScript}
+        '';
+    };
+
+    services.phpfpm.pools.strichliste = {
+      user = nginxUser;
+
+      settings = {
+        "listen" = "127.0.0.1:${toString cfg.settings.port}";
+        "listen.owner" = nginxUser;
+        "listen.mode" = "0600";
+        "pm" = "dynamic";
+        "pm.max_children" = 32;
+        "pm.max_requests" = 500;
+        "pm.start_servers" = 2;
+        "pm.min_spare_servers" = 2;
+        "pm.max_spare_servers" = 5;
+        "php_admin_value[error_log]" = "stderr";
+        "php_admin_flag[log_errors]" = true;
+        "catch_workers_output" = true;
       };
-      services.nginx = {
-        enable = true;
-        virtualHosts = {
-          ${cfg.settings.domain} = {
-            root = "${cfg.paths.application}/public";
+    };
+
+    services.nginx = {
+      enable = true;
+      virtualHosts.${cfg.settings.domain} = {
+        root = "${cfg.paths.application}/public";
+
+        extraConfig = ''
+          add_header X-Frame-Options "SAMEORIGIN";
+          add_header X-Content-Type-Options "nosniff";
+
+          index index.php;
+          charset utf-8;
+
+          location = /favicon.ico { access_log off; log_not_found off; }
+          location = /robots.txt { access_log off; log_not_found off; }
+
+          error_page 404 /index.php;
+        '';
+
+        locations = {
+          "/" = {
+            tryFiles = "$uri $uri/ /index.php?$query_string";
+          };
+
+          "~ ^/index\\.php(/|$)" = {
+            fastcgiParams = {
+              SCRIPT_FILENAME = "$realpath_root$fastcgi_script_name";
+            };
 
             extraConfig = ''
-              add_header X-Frame-Options "SAMEORIGIN";
-              add_header X-Content-Type-Options "nosniff";
-
-              index index.php;
-              charset utf-8;
-
-              location = /favicon.ico { access_log off; log_not_found off; }
-              location = /robots.txt { access_log off; log_not_found off; }
-
-              error_page 404 /index.php;
+              fastcgi_pass 127.0.0.1:${toString cfg.settings.port};
+              include ${config.services.nginx.package}/conf/fastcgi_params;
+              fastcgi_hide_header X-Powered-By;
             '';
+          };
 
-            locations = {
-              "/" = {
-                tryFiles = "$uri $uri/ /index.php?$query_string";
-              };
-
-              "~ ^/index\\.php(/|$)" = {
-                fastcgiParams = {
-                  SCRIPT_FILENAME = "$realpath_root$fastcgi_script_name";
-
-                }
-                // envVars;
-
-                extraConfig = ''
-                  fastcgi_pass 127.0.0.1:${toString cfg.settings.port};
-                  include ${config.services.nginx.package}/conf/fastcgi_params;
-                  fastcgi_hide_header X-Powered-By;
-                '';
-              };
-
-              "~ /\\.(?!well-known).*" = {
-                extraConfig = ''
-                  deny all;
-                '';
-              };
-            };
+          "~ /\\.(?!well-known).*" = {
+            extraConfig = ''
+              deny all;
+            '';
           };
         };
       };
-
-      services.phpfpm.pools.strichliste = {
-        user = config.services.nginx.user;
-
-        settings = {
-          "listen" = "127.0.0.1:${toString cfg.settings.port}";
-          "listen.owner" = config.services.nginx.user;
-          "listen.mode" = "0600";
-          "pm" = "dynamic";
-          "pm.max_children" = 32;
-          "pm.max_requests" = 500;
-          "pm.start_servers" = 2;
-          "pm.min_spare_servers" = 2;
-          "pm.max_spare_servers" = 5;
-          "php_admin_value[error_log]" = "stderr";
-          "php_admin_flag[log_errors]" = true;
-          "catch_workers_output" = true;
-        };
-      };
     };
+  };
 }
