@@ -74,7 +74,7 @@ class LoginController extends Controller
         return $this->userStartPage($user);
     }
 
-    public function loginByBarcode(Request $request): RedirectResponse
+    public function scanBarcode(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'barcode' => ['required', 'string'],

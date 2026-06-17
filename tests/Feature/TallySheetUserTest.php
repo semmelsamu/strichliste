@@ -145,7 +145,7 @@ test('scanning a barcode linked to a user logs them in without a pin', function 
     $barcode->user_id = $user->id;
     $barcode->save();
 
-    $this->actingAs($admin)->withSession(tallySheetRunningSession($world))->post(route('tally-sheet.auth.login-by-barcode'), [
+    $this->actingAs($admin)->withSession(tallySheetRunningSession($world))->post(route('tally-sheet.auth.scan-barcode'), [
         'barcode' => 'user-login-barcode',
     ])
         ->assertRedirect(route('tally-sheet.buy-overview'))
@@ -155,7 +155,7 @@ test('scanning a barcode linked to a user logs them in without a pin', function 
 test('scanning an unknown barcode keeps the user on the login screen', function () {
     $admin = testUser([], UserRole::TallyHost);
 
-    $this->actingAs($admin)->withSession(tallySheetRunningSession())->post(route('tally-sheet.auth.login-by-barcode'), [
+    $this->actingAs($admin)->withSession(tallySheetRunningSession())->post(route('tally-sheet.auth.scan-barcode'), [
         'barcode' => 'unknown-barcode',
     ])
         ->assertRedirect(route('tally-sheet.auth.list-users'))
@@ -172,7 +172,7 @@ test('scanning a barcode linked to an article shows the article details page', f
     $barcode->article_id = $article->id;
     $barcode->save();
 
-    $this->actingAs($admin)->withSession(tallySheetRunningSession())->post(route('tally-sheet.auth.login-by-barcode'), [
+    $this->actingAs($admin)->withSession(tallySheetRunningSession())->post(route('tally-sheet.auth.scan-barcode'), [
         'barcode' => 'article-login-barcode',
     ])
         ->assertRedirect(route('tally-sheet.article-details', $article))
