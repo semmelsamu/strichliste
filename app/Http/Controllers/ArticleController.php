@@ -132,11 +132,12 @@ class ArticleController extends Controller
     public function addBarcode(Request $request, Article $article)
     {
         $validated = $request->validate([
-            'barcode' => ['required', 'string', 'unique:barcodes,barcode'],
+            'barcode' => ['required', 'string'],
         ]);
 
-        $barcode = new Barcode;
+        $barcode = Barcode::where('barcode', $validated['barcode'])->first() ?? new Barcode;
         $barcode->barcode = $validated['barcode'];
+        $barcode->user_id = null;
         $barcode->article_id = $article->id;
         $barcode->save();
 
