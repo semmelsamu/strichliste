@@ -12,7 +12,7 @@
     <x-scanner>
         <form
             method="POST"
-            action="{{ route('tally-sheet.auth.login-by-barcode') }}"
+            action="{{ route('tally-sheet.auth.scan-barcode') }}"
             x-ref="form"
         >
             @csrf

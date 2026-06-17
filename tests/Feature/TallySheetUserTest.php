@@ -145,7 +145,7 @@ test('scanning a barcode linked to a user logs them in without a pin', function 
     $barcode->user_id = $user->id;
     $barcode->save();
 
-    $this->actingAs($admin)->withSession(tallySheetRunningSession($world))->post(route('tally-sheet.auth.login-by-barcode'), [
+    $this->actingAs($admin)->withSession(tallySheetRunningSession($world))->post(route('tally-sheet.auth.scan-barcode'), [
         'barcode' => 'user-login-barcode',
     ])
         ->assertRedirect(route('tally-sheet.buy-overview'))
@@ -155,7 +155,7 @@ test('scanning a barcode linked to a user logs them in without a pin', function 
 test('scanning an unknown barcode keeps the user on the login screen', function () {
     $admin = testUser([], UserRole::TallyHost);
 
-    $this->actingAs($admin)->withSession(tallySheetRunningSession())->post(route('tally-sheet.auth.login-by-barcode'), [
+    $this->actingAs($admin)->withSession(tallySheetRunningSession())->post(route('tally-sheet.auth.scan-barcode'), [
         'barcode' => 'unknown-barcode',
     ])
         ->assertRedirect(route('tally-sheet.auth.list-users'))
@@ -163,7 +163,7 @@ test('scanning an unknown barcode keeps the user on the login screen', function 
         ->assertSessionMissing('tally_sheet.user_id');
 });
 
-test('scanning a barcode linked to an article keeps the user on the login screen', function () {
+test('scanning a barcode linked to an article shows the article details page', function () {
     $admin = testUser([], UserRole::TallyHost);
     $article = testArticle();
 
@@ -172,12 +172,90 @@ test('scanning a barcode linked to an article keeps the user on the login screen
     $barcode->article_id = $article->id;
     $barcode->save();
 
-    $this->actingAs($admin)->withSession(tallySheetRunningSession())->post(route('tally-sheet.auth.login-by-barcode'), [
+    $this->actingAs($admin)->withSession(tallySheetRunningSession())->post(route('tally-sheet.auth.scan-barcode'), [
         'barcode' => 'article-login-barcode',
     ])
-        ->assertRedirect(route('tally-sheet.auth.list-users'))
+        ->assertRedirect(route('tally-sheet.article-details', $article))
+        ->assertSessionMissing('tally_sheet.user_id');
+});
+
+test('the article details page shows the scanned article', function () {
+    $admin = testUser([], UserRole::TallyHost);
+    $article = testArticle();
+
+    $this->actingAs($admin)->withSession(tallySheetRunningSession())->get(route('tally-sheet.article-details', $article))
+        ->assertSuccessful()
+        ->assertViewIs('pages.tally-sheet.article-details')
+        ->assertViewHas('article', $article);
+});
+
+test('scanning a user barcode on the article details page buys the article without logging in', function () {
+    $admin = testUser([], UserRole::TallyHost);
+    $world = testUser([], UserRole::World);
+    $vendor = testUser([], UserRole::Vendor);
+    $user = testUser([], UserRole::Customer);
+    $article = testArticle(price: 1.20);
+
+    Transaction::factory()->create([
+        'from_user_id' => $world->id,
+        'to_user_id' => $user->id,
+        'amount' => 5,
+    ]);
+
+    $barcode = new Barcode;
+    $barcode->barcode = 'user-purchase-barcode';
+    $barcode->user_id = $user->id;
+    $barcode->save();
+
+    $this->actingAs($admin)->withSession(tallySheetRunningSession($world, $vendor))->post(route('tally-sheet.article-details.buy-by-barcode', $article), [
+        'barcode' => 'user-purchase-barcode',
+    ])
+        ->assertRedirect()
+        ->assertSessionHas('toast.type', 'success')
+        ->assertSessionMissing('tally_sheet.user_id');
+
+    $purchase = Transaction::latest('id')->firstOrFail();
+
+    expect($purchase->from_user_id)->toBe($user->id)
+        ->and($purchase->to_user_id)->toBe($vendor->id)
+        ->and((float) $purchase->amount)->toBe(1.20)
+        ->and((float) $user->fresh()->balance)->toBe(3.80);
+});
+
+test('scanning a user barcode without enough balance logs the user in and sends them to deposit', function () {
+    $admin = testUser([], UserRole::TallyHost);
+    $world = testUser([], UserRole::World);
+    $vendor = testUser([], UserRole::Vendor);
+    $user = testUser([], UserRole::Customer);
+    $article = testArticle(price: 1.20);
+
+    $barcode = new Barcode;
+    $barcode->barcode = 'poor-user-barcode';
+    $barcode->user_id = $user->id;
+    $barcode->save();
+
+    $this->actingAs($admin)->withSession(tallySheetRunningSession($world, $vendor))->post(route('tally-sheet.article-details.buy-by-barcode', $article), [
+        'barcode' => 'poor-user-barcode',
+    ])
+        ->assertRedirect(route('tally-sheet.show-deposit'))
+        ->assertSessionHas('toast.type', 'error')
+        ->assertSessionHas('tally_sheet.user_id', $user->id);
+
+    expect(Transaction::count())->toBe(0);
+});
+
+test('scanning an unknown barcode on the article details page shows an error and does not buy', function () {
+    $admin = testUser([], UserRole::TallyHost);
+    $article = testArticle(price: 1.20);
+
+    $this->actingAs($admin)->withSession(tallySheetRunningSession())->post(route('tally-sheet.article-details.buy-by-barcode', $article), [
+        'barcode' => 'unknown-barcode',
+    ])
+        ->assertRedirect()
         ->assertSessionHas('toast.type', 'error')
         ->assertSessionMissing('tally_sheet.user_id');
+
+    expect(Transaction::count())->toBe(0);
 });
 
 test('tally sheet users can update their username', function () {

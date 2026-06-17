@@ -37,7 +37,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/', 'listUsers')->name('list-users');
             Route::get('/login/{user}', 'login')->name('login');
             Route::post('/login/{user}', 'validatePin')->name('validate-pin');
-            Route::post('/login-by-barcode', 'loginByBarcode')->name('login-by-barcode');
+            Route::post('/scan-barcode', 'scanBarcode')->name('scan-barcode');
             Route::get('/logout', 'logout')->name('logout');
         });
 
@@ -45,6 +45,9 @@ Route::middleware('auth')->group(function () {
             Route::get('/users/create', 'create')->name('users.create');
             Route::post('/users', 'store')->name('users.store');
         });
+
+        Route::get('/article/{article}', [TallySheet\ViewController::class, 'showArticleDetails'])->name('article-details');
+        Route::post('/article/{article}/buy-by-barcode', [TallySheet\TransactionController::class, 'buyArticleByScannedUser'])->name('article-details.buy-by-barcode');
 
         Route::middleware(EnsureTallySheetUserSelected::class)->group(function () {
 

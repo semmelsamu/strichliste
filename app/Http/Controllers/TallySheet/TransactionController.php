@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\TallySheet;
 
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\Article;
 use App\Models\Barcode;
@@ -121,6 +122,42 @@ class TransactionController extends Controller
 
         $vendor = $this->tallySheetSessionService->get('vendor');
         $article = Barcode::where('barcode', $validated['barcode'])->firstOrFail()->article;
+
+        $this->transactionService->buyArticle($user, $vendor, $article);
+
+        return back()
+            ->with('toast', [
+                'type' => 'success',
+                'message' => 'Gekauft: '.$article->name.' für '.Number::currency($article->currentPrice),
+            ])
+            ->with('sound', collect($article->sounds ?? ['kaching'])->random());
+    }
+
+    public function buyArticleByScannedUser(Request $request, Article $article): RedirectResponse
+    {
+        $validated = $request->validate([
+            'barcode' => ['required', 'string'],
+        ]);
+
+        $user = Barcode::where('barcode', $validated['barcode'])->first()?->user;
+
+        if (! $user || ! $user->hasRole(UserRole::Customer)) {
+            return back()->with('toast', [
+                'type' => 'error',
+                'message' => 'Barcode wurde keinem Nutzer zugeordnet.',
+            ]);
+        }
+
+        if ($user->balance < $article->currentPrice) {
+            $this->tallySheetSessionService->login($user);
+
+            return redirect()->route('tally-sheet.show-deposit')->with('toast', [
+                'type' => 'error',
+                'message' => 'Nicht genügend Guthaben. Bitte aufladen.',
+            ]);
+        }
+
+        $vendor = $this->tallySheetSessionService->get('vendor');
 
         $this->transactionService->buyArticle($user, $vendor, $article);
 

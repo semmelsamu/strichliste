@@ -74,13 +74,19 @@ class LoginController extends Controller
         return $this->userStartPage($user);
     }
 
-    public function loginByBarcode(Request $request): RedirectResponse
+    public function scanBarcode(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'barcode' => ['required', 'string'],
         ]);
 
-        $user = Barcode::where('barcode', $validated['barcode'])->first()?->user;
+        $barcode = Barcode::where('barcode', $validated['barcode'])->first();
+
+        if ($barcode?->article) {
+            return redirect()->route('tally-sheet.article-details', $barcode->article);
+        }
+
+        $user = $barcode?->user;
 
         if (! $user || ! $user->hasRole(UserRole::Customer)) {
             return redirect()->route('tally-sheet.auth.list-users')->with('toast', [

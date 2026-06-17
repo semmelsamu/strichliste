@@ -44,6 +44,13 @@ class ViewController extends Controller
         return view('pages.tally-sheet.deposit');
     }
 
+    public function showArticleDetails(Article $article)
+    {
+        return view('pages.tally-sheet.article-details', [
+            'article' => $article,
+        ]);
+    }
+
     public function showHistory()
     {
         $user = $this->tallySheetSessionService->get('user');
