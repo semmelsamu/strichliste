@@ -162,7 +162,7 @@ test('admins can add and remove article barcodes', function () {
     expect(Barcode::whereKey($barcode->id)->exists())->toBeFalse();
 });
 
-test('article barcodes must be unique', function () {
+test('adding a barcode already linked to another article reassigns it', function () {
     $admin = testUser([], UserRole::Admin);
     $firstArticle = testArticle();
     $secondArticle = testArticle();
@@ -174,7 +174,32 @@ test('article barcodes must be unique', function () {
 
     $this->actingAs($admin)->post(route('articles.add-barcode', $secondArticle), [
         'barcode' => 'duplicate-code',
-    ])->assertSessionHasErrors('barcode');
+    ])
+        ->assertRedirect(route('articles.edit', $secondArticle->id))
+        ->assertSessionHas('toast.type', 'success');
+
+    expect($barcode->fresh()->article_id)->toBe($secondArticle->id);
+});
+
+test('adding a barcode already linked to a user reassigns it to the article', function () {
+    $admin = testUser([], UserRole::Admin);
+    $user = testUser([], UserRole::Customer);
+    $article = testArticle();
+
+    $barcode = new Barcode;
+    $barcode->barcode = 'user-owned-code';
+    $barcode->user_id = $user->id;
+    $barcode->save();
+
+    $this->actingAs($admin)->post(route('articles.add-barcode', $article), [
+        'barcode' => 'user-owned-code',
+    ])
+        ->assertRedirect(route('articles.edit', $article->id))
+        ->assertSessionHas('toast.type', 'success');
+
+    expect($barcode->fresh())
+        ->article_id->toBe($article->id)
+        ->user_id->toBeNull();
 });
 
 test('article barcodes are required', function () {

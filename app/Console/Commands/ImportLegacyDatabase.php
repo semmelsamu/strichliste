@@ -80,6 +80,7 @@ class ImportLegacyDatabase extends Command
                 $this->importArticles($category);
                 $this->importArticlePrices();
                 $this->importBarcodes();
+                $this->importUserBarcodes();
                 $this->importTransactions();
             });
         } catch (Throwable $e) {
@@ -229,6 +230,34 @@ class ImportLegacyDatabase extends Command
             $barcode = new Barcode;
             $barcode->barcode = $row->barcode_content;
             $barcode->article_id = $article->id;
+            $barcode->save();
+        }
+    }
+
+    private function importUserBarcodes(): void
+    {
+        $rows = $this->legacy()->table('UserCardNumberMap')->get();
+
+        foreach ($rows as $row) {
+            $user = $this->users[(int) $row->user_id] ?? null;
+
+            if (! $user) {
+                $this->warn("Skipping card number for unknown legacy user {$row->user_id}.");
+
+                continue;
+            }
+
+            // A barcode can only belong to one entity and the article always wins,
+            // so skip any card number already claimed by an imported article barcode.
+            if (Barcode::where('barcode', $row->card_number)->exists()) {
+                $this->warn("Skipping card number {$row->card_number}: already linked to an article.");
+
+                continue;
+            }
+
+            $barcode = new Barcode;
+            $barcode->barcode = $row->card_number;
+            $barcode->user_id = $user->id;
             $barcode->save();
         }
     }

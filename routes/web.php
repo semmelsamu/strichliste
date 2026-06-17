@@ -37,6 +37,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/', 'listUsers')->name('list-users');
             Route::get('/login/{user}', 'login')->name('login');
             Route::post('/login/{user}', 'validatePin')->name('validate-pin');
+            Route::post('/login-by-barcode', 'loginByBarcode')->name('login-by-barcode');
             Route::get('/logout', 'logout')->name('logout');
         });
 
@@ -53,6 +54,8 @@ Route::middleware('auth')->group(function () {
                 Route::delete('/user-settings', 'destroy')->name('users.destroy');
                 Route::post('/user-settings/pin', 'updatePin')->name('users.update-pin');
                 Route::delete('/user-settings/pin', 'removePin')->name('users.remove-pin');
+                Route::post('/user-settings/barcode', 'addBarcode')->name('users.add-barcode');
+                Route::delete('/user-settings/barcode/{barcode}', 'removeBarcode')->name('users.remove-barcode');
             });
 
             Route::controller(TallySheet\ViewController::class)->group(function () {

@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\UserRole;
+use App\Models\Barcode;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -128,6 +129,57 @@ test('tally sheet pin validation requires a pin', function () {
     ])->assertSessionHasErrors('pin');
 });
 
+test('scanning a barcode linked to a user logs them in without a pin', function () {
+    $admin = testUser([], UserRole::TallyHost);
+    $world = testUser([], UserRole::World);
+    $user = testUser(['pin' => '1234'], UserRole::Customer);
+
+    Transaction::factory()->create([
+        'from_user_id' => $world->id,
+        'to_user_id' => $user->id,
+        'amount' => 5,
+    ]);
+
+    $barcode = new Barcode;
+    $barcode->barcode = 'user-login-barcode';
+    $barcode->user_id = $user->id;
+    $barcode->save();
+
+    $this->actingAs($admin)->withSession(tallySheetRunningSession($world))->post(route('tally-sheet.auth.login-by-barcode'), [
+        'barcode' => 'user-login-barcode',
+    ])
+        ->assertRedirect(route('tally-sheet.buy-overview'))
+        ->assertSessionHas('tally_sheet.user_id', $user->id);
+});
+
+test('scanning an unknown barcode keeps the user on the login screen', function () {
+    $admin = testUser([], UserRole::TallyHost);
+
+    $this->actingAs($admin)->withSession(tallySheetRunningSession())->post(route('tally-sheet.auth.login-by-barcode'), [
+        'barcode' => 'unknown-barcode',
+    ])
+        ->assertRedirect(route('tally-sheet.auth.list-users'))
+        ->assertSessionHas('toast.type', 'error')
+        ->assertSessionMissing('tally_sheet.user_id');
+});
+
+test('scanning a barcode linked to an article keeps the user on the login screen', function () {
+    $admin = testUser([], UserRole::TallyHost);
+    $article = testArticle();
+
+    $barcode = new Barcode;
+    $barcode->barcode = 'article-login-barcode';
+    $barcode->article_id = $article->id;
+    $barcode->save();
+
+    $this->actingAs($admin)->withSession(tallySheetRunningSession())->post(route('tally-sheet.auth.login-by-barcode'), [
+        'barcode' => 'article-login-barcode',
+    ])
+        ->assertRedirect(route('tally-sheet.auth.list-users'))
+        ->assertSessionHas('toast.type', 'error')
+        ->assertSessionMissing('tally_sheet.user_id');
+});
+
 test('tally sheet users can update their username', function () {
     $admin = testUser([], UserRole::TallyHost);
     $user = testUser(['name' => 'old-name'], UserRole::Customer);
@@ -181,6 +233,51 @@ test('tally sheet pin update requires a pin', function () {
     $this->actingAs($admin)->withSession(tallySheetSession($user))->post(route('tally-sheet.users.update-pin'), [
         'pin' => null,
     ])->assertSessionHasErrors('pin');
+});
+
+test('tally sheet users can add and remove their barcodes', function () {
+    $admin = testUser([], UserRole::TallyHost);
+    $user = testUser([], UserRole::Customer);
+
+    $this->actingAs($admin)->withSession(tallySheetSession($user))->post(route('tally-sheet.users.add-barcode'), [
+        'barcode' => '4012345678901',
+    ])
+        ->assertRedirect(route('tally-sheet.users.edit'))
+        ->assertSessionHas('toast.type', 'success');
+
+    $barcode = Barcode::where('barcode', '4012345678901')->firstOrFail();
+
+    expect($barcode->user_id)->toBe($user->id);
+
+    $this->actingAs($admin)->withSession(tallySheetSession($user))->delete(route('tally-sheet.users.remove-barcode', $barcode))
+        ->assertRedirect(route('tally-sheet.users.edit'))
+        ->assertSessionHas('toast.type', 'success');
+
+    expect(Barcode::whereKey($barcode->id)->exists())->toBeFalse();
+});
+
+test('tally sheet user barcodes must be unique', function () {
+    $admin = testUser([], UserRole::TallyHost);
+    $firstUser = testUser([], UserRole::Customer);
+    $secondUser = testUser([], UserRole::Customer);
+
+    $barcode = new Barcode;
+    $barcode->barcode = 'duplicate-code';
+    $barcode->user_id = $firstUser->id;
+    $barcode->save();
+
+    $this->actingAs($admin)->withSession(tallySheetSession($secondUser))->post(route('tally-sheet.users.add-barcode'), [
+        'barcode' => 'duplicate-code',
+    ])->assertSessionHasErrors('barcode');
+});
+
+test('tally sheet user barcodes are required', function () {
+    $admin = testUser([], UserRole::TallyHost);
+    $user = testUser([], UserRole::Customer);
+
+    $this->actingAs($admin)->withSession(tallySheetSession($user))->post(route('tally-sheet.users.add-barcode'), [
+        'barcode' => null,
+    ])->assertSessionHasErrors('barcode');
 });
 
 test('tally sheet users can deactivate their account', function () {

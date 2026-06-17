@@ -51,6 +51,11 @@ class User extends Authenticatable
             ->orWhere('to_user_id', $this->id);
     }
 
+    public function barcodes(): HasMany
+    {
+        return $this->hasMany(Barcode::class);
+    }
+
     protected function balance(): Attribute
     {
         return Attribute::make(
