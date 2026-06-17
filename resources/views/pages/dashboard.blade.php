@@ -55,6 +55,7 @@
                 <a class="card p-inline" href="{{ route("sounds.index") }}">
                     Sounds bearbeiten
                 </a>
+                <a class="card p-inline" href="/pulse">Pulse Dashboard</a>
             @endif
 
             @if (auth()->user()->hasRole(UserRole::Admin->value))
