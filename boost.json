@@ -11,7 +11,7 @@
     "sail": false,
     "skills": [
         "laravel-best-practices",
-        "pest-testing",
-        "tailwindcss-development"
+        "pulse-development",
+        "pest-testing"
     ]
 }

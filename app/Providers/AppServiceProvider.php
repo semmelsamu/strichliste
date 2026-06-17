@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Enums\UserRole;
+use App\Models\User;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Number;
 use Illuminate\Support\ServiceProvider;
 
@@ -22,5 +25,9 @@ class AppServiceProvider extends ServiceProvider
     {
         Number::useLocale(config('app.locale'));
         Number::useCurrency(config('app.currency'));
+
+        Gate::define('viewPulse', function (User $user) {
+            return $user->hasRole(UserRole::Admin);
+        });
     }
 }
