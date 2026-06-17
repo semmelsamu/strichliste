@@ -46,6 +46,8 @@ Route::middleware('auth')->group(function () {
             Route::post('/users', 'store')->name('users.store');
         });
 
+        Route::get('/article/{article}', [TallySheet\ViewController::class, 'showArticleDetails'])->name('article-details');
+
         Route::middleware(EnsureTallySheetUserSelected::class)->group(function () {
 
             Route::controller(TallySheet\UserController::class)->group(function () {

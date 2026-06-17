@@ -163,7 +163,7 @@ test('scanning an unknown barcode keeps the user on the login screen', function 
         ->assertSessionMissing('tally_sheet.user_id');
 });
 
-test('scanning a barcode linked to an article keeps the user on the login screen', function () {
+test('scanning a barcode linked to an article shows the article details page', function () {
     $admin = testUser([], UserRole::TallyHost);
     $article = testArticle();
 
@@ -175,9 +175,18 @@ test('scanning a barcode linked to an article keeps the user on the login screen
     $this->actingAs($admin)->withSession(tallySheetRunningSession())->post(route('tally-sheet.auth.login-by-barcode'), [
         'barcode' => 'article-login-barcode',
     ])
-        ->assertRedirect(route('tally-sheet.auth.list-users'))
-        ->assertSessionHas('toast.type', 'error')
+        ->assertRedirect(route('tally-sheet.article-details', $article))
         ->assertSessionMissing('tally_sheet.user_id');
+});
+
+test('the article details page shows the scanned article', function () {
+    $admin = testUser([], UserRole::TallyHost);
+    $article = testArticle();
+
+    $this->actingAs($admin)->withSession(tallySheetRunningSession())->get(route('tally-sheet.article-details', $article))
+        ->assertSuccessful()
+        ->assertViewIs('pages.tally-sheet.article-details')
+        ->assertViewHas('article', $article);
 });
 
 test('tally sheet users can update their username', function () {
