@@ -61,7 +61,6 @@
             x-ref="form"
         >
             @csrf
-            <input type="hidden" name="vendor" value="3" />
             <input type="hidden" name="barcode" x-ref="barcode" />
         </form>
     </x-scanner>
