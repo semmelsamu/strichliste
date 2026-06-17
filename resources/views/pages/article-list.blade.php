@@ -8,7 +8,7 @@
     >
         <nav
             x-ref="nav"
-            class="flex flex-col gap-inline overflow-y-auto touch-none select-none"
+            class="flex touch-none flex-col gap-inline overflow-y-auto select-none"
         >
             @foreach ($categories as $category)
                 <a
