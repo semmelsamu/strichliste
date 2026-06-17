@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\TallySheet;
 
-use App\Enums\UserType;
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\TallySheetSessionService;
@@ -41,13 +41,13 @@ class UserController extends Controller
         ]);
 
         $username = $validated['username'];
-        $pin = $validated['pin'];
+        $pin = $validated['pin'] ?? null;
 
         $user = new User;
         $user->name = $username;
         $user->pin = $pin;
-        $user->type = UserType::NormalUser;
         $user->save();
+        $user->assignRole(UserRole::Customer);
 
         $this->tallySheetSessionService->login($user);
 

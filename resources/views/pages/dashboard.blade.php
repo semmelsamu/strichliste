@@ -1,3 +1,5 @@
+@use (App\Enums\UserRole)
+
 <x-layouts.main title="Preisliste">
     <x-wrapper class="space-y-content">
         <header class="space-y-inline">
@@ -13,51 +15,56 @@
                 Hauptfunktionen
             </p>
 
-            <div class="flex gap-inline">
-                <a
-                    class="card flex-1 p-inline"
-                    href="{{ route('tally-sheet.auth.list-users') }}"
-                >
-                    Strichliste
-                </a>
-                @if (tally_session()->isRunning())
+            @if (auth()->user()->hasAnyRole([UserRole::Admin->value, UserRole::TallyHost->value]))
+                <div class="flex gap-inline">
                     <a
-                        class="card bg-red-800 p-inline"
-                        href="{{ route('tally-sheet.stop-session') }}"
+                        class="card flex-1 p-inline"
+                        href="{{ route('tally-sheet.auth.list-users') }}"
                     >
-                        <x-lucide-square />
+                        Strichliste
                     </a>
-                @endif
-            </div>
+                    @if (tally_session()->isRunning())
+                        <a
+                            class="card bg-red-800 p-inline"
+                            href="{{ route('tally-sheet.stop-session') }}"
+                        >
+                            <x-lucide-square />
+                        </a>
+                    @endif
+                </div>
+            @endif
+
             <a class="card p-inline" href="{{ route('article-list') }}">
                 Preisliste
             </a>
 
-            <p class="mt-content flex items-center gap-2 text-lg font-medium">
-                <x-lucide-pencil-ruler />
-                Administration
-            </p>
+            @if (auth()->user()->hasRole(UserRole::Admin->value))
+                <p class="mt-content flex items-center gap-2 text-lg font-medium">
+                    <x-lucide-pencil-ruler />
+                    Administration
+                </p>
+                <a class="card p-inline" href="{{ route("articles.index") }}">
+                    Artikel bearbeiten
+                </a>
+                <a class="card p-inline" href="{{ route("categories.index") }}">
+                    Kategorien bearbeiten
+                </a>
+                <a class="card p-inline" href="{{ route("users.index") }}">
+                    Nutzer bearbeiten
+                </a>
+                <a class="card p-inline" href="{{ route("sounds.index") }}">
+                    Sounds bearbeiten
+                </a>
+            @endif
 
-            <a class="card p-inline" href="{{ route("articles.index") }}">
-                Artikel bearbeiten
-            </a>
-            <a class="card p-inline" href="{{ route("categories.index") }}">
-                Kategorien bearbeiten
-            </a>
-            <a class="card p-inline" href="{{ route("users.index") }}">
-                Nutzer bearbeiten
-            </a>
-            <a class="card p-inline" href="{{ route("sounds.index") }}">
-                Sounds bearbeiten
-            </a>
-
-            <p class="mt-content flex items-center gap-2 text-lg font-medium">
-                <x-lucide-boxes />
-                Modi
-            </p>
-
-            <a class="card p-inline">Kassen-Modus</a>
-            <a class="card p-inline">Helfer-Modus</a>
+            @if (auth()->user()->hasRole(UserRole::Admin->value))
+                <p class="mt-content flex items-center gap-2 text-lg font-medium">
+                    <x-lucide-boxes />
+                    Modi
+                </p>
+                <a class="card p-inline">Kassen-Modus</a>
+                <a class="card p-inline">Helfer-Modus</a>
+            @endif
 
             <p class="mt-content flex items-center gap-2 text-lg font-medium">
                 <x-lucide-circle-user-round />

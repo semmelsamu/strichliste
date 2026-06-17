@@ -1,4 +1,4 @@
-@use (App\Enums\UserType)
+@use (App\Enums\UserRole)
 
 <x-layouts.main title="Nutzer">
     <header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
@@ -18,32 +18,29 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>Typ</th>
                     <th>Name</th>
+                    <th>Rollen</th>
                     <th class="text-right">Guthaben</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse ($users as $user)
                     <tr>
-                        <td title="{{ $user->type }}">
-                            @switch ($user->type)
-                                @case (UserType::World)
-                                    <x-lucide-globe />
-                                    @break
-                                @case (UserType::Vendor)
-                                    <x-lucide-banknote />
-                                    @break
-                                @default
-                                    <x-lucide-user />
-                                    @break
-                            @endswitch
-                        </td>
                         <th
                             @class (["w-auto", "text-text-secondary font-normal" => $user->trashed()])
                         >
                             {{ $user->name }}
                         </th>
+                        <td>
+                            @foreach ($user->roles->map(fn ($role) => UserRole::tryFrom($role->name))->filter() as $role)
+                                <div class="badge">
+                                    @if ($role->icon())
+                                        @svg ($role->icon())
+                                    @endif
+                                    {{ $role->displayName() }}
+                                </div>
+                            @endforeach
+                        </td>
                         <td class="text-right">
                             <x-currency :amount="$user->balance" />
                         </td>

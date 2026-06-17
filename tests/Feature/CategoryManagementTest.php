@@ -1,12 +1,13 @@
 <?php
 
+use App\Enums\UserRole;
 use App\Models\Category;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 pest()->use(RefreshDatabase::class);
 
 test('admins can list categories', function () {
-    $admin = testUser();
+    $admin = testUser([], UserRole::Admin);
     $category = testCategory(['name' => 'Softdrinks']);
 
     $this->actingAs($admin)->get(route('categories.index'))
@@ -16,7 +17,7 @@ test('admins can list categories', function () {
 });
 
 test('admins can create categories with lucide icons', function () {
-    $admin = testUser();
+    $admin = testUser([], UserRole::Admin);
 
     $this->actingAs($admin)->post(route('categories.store'), [
         'name' => 'Coffee',
@@ -31,7 +32,7 @@ test('admins can create categories with lucide icons', function () {
 });
 
 test('category creation validates name and icon existence', function (array $payload, array $errors) {
-    $admin = testUser();
+    $admin = testUser([], UserRole::Admin);
 
     $this->actingAs($admin)->post(route('categories.store'), $payload)
         ->assertSessionHasErrors($errors);
@@ -41,8 +42,24 @@ test('category creation validates name and icon existence', function (array $pay
     'unknown icon' => [['name' => 'Coffee', 'icon' => 'not-a-real-lucide-icon'], ['icon']],
 ]);
 
+test('category update validates name and icon existence', function (array $payload, array $errors) {
+    $admin = testUser([], UserRole::Admin);
+    $category = testCategory();
+    $payload = array_replace([
+        'name' => 'Valid Name',
+        'icon' => 'coffee',
+    ], $payload);
+
+    $this->actingAs($admin)->patch(route('categories.update', $category), $payload)
+        ->assertSessionHasErrors($errors);
+})->with([
+    'missing name' => [['name' => null], ['name']],
+    'missing icon' => [['icon' => null], ['icon']],
+    'unknown icon' => [['icon' => 'not-a-real-lucide-icon'], ['icon']],
+]);
+
 test('admins can edit and update categories', function () {
-    $admin = testUser();
+    $admin = testUser([], UserRole::Admin);
     $category = testCategory(['name' => 'Old Name', 'icon' => 'lucide-circle']);
 
     $this->actingAs($admin)->get(route('categories.edit', $category))
@@ -62,7 +79,7 @@ test('admins can edit and update categories', function () {
 });
 
 test('admins can delete unused categories', function () {
-    $admin = testUser();
+    $admin = testUser([], UserRole::Admin);
     $category = testCategory();
 
     $this->actingAs($admin)->delete(route('categories.destroy', $category))
@@ -73,7 +90,7 @@ test('admins can delete unused categories', function () {
 });
 
 test('admins cannot delete categories that are still used by articles', function () {
-    $admin = testUser();
+    $admin = testUser([], UserRole::Admin);
     $category = testCategory();
     testArticle(['category_id' => $category->id]);
 

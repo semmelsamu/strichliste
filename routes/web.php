@@ -27,9 +27,9 @@ Route::middleware('auth')->group(function () {
         ]);
     })->name('article-list');
 
-    Route::get('tally-sheet/start-session', [TallySheet\SessionController::class, 'startSession'])->name('tally-sheet.start-session');
+    Route::get('tally-sheet/start-session', [TallySheet\SessionController::class, 'startSession'])->middleware('role:admin|tally_host')->name('tally-sheet.start-session');
 
-    Route::middleware(EnsureTallySessionRunning::class)->name('tally-sheet.')->prefix('tally-sheet')->group(function () {
+    Route::middleware(['role:admin|tally_host', EnsureTallySessionRunning::class])->name('tally-sheet.')->prefix('tally-sheet')->group(function () {
 
         Route::get('stop-session', [TallySheet\SessionController::class, 'stopSession'])->name('stop-session');
 
@@ -80,6 +80,10 @@ Route::middleware('auth')->group(function () {
         });
     });
 
+});
+
+Route::middleware(['auth', 'role:admin'])->group(function () {
+
     Route::controller(ArticleController::class)->group(function () {
 
         Route::post('articles/{article}/restore', 'restore')->name('articles.restore')->withTrashed();
@@ -104,6 +108,7 @@ Route::middleware('auth')->group(function () {
     Route::controller(UserController::class)->group(function () {
 
         Route::put('users/{user}/pin', 'updatePassword')->name('users.update-password')->withTrashed();
+        Route::put('users/{user}/roles', 'updateRoles')->name('users.update-roles')->withTrashed();
         Route::delete('users/{user}/pin', 'removePin')->name('users.remove-pin')->withTrashed();
         Route::post('users/{user}/restore', 'restore')->name('users.restore')->withTrashed();
 
