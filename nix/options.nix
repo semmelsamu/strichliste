@@ -46,10 +46,10 @@ in
         default = "/var/lib/strichliste";
       };
 
-      storage = mkOption {
+      application = mkOption {
         type = types.path;
-        description = "Path of the storage directory";
-        default = "${cfg.paths.rootDir}/storage";
+        description = "Path of the application directory";
+        default = "${cfg.paths.rootDir}/application";
       };
 
       database = mkOption {
@@ -103,7 +103,7 @@ in
         APP_URL = "${if cfg.settings.expectSSL then "https" else "http"}://${cfg.settings.domain}";
         DB_CONNECTION = "${cfg.database.type}";
         DB_DATABASE = "${cfg.paths.database}";
-        APP_BASE_PATH = "${cfg.paths.storage}";
+        # APP_BASE_PATH = "${cfg.paths.application}";
         # APP_LOCALE = "de";
         # APP_CURRENCY = "EUR";
       };
@@ -115,11 +115,12 @@ in
 
           cd "${cfg.package}"
 
-          export PATH=$PATH:${pkgs.php}/bin:${pkgs.sqlite}/bin
+          export PATH=$PATH:${pkgs.php}/bin:${pkgs.sqlite}/bin:${pkgs.phpPackages.composer}/bin
 
           "$@"
         '')
       ];
+
       systemd.services."strichliste-setup" = {
         environment = envVars;
 
@@ -127,22 +128,19 @@ in
           let
             php = lib.getExe pkgs.php;
             sudo = lib.getExe' pkgs.sudo "sudo";
+            rsync = lib.getExe pkgs.rsync;
 
             nonRootScript = pkgs.writeShellScript "setup" ''
               set -euo pipefail
+
+              mkdir -p ${cfg.paths.application}
+              ${rsync} -ahq --progress ${cfg.package}/* ${cfg.paths.application}
 
               if [ -f "${cfg.paths.rootDir}/.is_setup" ]; then
               exit
               fi
 
-              mkdir -p ${cfg.paths.storage}
-              cp -u -r ${cfg.package}/storage/* "${cfg.paths.storage}"
-
-              mkdir -p ${cfg.paths.storage}/bootstrap/
-              cp -r ${cfg.package}/bootstrap/* ${cfg.paths.storage}/bootstrap
-
-
-              chmod -R 755 ${cfg.paths.storage}
+              chmod -R 755 ${cfg.paths.rootDir}
 
               cd "${cfg.package}"
 
@@ -177,7 +175,7 @@ in
         enable = true;
         virtualHosts = {
           ${cfg.settings.domain} = {
-            root = "${cfg.package}/public";
+            root = "${cfg.paths.application}/public";
 
             extraConfig = ''
               add_header X-Frame-Options "SAMEORIGIN";
