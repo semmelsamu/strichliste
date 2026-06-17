@@ -133,6 +133,7 @@ test('deposit requests validate action and amount', function (array $payload, ar
     $this->actingAs($admin)->withSession(tallySheetSession($user, $world ?? null, $vendor ?? null))->post(route('tally-sheet.deposit'), $payload)
         ->assertSessionHasErrors($errors);
 })->with([
+    'missing action' => [['action' => null], ['action']],
     'invalid action' => [['action' => 'refund'], ['action']],
     'missing amount' => [['amount' => null], ['amount']],
     'too many decimals' => [['amount' => '1.234'], ['amount']],

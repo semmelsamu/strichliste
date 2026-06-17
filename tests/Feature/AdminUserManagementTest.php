@@ -129,16 +129,18 @@ test('admins can update a users password', function () {
     expect(Hash::check('new-password', $user->fresh()->password))->toBeTrue();
 });
 
-test('admin password update rejects non-string passwords', function () {
+test('admin password update requires a password', function (array $payload) {
     $admin = testUser([], UserRole::Admin);
     $user = testUser(['password' => Hash::make('old-password')]);
 
-    $this->actingAs($admin)->put(route('users.update-password', $user), [
-        'password' => ['not-a-string'],
-    ])->assertSessionHasErrors('password');
+    $this->actingAs($admin)->put(route('users.update-password', $user), $payload)
+        ->assertSessionHasErrors('password');
 
     expect(Hash::check('old-password', $user->fresh()->password))->toBeTrue();
-});
+})->with([
+    'missing password' => [[]],
+    'non-string password' => [['password' => ['not-a-string']]],
+]);
 
 test('admins can remove a users pin', function () {
     $admin = testUser([], UserRole::Admin);

@@ -47,6 +47,20 @@ test('new tally sheet users can register and are redirected to deposit', functio
         ->and(Hash::check('1234', $user->pin))->toBeTrue();
 });
 
+test('new tally sheet users can register without setting a pin', function () {
+    $admin = testUser([], UserRole::TallyHost);
+
+    $this->actingAs($admin)->withSession(tallySheetRunningSession())->post(route('tally-sheet.users.store'), [
+        'username' => 'no-pin-member',
+    ])
+        ->assertRedirectToRoute('tally-sheet.show-deposit')
+        ->assertSessionHas('toast.type', 'success');
+
+    $user = User::where('name', 'no-pin-member')->firstOrFail();
+
+    expect($user->pin)->toBeNull();
+});
+
 test('tally sheet registration validates username and unique names', function (array $payload, array $errors) {
     $admin = testUser([], UserRole::TallyHost);
     testUser(['name' => 'taken-name']);
