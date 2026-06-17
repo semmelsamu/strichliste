@@ -9,8 +9,14 @@ class Barcode extends Model
 {
     protected static function booted(): void
     {
+        static::saving(function (Barcode $barcode) {
+            if ($barcode->article_id !== null && $barcode->user_id !== null) {
+                throw new \LogicException('A barcode cannot be linked to both an article and a user.');
+            }
+        });
+
         static::updated(function (Barcode $barcode) {
-            if ($barcode->article_id === null) {
+            if ($barcode->article_id === null && $barcode->user_id === null) {
                 $barcode->delete();
             }
         });
@@ -19,5 +25,10 @@ class Barcode extends Model
     public function article(): BelongsTo
     {
         return $this->belongsTo(Article::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }

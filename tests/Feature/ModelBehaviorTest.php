@@ -2,6 +2,7 @@
 
 use App\Enums\UserRole;
 use App\Models\ArticlePrice;
+use App\Models\Barcode;
 use App\Models\BuyArticleTransaction;
 use App\Models\Transaction;
 use App\Models\UndoTransaction;
@@ -171,4 +172,45 @@ test('undo transaction relations identify both the undoing and undone transactio
     expect($undoing->fresh()->undoTransaction->is($undoTransaction))->toBeTrue()
         ->and($original->fresh()->undone->is($undoTransaction))->toBeTrue()
         ->and($undoTransaction->fresh()->undoneTransaction->is($original))->toBeTrue();
+});
+
+test('a barcode is deleted once it is detached from both its article and its user', function () {
+    $article = testArticle();
+
+    $barcode = new Barcode;
+    $barcode->barcode = 'detach-me';
+    $barcode->article_id = $article->id;
+    $barcode->save();
+
+    $barcode->article()->dissociate();
+    $barcode->save();
+
+    expect(Barcode::whereKey($barcode->id)->exists())->toBeFalse();
+});
+
+test('a barcode linked to a user survives while the user link remains', function () {
+    $user = testUser();
+
+    $barcode = new Barcode;
+    $barcode->barcode = 'user-barcode';
+    $barcode->user_id = $user->id;
+    $barcode->save();
+
+    expect($barcode->fresh()->user->is($user))->toBeTrue();
+
+    $barcode->touch();
+
+    expect(Barcode::whereKey($barcode->id)->exists())->toBeTrue();
+});
+
+test('a barcode cannot be linked to both an article and a user', function () {
+    $article = testArticle();
+    $user = testUser();
+
+    $barcode = new Barcode;
+    $barcode->barcode = 'conflicting-barcode';
+    $barcode->article_id = $article->id;
+    $barcode->user_id = $user->id;
+
+    expect(fn () => $barcode->save())->toThrow(LogicException::class);
 });
