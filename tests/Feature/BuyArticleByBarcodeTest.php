@@ -57,6 +57,19 @@ test('a user cannot buy an article by barcode without enough balance', function 
     ]);
 });
 
+test('barcode purchases validate the barcode', function (array $payload, array $errors) {
+    $admin = testUser([], UserRole::TallyHost);
+    [$user, $world, $vendor] = createBarcodePurchaseFixtures(userBalance: 5.00, articlePrice: 1.50);
+
+    $payload = array_replace(['vendor' => $vendor->id, 'barcode' => '1234567890'], $payload);
+
+    $this->actingAs($admin)->withSession(tallySheetSession($user, $world, $vendor))->post(route('tally-sheet.buy-by-barcode'), $payload)
+        ->assertSessionHasErrors($errors);
+})->with([
+    'missing barcode' => [['barcode' => null], ['barcode']],
+    'unknown barcode' => [['barcode' => 'does-not-exist'], ['barcode']],
+]);
+
 /**
  * @return array{0: User, 1: User, 2: User, 3: Article}
  */

@@ -42,6 +42,22 @@ test('category creation validates name and icon existence', function (array $pay
     'unknown icon' => [['name' => 'Coffee', 'icon' => 'not-a-real-lucide-icon'], ['icon']],
 ]);
 
+test('category update validates name and icon existence', function (array $payload, array $errors) {
+    $admin = testUser([], UserRole::Admin);
+    $category = testCategory();
+    $payload = array_replace([
+        'name' => 'Valid Name',
+        'icon' => 'coffee',
+    ], $payload);
+
+    $this->actingAs($admin)->patch(route('categories.update', $category), $payload)
+        ->assertSessionHasErrors($errors);
+})->with([
+    'missing name' => [['name' => null], ['name']],
+    'missing icon' => [['icon' => null], ['icon']],
+    'unknown icon' => [['icon' => 'not-a-real-lucide-icon'], ['icon']],
+]);
+
 test('admins can edit and update categories', function () {
     $admin = testUser([], UserRole::Admin);
     $category = testCategory(['name' => 'Old Name', 'icon' => 'lucide-circle']);

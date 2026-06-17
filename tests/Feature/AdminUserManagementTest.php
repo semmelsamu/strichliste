@@ -77,6 +77,15 @@ test('admins can update user names', function () {
     expect($user->fresh()->name)->toBe('renamed-vendor');
 });
 
+test('admin user update requires a username', function () {
+    $admin = testUser([], UserRole::Admin);
+    $user = testUser([], UserRole::Customer);
+
+    $this->actingAs($admin)->patch(route('users.update', $user), [
+        'username' => null,
+    ])->assertSessionHasErrors('username');
+});
+
 test('admins cannot rename a user to another users existing name', function () {
     $admin = testUser([], UserRole::Admin);
     $firstUser = testUser(['name' => 'first-user']);
@@ -118,6 +127,17 @@ test('admins can update a users password', function () {
         ->assertSessionHas('toast.type', 'success');
 
     expect(Hash::check('new-password', $user->fresh()->password))->toBeTrue();
+});
+
+test('admin password update rejects non-string passwords', function () {
+    $admin = testUser([], UserRole::Admin);
+    $user = testUser(['password' => Hash::make('old-password')]);
+
+    $this->actingAs($admin)->put(route('users.update-password', $user), [
+        'password' => ['not-a-string'],
+    ])->assertSessionHasErrors('password');
+
+    expect(Hash::check('old-password', $user->fresh()->password))->toBeTrue();
 });
 
 test('admins can remove a users pin', function () {

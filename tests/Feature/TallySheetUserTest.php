@@ -105,6 +105,15 @@ test('an incorrect tally sheet pin is rejected', function () {
     ])->assertSessionHasErrors('pin');
 });
 
+test('tally sheet pin validation requires a pin', function () {
+    $admin = testUser([], UserRole::TallyHost);
+    $user = testUser(['pin' => '1234'], UserRole::Customer);
+
+    $this->actingAs($admin)->withSession(tallySheetRunningSession())->post(route('tally-sheet.auth.validate-pin', $user), [
+        'pin' => null,
+    ])->assertSessionHasErrors('pin');
+});
+
 test('tally sheet users can update their username', function () {
     $admin = testUser([], UserRole::TallyHost);
     $user = testUser(['name' => 'old-name'], UserRole::Customer);
@@ -117,6 +126,20 @@ test('tally sheet users can update their username', function () {
 
     expect($user->fresh()->name)->toBe('new-name');
 });
+
+test('tally sheet username update validates username and uniqueness', function (array $payload, array $errors) {
+    $admin = testUser([], UserRole::TallyHost);
+    testUser(['name' => 'taken-name']);
+    $user = testUser(['name' => 'old-name'], UserRole::Customer);
+    $payload = array_replace(['username' => 'new-name'], $payload);
+
+    $this->actingAs($admin)->withSession(tallySheetSession($user))->put(route('tally-sheet.users.update'), $payload)
+        ->assertSessionHasErrors($errors);
+})->with([
+    'missing username' => [['username' => null], ['username']],
+    'too short username' => [['username' => 'ab'], ['username']],
+    'duplicate username' => [['username' => 'taken-name'], ['username']],
+]);
 
 test('tally sheet users can save and remove their pin', function () {
     $admin = testUser([], UserRole::TallyHost);
@@ -135,6 +158,15 @@ test('tally sheet users can save and remove their pin', function () {
         ->assertSessionHas('toast.type', 'success');
 
     expect($user->fresh()->pin)->toBeNull();
+});
+
+test('tally sheet pin update requires a pin', function () {
+    $admin = testUser([], UserRole::TallyHost);
+    $user = testUser(['pin' => null], UserRole::Customer);
+
+    $this->actingAs($admin)->withSession(tallySheetSession($user))->post(route('tally-sheet.users.update-pin'), [
+        'pin' => null,
+    ])->assertSessionHasErrors('pin');
 });
 
 test('tally sheet users can deactivate their account', function () {

@@ -33,6 +33,25 @@ test('users can authenticate with their name and password', function () {
     $this->assertAuthenticatedAs($user);
 });
 
+test('authentication requires a name and password', function (array $payload, array $errors) {
+    $user = testUser([
+        'password' => Hash::make('secret-password'),
+    ]);
+
+    $payload = array_replace([
+        'name' => $user->name,
+        'password' => 'secret-password',
+    ], $payload);
+
+    $this->post(route('authenticate'), $payload)
+        ->assertSessionHasErrors($errors);
+
+    $this->assertGuest();
+})->with([
+    'missing name' => [['name' => null], ['name']],
+    'missing password' => [['password' => null], ['password']],
+]);
+
 test('users cannot authenticate with an invalid password', function () {
     $user = testUser([
         'password' => Hash::make('secret-password'),
