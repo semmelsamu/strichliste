@@ -58,40 +58,102 @@ class ImportLegacyDatabase extends Command
      */
     private array $articles = [];
 
+    /**
+     * The category every imported article is filed under.
+     */
+    private ?Category $category = null;
+
+    private int $articlePriceCount = 0;
+
+    private int $articleBarcodeCount = 0;
+
+    private int $userBarcodeCount = 0;
+
+    private int $transactionCount = 0;
+
+    /**
+     * Non-fatal issues collected during the import, rendered together at the end.
+     *
+     * @var list<string>
+     */
+    private array $warnings = [];
+
     public function handle(): int
     {
         $path = $this->argument('path') ?? storage_path('app/private/legacy-db/database.db');
 
         if (! is_file($path)) {
-            $this->error("Legacy database not found at: {$path}");
+            $this->components->error("Legacy database not found at: {$path}");
 
             return self::FAILURE;
         }
 
         $this->configureLegacyConnection($path);
 
+        $this->newLine();
+        $this->components->info('Importing legacy strichliste database');
+        $this->components->twoColumnDetail('<fg=gray>Source database</>', "<fg=cyan>{$path}</>");
+        $this->newLine();
+
         try {
             DB::transaction(function (): void {
-                $this->ensureRolesExist();
-                $category = $this->createImportCategory();
-
-                $this->importUsers();
-                $this->loadGroupMembers();
-                $this->importArticles($category);
-                $this->importArticlePrices();
-                $this->importBarcodes();
-                $this->importUserBarcodes();
+                $this->components->task('Ensuring user roles exist', fn () => $this->ensureRolesExist());
+                $this->components->task('Creating import category', fn () => $this->category = $this->createImportCategory());
+                $this->components->task('Importing users', fn () => $this->importUsers());
+                $this->components->task('Loading user groups', fn () => $this->loadGroupMembers());
+                $this->components->task('Importing articles', fn () => $this->importArticles($this->category));
+                $this->components->task('Importing article prices', fn () => $this->importArticlePrices());
+                $this->components->task('Importing article barcodes', fn () => $this->importBarcodes());
+                $this->components->task('Importing user barcodes', fn () => $this->importUserBarcodes());
                 $this->importTransactions();
             });
         } catch (Throwable $e) {
-            $this->error('Import failed: '.$e->getMessage());
+            $this->newLine();
+            $this->components->error('Import failed and was rolled back: '.$e->getMessage());
 
             return self::FAILURE;
         }
 
-        $this->info('Legacy database imported successfully.');
+        $this->renderSummary();
+        $this->renderWarnings();
+
+        $this->newLine();
+        $this->components->info('Legacy database imported successfully. 🎉');
 
         return self::SUCCESS;
+    }
+
+    private function renderSummary(): void
+    {
+        $this->newLine();
+        $this->components->info('Import summary');
+
+        $this->components->twoColumnDetail('<fg=green>Users</>', '<fg=white;options=bold>'.count($this->users).'</>');
+        $this->components->twoColumnDetail('<fg=green>Articles</>', '<fg=white;options=bold>'.count($this->articles).'</>');
+        $this->components->twoColumnDetail('<fg=green>Article prices</>', '<fg=white;options=bold>'.$this->articlePriceCount.'</>');
+        $this->components->twoColumnDetail('<fg=green>Article barcodes</>', '<fg=white;options=bold>'.$this->articleBarcodeCount.'</>');
+        $this->components->twoColumnDetail('<fg=green>User barcodes</>', '<fg=white;options=bold>'.$this->userBarcodeCount.'</>');
+        $this->components->twoColumnDetail('<fg=green>Transactions</>', '<fg=white;options=bold>'.$this->transactionCount.'</>');
+    }
+
+    private function renderWarnings(): void
+    {
+        if ($this->warnings === []) {
+            return;
+        }
+
+        $this->newLine();
+        $this->components->warn(count($this->warnings).' issue(s) were skipped during the import:');
+        $this->components->bulletList($this->warnings);
+    }
+
+    /**
+     * Records a non-fatal issue to be reported once the import has finished,
+     * keeping the per-step task output clean.
+     */
+    private function recordWarning(string $message): void
+    {
+        $this->warnings[] = $message;
     }
 
     private function legacy(): Connection
@@ -150,8 +212,6 @@ class ImportLegacyDatabase extends Command
 
             $this->users[(int) $legacyUser->id] = $user;
         }
-
-        $this->info(count($this->users).' users imported.');
     }
 
     private function roleForLegacyUser(int $legacyUserId): UserRole
@@ -189,8 +249,6 @@ class ImportLegacyDatabase extends Command
 
             $this->articles[(int) $legacyArticle->id] = $article;
         }
-
-        $this->info(count($this->articles).' articles imported.');
     }
 
     private function importArticlePrices(): void
@@ -201,7 +259,7 @@ class ImportLegacyDatabase extends Command
             $article = $this->articles[(int) $row->article_id] ?? null;
 
             if (! $article) {
-                $this->warn("Skipping price for unknown legacy article {$row->article_id}.");
+                $this->recordWarning("Price for unknown legacy article #{$row->article_id} skipped.");
 
                 continue;
             }
@@ -211,6 +269,8 @@ class ImportLegacyDatabase extends Command
             $price->price = $this->centsToAmount((int) $row->cost);
             $price->effective_since = $this->parseTimestamp($row->effective_since);
             $price->save();
+
+            $this->articlePriceCount++;
         }
     }
 
@@ -222,7 +282,7 @@ class ImportLegacyDatabase extends Command
             $article = $this->articles[(int) $row->article_id] ?? null;
 
             if (! $article) {
-                $this->warn("Skipping barcode for unknown legacy article {$row->article_id}.");
+                $this->recordWarning("Barcode '{$row->barcode_content}' for unknown legacy article #{$row->article_id} skipped.");
 
                 continue;
             }
@@ -231,6 +291,8 @@ class ImportLegacyDatabase extends Command
             $barcode->barcode = $row->barcode_content;
             $barcode->article_id = $article->id;
             $barcode->save();
+
+            $this->articleBarcodeCount++;
         }
     }
 
@@ -242,7 +304,7 @@ class ImportLegacyDatabase extends Command
             $user = $this->users[(int) $row->user_id] ?? null;
 
             if (! $user) {
-                $this->warn("Skipping card number for unknown legacy user {$row->user_id}.");
+                $this->recordWarning("Card number '{$row->card_number}' for unknown legacy user #{$row->user_id} skipped.");
 
                 continue;
             }
@@ -250,7 +312,7 @@ class ImportLegacyDatabase extends Command
             // A barcode can only belong to one entity and the article always wins,
             // so skip any card number already claimed by an imported article barcode.
             if (Barcode::where('barcode', $row->card_number)->exists()) {
-                $this->warn("Skipping card number {$row->card_number}: already linked to an article.");
+                $this->recordWarning("Card number '{$row->card_number}' skipped: already linked to an article.");
 
                 continue;
             }
@@ -259,19 +321,30 @@ class ImportLegacyDatabase extends Command
             $barcode->barcode = $row->card_number;
             $barcode->user_id = $user->id;
             $barcode->save();
+
+            $this->userBarcodeCount++;
         }
     }
 
     private function importTransactions(): void
     {
-        $imported = 0;
+        $total = $this->legacy()->table('Transactions')->count();
+
+        $this->newLine();
+        $this->components->twoColumnDetail('Importing transactions', "<fg=yellow>{$total}</> legacy rows");
+
+        $bar = $this->output->createProgressBar($total);
+        $bar->setFormat(' %current%/%max% [%bar%] %percent:3s%% %elapsed:6s%');
+        $bar->start();
 
         foreach ($this->legacy()->table('Transactions')->orderBy('id')->cursor() as $legacy) {
+            $bar->advance();
+
             $fromUsers = $this->resolveGroupUsers((int) $legacy->sender);
             $toUser = $this->resolveSingleGroupUser((int) $legacy->receiver, (int) $legacy->id);
 
             if ($fromUsers === [] || $toUser === null) {
-                $this->warn("Skipping transaction {$legacy->id}: unresolvable sender or receiver.");
+                $this->recordWarning("Transaction #{$legacy->id} skipped: unresolvable sender or receiver.");
 
                 continue;
             }
@@ -296,11 +369,12 @@ class ImportLegacyDatabase extends Command
                     isUndone: (bool) $legacy->is_undone,
                 );
 
-                $imported++;
+                $this->transactionCount++;
             }
         }
 
-        $this->info($imported.' transactions imported.');
+        $bar->finish();
+        $this->newLine();
     }
 
     private function createTransaction(
@@ -374,7 +448,7 @@ class ImportLegacyDatabase extends Command
         $users = $this->resolveGroupUsers($groupId);
 
         if (count($users) > 1) {
-            $this->warn("Transaction {$transactionId}: receiver group {$groupId} has multiple users, using the first.");
+            $this->recordWarning("Transaction #{$transactionId}: receiver group #{$groupId} has multiple users, using the first.");
         }
 
         return $users[0] ?? null;
