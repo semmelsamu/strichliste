@@ -1,64 +1,71 @@
 {
   php,
   buildNpmPackage,
-  stdenv,
-  lib,
-  pkgs,
+  stdenvNoCC,
   ...
 }:
 let
   version = "0.1";
   name = "strichliste";
 
-  npmDrv = buildNpmPackage {
-
+  # Frontend assets (Vite -> public/build). Built independently of PHP.
+  assets = buildNpmPackage {
+    pname = "${name}-assets";
     inherit version;
-    name = "${name}-npm";
-    pname = "${name}-npm-${version}";
 
     src = ../.;
 
     npmDepsHash = "sha256-kkmarT3o+dTHmWyynaWQbjneCi/Z8PMNh9erwqZ0dLE=";
 
+    # Don't run the postinstall composer/npm scripts; we only want `vite build`.
     npmPackFlags = [ "--ignore-scripts" ];
 
     installPhase = ''
+      runHook preInstall
       mkdir -p $out
-      cp -r public/build/* $out
+      cp -r public/build/* $out/
+      runHook postInstall
     '';
   };
 
-  phpDrv = php.buildComposerProject {
+  # PHP application (composer, production deps only).
+  #
+  # NOTE: We deliberately do NOT run `php artisan optimize` / `config:cache`
+  # here. Caching config at build time would (a) bake values from the empty
+  # build sandbox and (b) make Laravel ignore the runtime environment entirely.
+  # All artisan caching happens at runtime in the NixOS module, once a real
+  # `.env` and writable `bootstrap/cache` exist.
+  php-app = php.buildComposerProject {
+    pname = "${name}-php";
     inherit version;
 
     src = ../.;
-    name = "${name}-php";
-    pname = "${name}-php-${version}";
 
     vendorHash = "sha256-VVISoVd1LAG1c5m8mvopGRhg/Ds8hUe0AGIHPfm77Jg=";
 
-    nativeBuildInputs = [
-      pkgs.php
-    ];
+    composerNoDev = true;
 
-    fixupPhase = ''
-      php artisan optimize
-      php artisan icons:cache
+    # Drop the built frontend assets into the installed app tree.
+    postInstall = ''
+      appDir="$out/share/php/${name}-php"
+      mkdir -p "$appDir/public/build"
+      cp -r ${assets}/* "$appDir/public/build/"
     '';
   };
 
 in
-stdenv.mkDerivation {
-  inherit name version;
+# Thin wrapper so the application lives at the package root, which keeps the
+# NixOS module paths simple (`${cfg.package}/public`, `${cfg.package}/artisan`).
+stdenvNoCC.mkDerivation {
+  pname = name;
+  inherit version;
 
-  src = phpDrv;
+  dontUnpack = true;
 
   installPhase = ''
+    runHook preInstall
     mkdir -p $out
-    cp -r share/php/${name}-php-${version}/* $out
-
-    mkdir -p $out/public/build
-    cp -r ${npmDrv}/* $out/public/build
+    cp -r ${php-app}/share/php/${name}-php/. $out/
+    runHook postInstall
   '';
-
 }

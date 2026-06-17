@@ -16,9 +16,8 @@
       devShells.x86_64-linux.default = pkgs.mkShell {
         nativeBuildInputs = with pkgs; [
           php
-          phpPackages.composer
+          php.packages.composer
           nodejs
-          vitejs
         ];
       };
     };
