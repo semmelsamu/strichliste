@@ -148,7 +148,8 @@ class ArticleController extends Controller
 
     public function removeBarcode(Request $request, Article $article, Barcode $barcode)
     {
-        $barcode->delete();
+        $barcode->article()->dissociate();
+        $barcode->save();
 
         return redirect()->route('articles.edit', $article->id)->with('toast', [
             'type' => 'success',
