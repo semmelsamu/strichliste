@@ -33,7 +33,11 @@ class LoginController extends Controller
             return redirect()->route('tally-sheet.show-deposit');
         }
 
-        return redirect()->route('tally-sheet.buy-overview');
+        return redirect()->route('tally-sheet.buy-overview')
+            ->with('toast', [
+                'type' => 'success',
+                'message' => 'Willkommen zurück, '.$user->name.'!',
+            ]);
     }
 
     public function login(Request $request, User $user)
