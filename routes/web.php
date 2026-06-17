@@ -82,7 +82,7 @@ Route::middleware('auth')->group(function () {
 
 });
 
-Route::middleware('role:admin')->group(function () {
+Route::middleware(['auth', 'role:admin'])->group(function () {
 
     Route::controller(ArticleController::class)->group(function () {
 

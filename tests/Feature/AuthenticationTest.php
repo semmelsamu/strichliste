@@ -21,8 +21,7 @@ test('guests can view the login form', function () {
 test('users can authenticate with their name and password', function () {
     $user = testUser([
         'password' => Hash::make('secret-password'),
-        'type' => UserRole::Customer,
-    ]);
+    ], UserRole::Customer);
 
     $this->post(route('authenticate'), [
         'name' => $user->name,

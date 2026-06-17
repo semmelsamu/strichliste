@@ -50,11 +50,17 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function testUser(array $attributes = []): User
+function testUser(array $attributes = [], ?UserRole $role = null): User
 {
-    return User::factory()->create(array_merge([
+    $user = User::factory()->create(array_merge([
         'name' => fake()->unique()->userName(),
     ], $attributes));
+
+    if ($role !== null) {
+        $user->assignRole($role);
+    }
+
+    return $user;
 }
 
 function testCategory(array $attributes = []): Category

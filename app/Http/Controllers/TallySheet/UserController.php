@@ -46,8 +46,8 @@ class UserController extends Controller
         $user = new User;
         $user->name = $username;
         $user->pin = $pin;
-        $user->type = UserRole::Customer;
         $user->save();
+        $user->assignRole(UserRole::Customer);
 
         $this->tallySheetSessionService->login($user);
 

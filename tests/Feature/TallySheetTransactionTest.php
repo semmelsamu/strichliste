@@ -12,10 +12,10 @@ pest()->use(RefreshDatabase::class);
 function transactionUsers(): array
 {
     return [
-        'admin' => testUser(),
-        'world' => testUser(['type' => UserRole::World]),
-        'vendor' => testUser(['type' => UserRole::Vendor]),
-        'user' => testUser(['type' => UserRole::Customer]),
+        'admin' => testUser([], UserRole::TallyHost),
+        'world' => testUser([], UserRole::World),
+        'vendor' => testUser([], UserRole::Vendor),
+        'user' => testUser([], UserRole::Customer),
     ];
 }
 

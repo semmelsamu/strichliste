@@ -12,9 +12,9 @@ use Illuminate\Support\Carbon;
 pest()->use(RefreshDatabase::class);
 
 test('user balances are incoming transactions minus outgoing transactions', function () {
-    $world = testUser(['type' => UserRole::World]);
-    $vendor = testUser(['type' => UserRole::Vendor]);
-    $user = testUser(['type' => UserRole::Customer]);
+    $world = testUser([], UserRole::World);
+    $vendor = testUser([], UserRole::Vendor);
+    $user = testUser([], UserRole::Customer);
 
     Transaction::factory()->create([
         'from_user_id' => $world->id,
@@ -40,10 +40,10 @@ test('user balances are incoming transactions minus outgoing transactions', func
 });
 
 test('a users transactions include sent and received transactions only', function () {
-    $world = testUser(['type' => UserRole::World]);
-    $vendor = testUser(['type' => UserRole::Vendor]);
-    $user = testUser(['type' => UserRole::Customer]);
-    $otherUser = testUser(['type' => UserRole::Customer]);
+    $world = testUser([], UserRole::World);
+    $vendor = testUser([], UserRole::Vendor);
+    $user = testUser([], UserRole::Customer);
+    $otherUser = testUser([], UserRole::Customer);
 
     $received = Transaction::factory()->create([
         'from_user_id' => $world->id,
@@ -95,8 +95,8 @@ test('article current price is the latest effective price', function () {
 });
 
 test('negative transactions are normalized by swapping users and making the amount positive', function () {
-    $world = testUser(['type' => UserRole::World]);
-    $user = testUser(['type' => UserRole::Customer]);
+    $world = testUser([], UserRole::World);
+    $user = testUser([], UserRole::Customer);
 
     $transaction = Transaction::factory()->create([
         'from_user_id' => $world->id,
@@ -113,8 +113,8 @@ test('negative transactions are normalized by swapping users and making the amou
 });
 
 test('positive transactions normalize to the same transaction instance', function () {
-    $world = testUser(['type' => UserRole::World]);
-    $user = testUser(['type' => UserRole::Customer]);
+    $world = testUser([], UserRole::World);
+    $user = testUser([], UserRole::Customer);
 
     $transaction = Transaction::factory()->create([
         'from_user_id' => $world->id,
@@ -126,9 +126,9 @@ test('positive transactions normalize to the same transaction instance', functio
 });
 
 test('buy article transaction keeps referencing archived articles', function () {
-    $world = testUser(['type' => UserRole::World]);
-    $vendor = testUser(['type' => UserRole::Vendor]);
-    $user = testUser(['type' => UserRole::Customer]);
+    $world = testUser([], UserRole::World);
+    $vendor = testUser([], UserRole::Vendor);
+    $user = testUser([], UserRole::Customer);
     $article = testArticle();
 
     $transaction = Transaction::factory()->create([
@@ -148,8 +148,8 @@ test('buy article transaction keeps referencing archived articles', function () 
 });
 
 test('undo transaction relations identify both the undoing and undone transactions', function () {
-    $world = testUser(['type' => UserRole::World]);
-    $user = testUser(['type' => UserRole::Customer]);
+    $world = testUser([], UserRole::World);
+    $user = testUser([], UserRole::Customer);
 
     $original = Transaction::factory()->create([
         'from_user_id' => $world->id,

@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\UserRole;
 use App\Models\Article;
 use App\Models\Barcode;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -8,7 +9,7 @@ use Illuminate\Support\Facades\Storage;
 pest()->use(RefreshDatabase::class);
 
 test('admins can list active and archived articles', function () {
-    $admin = testUser();
+    $admin = testUser([], UserRole::Admin);
     $activeArticle = testArticle(['name' => 'Club Mate']);
     $archivedArticle = testArticle(['name' => 'Archived Mate']);
     $archivedArticle->delete();
@@ -21,7 +22,7 @@ test('admins can list active and archived articles', function () {
 });
 
 test('admins can create articles with an initial price', function () {
-    $admin = testUser();
+    $admin = testUser([], UserRole::Admin);
     $category = testCategory(['name' => 'Softdrinks']);
 
     $this->actingAs($admin)->post(route('articles.store'), [
@@ -39,7 +40,7 @@ test('admins can create articles with an initial price', function () {
 });
 
 test('article creation validates name category and non-negative decimal price', function (array $payload, array $errors) {
-    $admin = testUser();
+    $admin = testUser([], UserRole::Admin);
     $category = testCategory();
     $payload = array_replace([
         'name' => 'Valid Article',
@@ -58,7 +59,7 @@ test('article creation validates name category and non-negative decimal price', 
 ]);
 
 test('admins can update article details without changing its price history', function () {
-    $admin = testUser();
+    $admin = testUser([], UserRole::Admin);
     $oldCategory = testCategory(['name' => 'Snacks']);
     $newCategory = testCategory(['name' => 'Coffee']);
     $article = testArticle(['category_id' => $oldCategory->id], 0.80);
@@ -76,7 +77,7 @@ test('admins can update article details without changing its price history', fun
 });
 
 test('admins can append a new article price', function () {
-    $admin = testUser();
+    $admin = testUser([], UserRole::Admin);
     $article = testArticle(price: 0.80);
     $article->prices()->update([
         'effective_since' => now()->subMinute(),
@@ -93,7 +94,7 @@ test('admins can append a new article price', function () {
 });
 
 test('admins can archive and restore articles', function () {
-    $admin = testUser();
+    $admin = testUser([], UserRole::Admin);
     $article = testArticle();
 
     $this->actingAs($admin)->delete(route('articles.destroy', $article))
@@ -110,7 +111,7 @@ test('admins can archive and restore articles', function () {
 });
 
 test('admins can add and remove article barcodes', function () {
-    $admin = testUser();
+    $admin = testUser([], UserRole::Admin);
     $article = testArticle();
 
     $this->actingAs($admin)->post(route('articles.add-barcode', $article), [
@@ -131,7 +132,7 @@ test('admins can add and remove article barcodes', function () {
 });
 
 test('article barcodes must be unique', function () {
-    $admin = testUser();
+    $admin = testUser([], UserRole::Admin);
     $firstArticle = testArticle();
     $secondArticle = testArticle();
 
@@ -148,7 +149,7 @@ test('article barcodes must be unique', function () {
 test('admins can update the sounds assigned to an article', function () {
     Storage::fake('public');
 
-    $admin = testUser();
+    $admin = testUser([], UserRole::Admin);
     $article = testArticle();
 
     Storage::disk('public')->put('sounds/kaching.mp3', 'sound');
