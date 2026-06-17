@@ -1,4 +1,15 @@
 <x-layouts.main title="{{ $article->name }}">
+    <x-scanner>
+        <form
+            method="POST"
+            action="{{ route('tally-sheet.article-details.buy-by-barcode', $article) }}"
+            x-ref="form"
+        >
+            @csrf
+            <input type="hidden" name="barcode" x-ref="barcode" />
+        </form>
+    </x-scanner>
+
     <header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
         <a
             class="button bg-fsim-light"

@@ -47,6 +47,7 @@ Route::middleware('auth')->group(function () {
         });
 
         Route::get('/article/{article}', [TallySheet\ViewController::class, 'showArticleDetails'])->name('article-details');
+        Route::post('/article/{article}/buy-by-barcode', [TallySheet\TransactionController::class, 'buyArticleByScannedUser'])->name('article-details.buy-by-barcode');
 
         Route::middleware(EnsureTallySheetUserSelected::class)->group(function () {
 
