@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\UserType;
+use App\Enums\UserRole;
 use App\Models\BuyArticleTransaction;
 use App\Models\Transaction;
 use App\Models\UndoTransaction;
@@ -12,10 +12,10 @@ pest()->use(RefreshDatabase::class);
 function transactionUsers(): array
 {
     return [
-        'admin' => testUser(),
-        'world' => testUser(['type' => UserType::World]),
-        'vendor' => testUser(['type' => UserType::Vendor]),
-        'user' => testUser(['type' => UserType::NormalUser]),
+        'admin' => testUser([], UserRole::TallyHost),
+        'world' => testUser([], UserRole::World),
+        'vendor' => testUser([], UserRole::Vendor),
+        'user' => testUser([], UserRole::Customer),
     ];
 }
 

@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Enums\UserType;
+use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -13,18 +13,20 @@ class BaseWorldVendorSeeder extends Seeder
      */
     public function run(): void
     {
-        User::firstOrCreate(
+        $world = User::firstOrCreate(
             ['name' => 'Kasse K032'],
             [
                 'name' => 'Kasse K032',
-                'type' => UserType::World,
             ]);
 
-        User::firstOrCreate(
+        $world->assignRole(UserRole::World->value);
+
+        $vendor = User::firstOrCreate(
             ['name' => 'FSIM'],
             [
                 'name' => 'FSIM',
-                'type' => UserType::Vendor,
             ]);
+
+        $vendor->assignRole(UserRole::Vendor->value);
     }
 }

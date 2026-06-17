@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Enums\UserType;
+use App\Enums\UserRole;
 use App\Models\Article;
 use App\Models\BuyArticleTransaction;
 use App\Models\Transaction;
@@ -23,12 +23,11 @@ class BuyArticleTransactionFactory extends Factory
     {
         $article = Article::inRandomOrder()->first();
 
-        $user = User::where([
-            ['type', UserType::NormalUser],
+        $user = User::role(UserRole::World->value)->where([
             ['balance', '>=', $article->currentPrice],
         ])->inRandomOrder()->value('id');
 
-        $vendor = User::where('type', UserType::Vendor)->inRandomOrder()->value('id');
+        $vendor = User::role(UserRole::Vendor->value)->inRandomOrder()->value('id');
 
         return [
             'transaction_id' => Transaction::factory()->create([

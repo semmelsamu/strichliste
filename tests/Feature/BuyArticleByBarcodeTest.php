@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\UserType;
+use App\Enums\UserRole;
 use App\Models\Article;
 use App\Models\ArticlePrice;
 use App\Models\Barcode;
@@ -13,9 +13,10 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 pest()->use(RefreshDatabase::class);
 
 test('a user can buy an article by scanning its barcode', function () {
+    $admin = testUser([], UserRole::TallyHost);
     [$user, $world, $vendor, $article] = createBarcodePurchaseFixtures(userBalance: 5.00, articlePrice: 1.50);
 
-    $response = $this->actingAs($user)->withSession(tallySheetSession($user, $world, $vendor))->post(route('tally-sheet.buy-by-barcode'), [
+    $response = $this->actingAs($admin)->withSession(tallySheetSession($user, $world, $vendor))->post(route('tally-sheet.buy-by-barcode'), [
         'vendor' => $vendor->id,
         'barcode' => '1234567890',
     ]);
@@ -39,9 +40,10 @@ test('a user can buy an article by scanning its barcode', function () {
 });
 
 test('a user cannot buy an article by barcode without enough balance', function () {
+    $admin = testUser([], UserRole::TallyHost);
     [$user, $world, $vendor] = createBarcodePurchaseFixtures(userBalance: 1.00, articlePrice: 1.50);
 
-    $response = $this->actingAs($user)->withSession(tallySheetSession($user, $world, $vendor))->post(route('tally-sheet.buy-by-barcode'), [
+    $response = $this->actingAs($admin)->withSession(tallySheetSession($user, $world, $vendor))->post(route('tally-sheet.buy-by-barcode'), [
         'vendor' => $vendor->id,
         'barcode' => '1234567890',
     ]);
@@ -60,9 +62,9 @@ test('a user cannot buy an article by barcode without enough balance', function 
  */
 function createBarcodePurchaseFixtures(float $userBalance, float $articlePrice): array
 {
-    $world = User::factory()->create(['type' => UserType::World]);
-    $vendor = User::factory()->create(['type' => UserType::Vendor]);
-    $user = User::factory()->create(['type' => UserType::NormalUser]);
+    $world = testUser([], UserRole::World);
+    $vendor = testUser([], UserRole::Vendor);
+    $user = testUser([], UserRole::Customer);
 
     Transaction::factory()->create([
         'from_user_id' => $world->id,

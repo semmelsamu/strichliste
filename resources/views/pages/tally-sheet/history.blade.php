@@ -1,5 +1,5 @@
 @use (Illuminate\Support\Facades\Auth)
-@use (App\Enums\UserType)
+@use (App\Enums\UserRole)
 @use (App\Models\Transaction)
 
 <x-layouts.tally-sheet title="Verlauf" activeTab="history">
@@ -35,9 +35,9 @@
                                         class="text-text-secondary"
                                     />
                                 </a>
-                            @elseif ($transaction->fromUser->type == UserType::World->value)
+                            @elseif ($transaction->fromUser->hasRole(UserRole::World))
                                 Geld bei {{$transaction->fromUser->name }} eingezahlt
-                            @elseif ($transaction->toUser->type == UserType::World->value)
+                            @elseif ($transaction->toUser->hasRole(UserRole::World))
                                 Geld bei {{$transaction->toUser->name }} ausgezahlt
                             @elseif ($transaction->fromUser->is(tally_session()->get('user')))
                                 Geld an {{ $transaction->toUser->name }} gesendet

@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Enums\UserType;
+use App\Enums\UserRole;
 use App\Models\User;
 use InvalidArgumentException;
 
@@ -14,27 +14,27 @@ class TallySheetSessionService
 
     public const USER_SESSION_KEY = 'tally_sheet.user_id';
 
-    public function initialize(User $world, User $vendor)
+    public function initialize(User $worldUser, User $vendorUser)
     {
         $this->clear();
 
-        if ($world->type !== UserType::World || $world->trashed()) {
+        if (! $worldUser->hasRole(UserRole::World) || $worldUser->trashed()) {
             throw new InvalidArgumentException('The given world user is invalid.');
         }
-        if ($vendor->type !== UserType::Vendor || $vendor->trashed()) {
+        if (! $vendorUser->hasRole(UserRole::Vendor) || $vendorUser->trashed()) {
             throw new InvalidArgumentException('The given vendor user is invalid.');
         }
 
         session([
-            self::WORLD_SESSION_KEY => $world->id,
-            self::VENDOR_SESSION_KEY => $vendor->id,
+            self::WORLD_SESSION_KEY => $worldUser->id,
+            self::VENDOR_SESSION_KEY => $vendorUser->id,
         ]);
     }
 
     public function login(User $user): void
     {
-        if ($user->type !== UserType::NormalUser || $user->trashed()) {
-            throw new InvalidArgumentException('Only active normal users can be selected for the tally sheet session.');
+        if (! $user->hasRole(UserRole::Customer) || $user->trashed()) {
+            throw new InvalidArgumentException('Only active tally users can be selected for the tally sheet session.');
         }
 
         session([self::USER_SESSION_KEY => $user->id]);
@@ -61,15 +61,15 @@ class TallySheetSessionService
         $session = [
             'world' => User::query()
                 ->whereKey($worldId)
-                ->where('type', UserType::World)
+                ->role(UserRole::World)
                 ->first(),
             'vendor' => User::query()
                 ->whereKey($vendorId)
-                ->where('type', UserType::Vendor)
+                ->role(UserRole::Vendor)
                 ->first(),
             'user' => User::query()
                 ->whereKey($userId)
-                ->where('type', UserType::NormalUser)
+                ->role(UserRole::Customer)
                 ->first(),
         ];
 

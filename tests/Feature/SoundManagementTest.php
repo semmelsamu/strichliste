@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\UserRole;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -9,7 +10,7 @@ pest()->use(RefreshDatabase::class);
 test('admins can list stored sounds', function () {
     Storage::fake('public');
 
-    $admin = testUser();
+    $admin = testUser([], UserRole::Admin);
     Storage::disk('public')->put('sounds/kaching.mp3', 'sound');
 
     $this->actingAs($admin)->get(route('sounds.index'))
@@ -21,7 +22,7 @@ test('admins can list stored sounds', function () {
 test('admins can upload mp3 sounds with slugged filenames', function () {
     Storage::fake('public');
 
-    $admin = testUser();
+    $admin = testUser([], UserRole::Admin);
     $file = UploadedFile::fake()->create('Cash Register.mp3', 100, 'audio/mpeg');
 
     $this->actingAs($admin)->post(route('sounds.store'), [
@@ -36,7 +37,7 @@ test('admins can upload mp3 sounds with slugged filenames', function () {
 test('sound uploads require an mp3 file under five megabytes', function (UploadedFile|string|null $sound, array $errors) {
     Storage::fake('public');
 
-    $admin = testUser();
+    $admin = testUser([], UserRole::Admin);
 
     $this->actingAs($admin)->post(route('sounds.store'), [
         'sound' => $sound,
@@ -50,7 +51,7 @@ test('sound uploads require an mp3 file under five megabytes', function (Uploade
 test('admins can delete existing sounds', function () {
     Storage::fake('public');
 
-    $admin = testUser();
+    $admin = testUser([], UserRole::Admin);
     Storage::disk('public')->put('sounds/wobble.mp3', 'sound');
 
     $this->actingAs($admin)->delete(route('sounds.destroy', 'wobble'))

@@ -69,3 +69,11 @@ a.card:not([href]) {
 input[type="checkbox"]:checked::after {
     transform: rotate(45deg) scale(1.2);
 }
+
+.badge {
+    @apply inline-flex w-fit items-center gap-1 rounded-full bg-fsim-medium px-2 py-1 align-middle text-xs;
+}
+
+.badge svg {
+    @apply size-4;
+}
