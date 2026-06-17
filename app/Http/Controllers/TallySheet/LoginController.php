@@ -4,6 +4,7 @@ namespace App\Http\Controllers\TallySheet;
 
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
+use App\Models\Barcode;
 use App\Models\User;
 use App\Services\TallySheetSessionService;
 use Closure;
@@ -65,6 +66,24 @@ class LoginController extends Controller
                 },
             ],
         ]);
+
+        return $this->userStartPage($user);
+    }
+
+    public function loginByBarcode(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'barcode' => ['required', 'string'],
+        ]);
+
+        $user = Barcode::where('barcode', $validated['barcode'])->first()?->user;
+
+        if (! $user || ! $user->hasRole(UserRole::Customer)) {
+            return redirect()->route('tally-sheet.auth.list-users')->with('toast', [
+                'type' => 'error',
+                'message' => 'Barcode wurde keinem Nutzer zugeordnet.',
+            ]);
+        }
 
         return $this->userStartPage($user);
     }

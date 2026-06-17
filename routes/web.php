@@ -37,6 +37,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/', 'listUsers')->name('list-users');
             Route::get('/login/{user}', 'login')->name('login');
             Route::post('/login/{user}', 'validatePin')->name('validate-pin');
+            Route::post('/login-by-barcode', 'loginByBarcode')->name('login-by-barcode');
             Route::get('/logout', 'logout')->name('logout');
         });
 

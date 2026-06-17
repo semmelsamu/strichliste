@@ -129,6 +129,57 @@ test('tally sheet pin validation requires a pin', function () {
     ])->assertSessionHasErrors('pin');
 });
 
+test('scanning a barcode linked to a user logs them in without a pin', function () {
+    $admin = testUser([], UserRole::TallyHost);
+    $world = testUser([], UserRole::World);
+    $user = testUser(['pin' => '1234'], UserRole::Customer);
+
+    Transaction::factory()->create([
+        'from_user_id' => $world->id,
+        'to_user_id' => $user->id,
+        'amount' => 5,
+    ]);
+
+    $barcode = new Barcode;
+    $barcode->barcode = 'user-login-barcode';
+    $barcode->user_id = $user->id;
+    $barcode->save();
+
+    $this->actingAs($admin)->withSession(tallySheetRunningSession($world))->post(route('tally-sheet.auth.login-by-barcode'), [
+        'barcode' => 'user-login-barcode',
+    ])
+        ->assertRedirect(route('tally-sheet.buy-overview'))
+        ->assertSessionHas('tally_sheet.user_id', $user->id);
+});
+
+test('scanning an unknown barcode keeps the user on the login screen', function () {
+    $admin = testUser([], UserRole::TallyHost);
+
+    $this->actingAs($admin)->withSession(tallySheetRunningSession())->post(route('tally-sheet.auth.login-by-barcode'), [
+        'barcode' => 'unknown-barcode',
+    ])
+        ->assertRedirect(route('tally-sheet.auth.list-users'))
+        ->assertSessionHas('toast.type', 'error')
+        ->assertSessionMissing('tally_sheet.user_id');
+});
+
+test('scanning a barcode linked to an article keeps the user on the login screen', function () {
+    $admin = testUser([], UserRole::TallyHost);
+    $article = testArticle();
+
+    $barcode = new Barcode;
+    $barcode->barcode = 'article-login-barcode';
+    $barcode->article_id = $article->id;
+    $barcode->save();
+
+    $this->actingAs($admin)->withSession(tallySheetRunningSession())->post(route('tally-sheet.auth.login-by-barcode'), [
+        'barcode' => 'article-login-barcode',
+    ])
+        ->assertRedirect(route('tally-sheet.auth.list-users'))
+        ->assertSessionHas('toast.type', 'error')
+        ->assertSessionMissing('tally_sheet.user_id');
+});
+
 test('tally sheet users can update their username', function () {
     $admin = testUser([], UserRole::TallyHost);
     $user = testUser(['name' => 'old-name'], UserRole::Customer);
