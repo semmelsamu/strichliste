@@ -72,8 +72,10 @@ function testCategory(array $attributes = []): Category
  */
 function tallySheetRunningSession(?User $world = null, ?User $vendor = null): array
 {
-    $world ??= testUser(['type' => UserRole::World]);
-    $vendor ??= testUser(['type' => UserRole::Vendor]);
+    $world ??= testUser();
+    $world->assignRole(UserRole::World);
+    $vendor ??= testUser();
+    $vendor->assignRole(UserRole::Vendor);
 
     return [
         TallySheetSessionService::WORLD_SESSION_KEY => $world->id,
