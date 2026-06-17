@@ -2,6 +2,7 @@
 
 use App\Enums\UserRole;
 use App\Models\Article;
+use App\Models\Barcode;
 use App\Models\BuyArticleTransaction;
 use App\Models\Transaction;
 use App\Models\UndoTransaction;
@@ -26,6 +27,7 @@ function buildLegacyDatabase(): string
     $pdo->exec('create table UserGroupMap (gid integer not null, uid integer not null)');
     $pdo->exec('create table Articles (id integer primary key, name text not null unique, is_disabled boolean not null default false)');
     $pdo->exec('create table ArticleBarcodes (article_id integer not null, barcode_content text not null unique)');
+    $pdo->exec('create table UserCardNumberMap (user_id integer not null primary key, card_number varchar(255) not null unique)');
     $pdo->exec('create table ArticleCostMap (article_id integer not null, cost integer not null, effective_since date not null)');
     $pdo->exec('create table Transactions (id integer primary key, sender not null, receiver not null, is_undone boolean not null default false, t_type_data integer, money integer not null, description varchar(255), timestamp date not null)');
 
@@ -46,6 +48,12 @@ function buildLegacyDatabase(): string
     // Articles: 10 active (two prices, one barcode), 11 disabled.
     $pdo->exec("insert into Articles (id, name, is_disabled) values (10, 'Cola', 0), (11, 'OldBeer', 1)");
     $pdo->exec("insert into ArticleBarcodes (article_id, barcode_content) values (10, 'BC-COLA')");
+
+    // User card numbers, including one that collides with an article barcode
+    // (BC-COLA) where the article must win.
+    $pdo->exec("insert into UserCardNumberMap (user_id, card_number) values
+        (3, 'CARD-ALICE'),
+        (5, 'BC-COLA')");
     $pdo->exec("insert into ArticleCostMap (article_id, cost, effective_since) values
         (10, 150, '2025-01-01 00:00:00'),
         (10, 170, '2025-02-01 00:00:00'),
@@ -103,6 +111,23 @@ it('imports articles, prices and barcodes', function () {
     // Disabled legacy articles become soft deleted.
     expect(Article::where('name', 'OldBeer')->exists())->toBeFalse();
     expect(Article::withTrashed()->where('name', 'OldBeer')->first()->trashed())->toBeTrue();
+});
+
+it('imports user card numbers as barcodes, letting articles win collisions', function () {
+    $this->artisan('import:legacy-database', ['path' => $this->legacyPath])->assertSuccessful();
+
+    $alice = User::where('name', 'alice')->first();
+    $carol = User::where('name', 'carol')->first();
+
+    // Alice's unique card number is linked to her.
+    $card = Barcode::where('barcode', 'CARD-ALICE')->first();
+    expect($card)->not->toBeNull();
+    expect($card->user_id)->toBe($alice->id);
+
+    // BC-COLA collides with an article barcode, so the article keeps it and
+    // carol does not receive a barcode.
+    expect(Barcode::where('barcode', 'BC-COLA')->first()->user_id)->toBeNull();
+    expect(Barcode::where('user_id', $carol->id)->exists())->toBeFalse();
 });
 
 it('imports a purchase as a buy article transaction', function () {
