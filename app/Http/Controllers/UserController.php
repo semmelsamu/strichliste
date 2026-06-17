@@ -116,7 +116,7 @@ class UserController extends Controller
     public function updatePassword(Request $request, User $user)
     {
         $validated = $request->validate([
-            'password' => ['string'],
+            'password' => ['required', 'string'],
         ]);
 
         $user->password = $validated['password'];

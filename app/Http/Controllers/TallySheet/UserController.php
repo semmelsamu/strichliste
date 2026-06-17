@@ -41,7 +41,7 @@ class UserController extends Controller
         ]);
 
         $username = $validated['username'];
-        $pin = $validated['pin'];
+        $pin = $validated['pin'] ?? null;
 
         $user = new User;
         $user->name = $username;

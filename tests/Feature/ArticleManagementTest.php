@@ -54,8 +54,26 @@ test('article creation validates name category and non-negative decimal price', 
     'missing name' => [['name' => null], ['name']],
     'missing category' => [['category' => null], ['category']],
     'unknown category' => [['category' => 9999], ['category']],
+    'missing price' => [['price' => null], ['price']],
     'negative price' => [['price' => '-0.10'], ['price']],
     'too many price decimals' => [['price' => '1.234'], ['price']],
+]);
+
+test('article update validates name and category', function (array $payload, array $errors) {
+    $admin = testUser([], UserRole::Admin);
+    $category = testCategory();
+    $article = testArticle(['category_id' => $category->id]);
+    $payload = array_replace([
+        'name' => 'Valid Article',
+        'category' => $category->id,
+    ], $payload);
+
+    $this->actingAs($admin)->patch(route('articles.update', $article), $payload)
+        ->assertSessionHasErrors($errors);
+})->with([
+    'missing name' => [['name' => null], ['name']],
+    'missing category' => [['category' => null], ['category']],
+    'unknown category' => [['category' => 9999], ['category']],
 ]);
 
 test('admins can update article details without changing its price history', function () {
@@ -92,6 +110,19 @@ test('admins can append a new article price', function () {
     expect($article->prices()->count())->toBe(2)
         ->and((float) $article->fresh()->currentPrice)->toBe(1.00);
 });
+
+test('article price update validates non-negative decimal price', function (array $payload, array $errors) {
+    $admin = testUser([], UserRole::Admin);
+    $article = testArticle();
+    $payload = array_replace(['price' => '1.00'], $payload);
+
+    $this->actingAs($admin)->post(route('articles.update-price', $article), $payload)
+        ->assertSessionHasErrors($errors);
+})->with([
+    'missing price' => [['price' => null], ['price']],
+    'negative price' => [['price' => '-0.10'], ['price']],
+    'too many price decimals' => [['price' => '1.234'], ['price']],
+]);
 
 test('admins can archive and restore articles', function () {
     $admin = testUser([], UserRole::Admin);
@@ -143,6 +174,15 @@ test('article barcodes must be unique', function () {
 
     $this->actingAs($admin)->post(route('articles.add-barcode', $secondArticle), [
         'barcode' => 'duplicate-code',
+    ])->assertSessionHasErrors('barcode');
+});
+
+test('article barcodes are required', function () {
+    $admin = testUser([], UserRole::Admin);
+    $article = testArticle();
+
+    $this->actingAs($admin)->post(route('articles.add-barcode', $article), [
+        'barcode' => null,
     ])->assertSessionHasErrors('barcode');
 });
 

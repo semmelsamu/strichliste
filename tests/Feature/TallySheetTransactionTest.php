@@ -133,6 +133,7 @@ test('deposit requests validate action and amount', function (array $payload, ar
     $this->actingAs($admin)->withSession(tallySheetSession($user, $world ?? null, $vendor ?? null))->post(route('tally-sheet.deposit'), $payload)
         ->assertSessionHasErrors($errors);
 })->with([
+    'missing action' => [['action' => null], ['action']],
     'invalid action' => [['action' => 'refund'], ['action']],
     'missing amount' => [['amount' => null], ['amount']],
     'too many decimals' => [['amount' => '1.234'], ['amount']],
@@ -261,6 +262,24 @@ test('users cannot undo transactions that do not belong to them', function () {
         'transaction' => $deposit->id,
     ])->assertSessionHasErrors('transaction');
 });
+
+test('undo requests validate the transaction id', function (array $payload, array $errors) {
+    ['admin' => $admin, 'world' => $world, 'user' => $user] = transactionUsers();
+
+    $deposit = Transaction::factory()->create([
+        'from_user_id' => $world->id,
+        'to_user_id' => $user->id,
+        'amount' => 5,
+    ]);
+
+    $payload = array_replace(['transaction' => $deposit->id], $payload);
+
+    $this->actingAs($admin)->withSession(tallySheetSession($user, $world ?? null, $vendor ?? null))->post(route('tally-sheet.undo'), $payload)
+        ->assertSessionHasErrors($errors);
+})->with([
+    'missing transaction' => [['transaction' => null], ['transaction']],
+    'unknown transaction' => [['transaction' => 9999], ['transaction']],
+]);
 
 test('old transactions cannot be undone', function () {
     ['admin' => $admin, 'world' => $world, 'user' => $user] = transactionUsers();
