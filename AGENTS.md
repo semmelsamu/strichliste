@@ -20,9 +20,6 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - laravel/pint (PINT) - v1
 - pestphp/pest (PEST) - v4
 - phpunit/phpunit (PHPUNIT) - v12
-- alpinejs (ALPINEJS) - v3
-- prettier (PRETTIER) - v3
-- tailwindcss (TAILWINDCSS) - v4
 
 ## Skills Activation
 
