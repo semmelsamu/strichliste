@@ -13,5 +13,13 @@
     {
       packages.x86_64-linux.default = pkgs.callPackage ./nix/pkg.nix { };
       nixosModules.strichliste = import ./nix/options.nix self;
+      devShells.x86_64-linux.default = pkgs.mkShell {
+        nativeBuildInputs = with pkgs; [
+          php
+          phpPackages.composer
+          nodejs
+          vitejs
+        ];
+      };
     };
 }

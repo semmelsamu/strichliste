@@ -18,7 +18,7 @@ let
 
     src = ../.;
 
-    npmDepsHash = "sha256-fRxzAHfc0z52QJWWYByLbSzHmunOdjy4xQX1IspM0Fg=";
+    npmDepsHash = "sha256-kkmarT3o+dTHmWyynaWQbjneCi/Z8PMNh9erwqZ0dLE=";
 
     npmPackFlags = [ "--ignore-scripts" ];
 
