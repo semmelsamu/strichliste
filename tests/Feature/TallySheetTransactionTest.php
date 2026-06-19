@@ -438,13 +438,46 @@ test('history view returns normalized transactions newest first', function () {
         'created_at' => Carbon::now(),
     ]);
 
-    $this->actingAs($admin)->withSession(tallySheetSession($user, $world ?? null, $vendor ?? null))->get(route('tally-sheet.history'))
+    $this->actingAs($admin)->withSession(tallySheetSession($user, $world ?? null, $vendor ?? null))
+        ->withHeader('HX-Request', 'true')
+        ->get(route('tally-sheet.history'))
         ->assertSuccessful()
-        ->assertViewIs('pages.tally-sheet.history')
-        ->assertViewHas('normalizedTransactions', function ($transactions) use ($newerPositive, $olderNegative, $world, $user) {
-            return $transactions->pluck('id')->all() === [$newerPositive->id, $olderNegative->id]
-                && (float) $transactions->last()->amount === 2.0
-                && $transactions->last()->fromUser->is($user)
-                && $transactions->last()->toUser->is($world);
-        });
+        ->assertSeeInOrder([
+            "transaction-{$newerPositive->id}",
+            "transaction-{$olderNegative->id}",
+        ], false)
+        // The negative transaction is normalized: from/to users are swapped,
+        // so it reads as money paid out to the world user.
+        ->assertSee("Geld bei {$world->name} ausgezahlt");
+});
+
+test('history view lazily loads transactions and only queries them for htmx requests', function () {
+    ['admin' => $admin, 'world' => $world, 'user' => $user] = transactionUsers();
+
+    $transaction = Transaction::factory()->create([
+        'from_user_id' => $world->id,
+        'to_user_id' => $user->id,
+        'amount' => 5,
+        'created_at' => Carbon::now(),
+    ]);
+
+    $session = tallySheetSession($user, $world, null);
+
+    // Initial (non-HTMX) page load renders only the shell: a spinner placeholder
+    // with the lazy-loading trigger, and none of the transaction data.
+    $this->actingAs($admin)->withSession($session)->get(route('tally-sheet.history'))
+        ->assertSuccessful()
+        ->assertSee('hx-get', false)
+        ->assertSee('animate-spin', false)
+        ->assertDontSee('Transaktionen gesamt.')
+        ->assertDontSee("transaction-{$transaction->id}", false);
+
+    // The HTMX fragment request renders the transactions, without the shell wrapper.
+    $this->actingAs($admin)->withSession($session)
+        ->withHeader('HX-Request', 'true')
+        ->get(route('tally-sheet.history'))
+        ->assertSuccessful()
+        ->assertSee('1 Transaktionen gesamt.')
+        ->assertSee("transaction-{$transaction->id}", false)
+        ->assertDontSee('hx-get', false);
 });

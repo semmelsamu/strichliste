@@ -1,3 +1,4 @@
+import "htmx.org";
 import Alpine from "alpinejs";
 import inactivityTimeout from "./components/inactivity-timeout";
 import scrollspy from "./components/scrollspy";
