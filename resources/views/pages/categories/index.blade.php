@@ -26,7 +26,11 @@
                         <td class="w-6">
                             @svg ($category->icon)
                         </td>
-                        <th class="w-auto">{{ $category->name }}</th>
+                        <th
+                            @class (["w-auto", "text-text-secondary" => $category->hidden])
+                        >
+                            {{ $category->name }}
+                        </th>
                         <td class="flex items-center justify-end">
                             <a
                                 href="{{ route("categories.edit", $category->id) }}"

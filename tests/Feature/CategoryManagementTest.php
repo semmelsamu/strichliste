@@ -78,6 +78,49 @@ test('admins can edit and update categories', function () {
         ->and($category->fresh()->icon)->toBe('lucide-coffee');
 });
 
+test('admins can hide a category', function () {
+    $admin = testUser([], UserRole::Admin);
+    $category = testCategory(['name' => 'Softdrinks']);
+
+    $this->actingAs($admin)->patch(route('categories.update', $category), [
+        'name' => 'Softdrinks',
+        'icon' => 'coffee',
+        'hidden' => '1',
+    ])
+        ->assertRedirect(route('categories.index'))
+        ->assertSessionHas('toast.type', 'success');
+
+    expect($category->fresh()->hidden)->toBeTrue();
+});
+
+test('admins can unhide a category', function () {
+    $admin = testUser([], UserRole::Admin);
+    $category = testCategory(['name' => 'Softdrinks']);
+    $category->hidden = true;
+    $category->save();
+
+    $this->actingAs($admin)->patch(route('categories.update', $category), [
+        'name' => 'Softdrinks',
+        'icon' => 'coffee',
+    ])
+        ->assertRedirect(route('categories.index'));
+
+    expect($category->fresh()->hidden)->toBeFalse();
+});
+
+test('hidden categories are not displayed in the tally sheet', function () {
+    $admin = testUser([], UserRole::Admin);
+    $user = testUser([], UserRole::Customer);
+    $visible = testCategory(['name' => 'Softdrinks']);
+    $hidden = testCategory(['name' => 'Secret']);
+    $hidden->hidden = true;
+    $hidden->save();
+
+    $this->actingAs($admin)->withSession(tallySheetSession($user))->get(route('tally-sheet.buy-overview'))
+        ->assertSuccessful()
+        ->assertViewHas('categories', fn ($categories) => $categories->contains($visible) && ! $categories->contains($hidden));
+});
+
 test('admins can delete unused categories', function () {
     $admin = testUser([], UserRole::Admin);
     $category = testCategory();

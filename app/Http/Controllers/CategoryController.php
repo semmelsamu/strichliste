@@ -99,10 +99,12 @@ class CategoryController extends Controller
                     }
                 },
             ],
+            'hidden' => ['boolean'],
         ]);
 
         $category->name = $validated['name'];
         $category->icon = 'lucide-'.$validated['icon'];
+        $category->hidden = $request->boolean('hidden');
         $category->save();
 
         return redirect()->route('categories.index')->with('toast', [
