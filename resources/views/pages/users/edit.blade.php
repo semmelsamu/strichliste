@@ -88,11 +88,7 @@
 
         <section class="my-section">
             <h2 class="mb-inline">Strichlisten-Zuweisung</h2>
-            <p class="mb-content max-w-prose text-text-secondary">
-                Ist eine Außenwelt und ein Verkäufer zugewiesen, startet dieser
-                Nutzer beim Anmelden automatisch eine Strichlisten-Session mit
-                diesen Konten.
-            </p>
+            <p class="mb-content max-w-prose text-text-secondary">Ist eine Außenwelt und ein Verkäufer zugewiesen, startet dieser Nutzer beim Anmelden automatisch eine Strichlisten-Session mit diesen Konten.</p>
             <form
                 method="POST"
                 action="{{ route("users.update-assignment", $user->id) }}"
