@@ -1,11 +1,14 @@
 <?php
 
+use App\Enums\SystemSound;
 use App\Enums\UserRole;
 use App\Models\BuyArticleTransaction;
+use App\Models\SystemSoundSetting;
 use App\Models\Transaction;
 use App\Models\UndoTransaction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 pest()->use(RefreshDatabase::class);
 
@@ -19,8 +22,32 @@ function transactionUsers(): array
     ];
 }
 
+function assignSystemSound(SystemSound $systemSound, string $name): void
+{
+    Storage::disk('public')->put("sounds/{$name}.mp3", 'sound');
+    SystemSoundSetting::create([
+        'system_sound' => $systemSound,
+        'sound' => $name,
+    ]);
+}
+
+test('no sound is played when no system sound is configured for an action', function () {
+    ['admin' => $admin, 'world' => $world, 'user' => $user] = transactionUsers();
+
+    $this->actingAs($admin)->withSession(tallySheetSession($user, $world ?? null, $vendor ?? null))->post(route('tally-sheet.deposit'), [
+        'action' => 'deposit',
+        'world' => $world->id,
+        'amount' => '10.50',
+    ])
+        ->assertRedirect()
+        ->assertSessionMissing('sound');
+});
+
 test('users can deposit money from a world account', function () {
     ['admin' => $admin, 'world' => $world, 'user' => $user] = transactionUsers();
+
+    Storage::fake('public');
+    assignSystemSound(SystemSound::Deposit, 'spongebob-moneten');
 
     $this->actingAs($admin)->withSession(tallySheetSession($user, $world ?? null, $vendor ?? null))->post(route('tally-sheet.deposit'), [
         'action' => 'deposit',
@@ -47,6 +74,9 @@ test('users can withdraw money without going below zero', function () {
         'to_user_id' => $user->id,
         'amount' => 5,
     ]);
+
+    Storage::fake('public');
+    assignSystemSound(SystemSound::Withdraw, 'wobble');
 
     $this->actingAs($admin)->withSession(tallySheetSession($user, $world ?? null, $vendor ?? null))->post(route('tally-sheet.deposit'), [
         'action' => 'withdraw',
@@ -213,6 +243,9 @@ test('users can undo one of their recent transactions', function () {
         'to_user_id' => $user->id,
         'amount' => 5,
     ]);
+
+    Storage::fake('public');
+    assignSystemSound(SystemSound::UndoTransaction, 'wobble');
 
     $this->actingAs($admin)->withSession(tallySheetSession($user, $world ?? null, $vendor ?? null))->post(route('tally-sheet.undo'), [
         'transaction' => $deposit->id,
