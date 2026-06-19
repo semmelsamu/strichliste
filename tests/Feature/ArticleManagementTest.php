@@ -4,9 +4,28 @@ use App\Enums\UserRole;
 use App\Models\Article;
 use App\Models\Barcode;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Drivers\Imagick\Driver;
+use Intervention\Image\ImageManager;
 
 pest()->use(RefreshDatabase::class);
+
+/**
+ * Build a real JPEG upload using Imagick (the GD-based UploadedFile::fake()->image()
+ * is unavailable because GD is not loaded in this environment).
+ */
+function imageUpload(int $width = 1200, int $height = 1000): UploadedFile
+{
+    $imagick = new Imagick;
+    $imagick->newImage($width, $height, new ImagickPixel('red'));
+    $imagick->setImageFormat('jpeg');
+
+    $path = tempnam(sys_get_temp_dir(), 'article-image').'.jpg';
+    file_put_contents($path, $imagick->getImageBlob());
+
+    return new UploadedFile($path, 'photo.jpg', 'image/jpeg', test: true);
+}
 
 test('admins can list active and archived articles', function () {
     $admin = testUser([], UserRole::Admin);
@@ -227,4 +246,71 @@ test('admins can update the sounds assigned to an article', function () {
         ->assertSessionHas('toast.type', 'success');
 
     expect($article->fresh()->sounds)->toBe(['kaching']);
+});
+
+test('admins can upload an image for an article, scaled down to 800px jpeg', function () {
+    Storage::fake('public');
+
+    $admin = testUser([], UserRole::Admin);
+    $article = testArticle();
+
+    $this->actingAs($admin)->post(route('articles.update-image', $article), [
+        'image' => imageUpload(1200, 1000),
+    ])
+        ->assertRedirect(route('articles.edit', $article->id))
+        ->assertSessionHas('toast.type', 'success');
+
+    expect($article->hasImage())->toBeTrue();
+
+    $contents = Storage::disk('public')->get("article-images/{$article->id}.jpg");
+    $stored = ImageManager::usingDriver(Driver::class)->decodeBinary($contents);
+
+    expect(bin2hex(substr($contents, 0, 3)))->toBe('ffd8ff')
+        ->and(max($stored->width(), $stored->height()))->toBe(800)
+        ->and($stored->width())->toBe(800)
+        ->and($stored->height())->toBe(667);
+});
+
+test('uploading a new image overwrites the existing one', function () {
+    Storage::fake('public');
+
+    $admin = testUser([], UserRole::Admin);
+    $article = testArticle();
+
+    $this->actingAs($admin)->post(route('articles.update-image', $article), [
+        'image' => imageUpload(),
+    ]);
+    $this->actingAs($admin)->post(route('articles.update-image', $article), [
+        'image' => imageUpload(),
+    ]);
+
+    expect(Storage::disk('public')->files('article-images'))
+        ->toBe(["article-images/{$article->id}.jpg"]);
+});
+
+test('admins can delete an article image', function () {
+    Storage::fake('public');
+
+    $admin = testUser([], UserRole::Admin);
+    $article = testArticle();
+    Storage::disk('public')->put("article-images/{$article->id}.jpg", 'image');
+
+    $this->actingAs($admin)->delete(route('articles.delete-image', $article))
+        ->assertRedirect(route('articles.edit', $article->id))
+        ->assertSessionHas('toast.type', 'success');
+
+    expect($article->hasImage())->toBeFalse();
+});
+
+test('article image upload requires an image file', function () {
+    Storage::fake('public');
+
+    $admin = testUser([], UserRole::Admin);
+    $article = testArticle();
+
+    $this->actingAs($admin)->post(route('articles.update-image', $article), [
+        'image' => UploadedFile::fake()->create('notes.txt', 10),
+    ])->assertSessionHasErrors('image');
+
+    expect($article->hasImage())->toBeFalse();
 });
