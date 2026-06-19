@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 class Sound
 {
@@ -38,13 +37,7 @@ class Sound
 
     public static function get(string $name)
     {
-        $result = self::all()->first(fn ($sound) => $sound->name() == $name);
-
-        if (! $result) {
-            throw new NotFoundResourceException('Sound "'.$name.'" wurde nicht gefunden.');
-        }
-
-        return $result;
+        return self::all()->first(fn ($sound) => $sound->name() == $name);
     }
 
     public static function create(UploadedFile $file)
