@@ -127,4 +127,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('sounds', SoundController::class)->only([
         'index', 'create', 'store', 'destroy',
     ]);
+
+    Route::put('system-sounds', [SoundController::class, 'updateSystemSounds'])->name('sounds.update-system-sounds');
 });
