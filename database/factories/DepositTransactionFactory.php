@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Enums\UserType;
+use App\Enums\UserRole;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -23,8 +23,8 @@ class DepositTransactionFactory extends Factory
     {
         return [
             'amount' => fake()->randomNumber(1, 10),
-            'from_user_id' => User::where('type', UserType::World)->inRandomOrder()->value('id'),
-            'to_user_id' => User::where('type', UserType::NormalUser)->inRandomOrder()->value('id'),
+            'from_user_id' => User::role(UserRole::World->value)->inRandomOrder()->value('id'),
+            'to_user_id' => User::withoutRole([UserRole::World->value, UserRole::Vendor->value])->inRandomOrder()->value('id'),
         ];
     }
 }

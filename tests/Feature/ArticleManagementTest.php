@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\UserRole;
 use App\Models\Article;
 use App\Models\Barcode;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -8,7 +9,7 @@ use Illuminate\Support\Facades\Storage;
 pest()->use(RefreshDatabase::class);
 
 test('admins can list active and archived articles', function () {
-    $admin = testUser();
+    $admin = testUser([], UserRole::Admin);
     $activeArticle = testArticle(['name' => 'Club Mate']);
     $archivedArticle = testArticle(['name' => 'Archived Mate']);
     $archivedArticle->delete();
@@ -21,7 +22,7 @@ test('admins can list active and archived articles', function () {
 });
 
 test('admins can create articles with an initial price', function () {
-    $admin = testUser();
+    $admin = testUser([], UserRole::Admin);
     $category = testCategory(['name' => 'Softdrinks']);
 
     $this->actingAs($admin)->post(route('articles.store'), [
@@ -39,7 +40,7 @@ test('admins can create articles with an initial price', function () {
 });
 
 test('article creation validates name category and non-negative decimal price', function (array $payload, array $errors) {
-    $admin = testUser();
+    $admin = testUser([], UserRole::Admin);
     $category = testCategory();
     $payload = array_replace([
         'name' => 'Valid Article',
@@ -53,12 +54,30 @@ test('article creation validates name category and non-negative decimal price', 
     'missing name' => [['name' => null], ['name']],
     'missing category' => [['category' => null], ['category']],
     'unknown category' => [['category' => 9999], ['category']],
+    'missing price' => [['price' => null], ['price']],
     'negative price' => [['price' => '-0.10'], ['price']],
     'too many price decimals' => [['price' => '1.234'], ['price']],
 ]);
 
+test('article update validates name and category', function (array $payload, array $errors) {
+    $admin = testUser([], UserRole::Admin);
+    $category = testCategory();
+    $article = testArticle(['category_id' => $category->id]);
+    $payload = array_replace([
+        'name' => 'Valid Article',
+        'category' => $category->id,
+    ], $payload);
+
+    $this->actingAs($admin)->patch(route('articles.update', $article), $payload)
+        ->assertSessionHasErrors($errors);
+})->with([
+    'missing name' => [['name' => null], ['name']],
+    'missing category' => [['category' => null], ['category']],
+    'unknown category' => [['category' => 9999], ['category']],
+]);
+
 test('admins can update article details without changing its price history', function () {
-    $admin = testUser();
+    $admin = testUser([], UserRole::Admin);
     $oldCategory = testCategory(['name' => 'Snacks']);
     $newCategory = testCategory(['name' => 'Coffee']);
     $article = testArticle(['category_id' => $oldCategory->id], 0.80);
@@ -76,7 +95,7 @@ test('admins can update article details without changing its price history', fun
 });
 
 test('admins can append a new article price', function () {
-    $admin = testUser();
+    $admin = testUser([], UserRole::Admin);
     $article = testArticle(price: 0.80);
     $article->prices()->update([
         'effective_since' => now()->subMinute(),
@@ -92,8 +111,21 @@ test('admins can append a new article price', function () {
         ->and((float) $article->fresh()->currentPrice)->toBe(1.00);
 });
 
+test('article price update validates non-negative decimal price', function (array $payload, array $errors) {
+    $admin = testUser([], UserRole::Admin);
+    $article = testArticle();
+    $payload = array_replace(['price' => '1.00'], $payload);
+
+    $this->actingAs($admin)->post(route('articles.update-price', $article), $payload)
+        ->assertSessionHasErrors($errors);
+})->with([
+    'missing price' => [['price' => null], ['price']],
+    'negative price' => [['price' => '-0.10'], ['price']],
+    'too many price decimals' => [['price' => '1.234'], ['price']],
+]);
+
 test('admins can archive and restore articles', function () {
-    $admin = testUser();
+    $admin = testUser([], UserRole::Admin);
     $article = testArticle();
 
     $this->actingAs($admin)->delete(route('articles.destroy', $article))
@@ -110,7 +142,7 @@ test('admins can archive and restore articles', function () {
 });
 
 test('admins can add and remove article barcodes', function () {
-    $admin = testUser();
+    $admin = testUser([], UserRole::Admin);
     $article = testArticle();
 
     $this->actingAs($admin)->post(route('articles.add-barcode', $article), [
@@ -130,8 +162,8 @@ test('admins can add and remove article barcodes', function () {
     expect(Barcode::whereKey($barcode->id)->exists())->toBeFalse();
 });
 
-test('article barcodes must be unique', function () {
-    $admin = testUser();
+test('adding a barcode already linked to another article reassigns it', function () {
+    $admin = testUser([], UserRole::Admin);
     $firstArticle = testArticle();
     $secondArticle = testArticle();
 
@@ -142,13 +174,47 @@ test('article barcodes must be unique', function () {
 
     $this->actingAs($admin)->post(route('articles.add-barcode', $secondArticle), [
         'barcode' => 'duplicate-code',
+    ])
+        ->assertRedirect(route('articles.edit', $secondArticle->id))
+        ->assertSessionHas('toast.type', 'success');
+
+    expect($barcode->fresh()->article_id)->toBe($secondArticle->id);
+});
+
+test('adding a barcode already linked to a user reassigns it to the article', function () {
+    $admin = testUser([], UserRole::Admin);
+    $user = testUser([], UserRole::Customer);
+    $article = testArticle();
+
+    $barcode = new Barcode;
+    $barcode->barcode = 'user-owned-code';
+    $barcode->user_id = $user->id;
+    $barcode->save();
+
+    $this->actingAs($admin)->post(route('articles.add-barcode', $article), [
+        'barcode' => 'user-owned-code',
+    ])
+        ->assertRedirect(route('articles.edit', $article->id))
+        ->assertSessionHas('toast.type', 'success');
+
+    expect($barcode->fresh())
+        ->article_id->toBe($article->id)
+        ->user_id->toBeNull();
+});
+
+test('article barcodes are required', function () {
+    $admin = testUser([], UserRole::Admin);
+    $article = testArticle();
+
+    $this->actingAs($admin)->post(route('articles.add-barcode', $article), [
+        'barcode' => null,
     ])->assertSessionHasErrors('barcode');
 });
 
 test('admins can update the sounds assigned to an article', function () {
     Storage::fake('public');
 
-    $admin = testUser();
+    $admin = testUser([], UserRole::Admin);
     $article = testArticle();
 
     Storage::disk('public')->put('sounds/kaching.mp3', 'sound');

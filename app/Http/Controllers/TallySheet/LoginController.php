@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers\TallySheet;
 
-use App\Enums\UserType;
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
+use App\Models\Barcode;
 use App\Models\User;
 use App\Services\TallySheetSessionService;
 use Closure;
@@ -19,7 +20,7 @@ class LoginController extends Controller
     {
         return view('pages.tally-sheet.auth.login', [
             'usersByLetter' => User::groupByFirstLetter(
-                User::where('type', UserType::NormalUser)->get()
+                User::role(UserRole::Customer)->get()
             ),
         ]);
     }
@@ -32,12 +33,16 @@ class LoginController extends Controller
             return redirect()->route('tally-sheet.show-deposit');
         }
 
-        return redirect()->route('tally-sheet.buy-overview');
+        return redirect()->route('tally-sheet.buy-overview')
+            ->with('toast', [
+                'type' => 'success',
+                'message' => 'Willkommen zurück, '.$user->name.'!',
+            ]);
     }
 
     public function login(Request $request, User $user)
     {
-        if ($user->type !== UserType::NormalUser) {
+        if (! $user->role(UserRole::Customer)) {
             return redirect()->route('tally-sheet.auth.list-users');
         }
 
@@ -50,7 +55,7 @@ class LoginController extends Controller
 
     public function validatePin(Request $request, User $user): RedirectResponse
     {
-        if ($user->type !== UserType::NormalUser) {
+        if (! $user->role(UserRole::Customer)) {
             return redirect()->route('tally-sheet.auth.list-users');
         }
 
@@ -65,6 +70,30 @@ class LoginController extends Controller
                 },
             ],
         ]);
+
+        return $this->userStartPage($user);
+    }
+
+    public function scanBarcode(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'barcode' => ['required', 'string'],
+        ]);
+
+        $barcode = Barcode::where('barcode', $validated['barcode'])->first();
+
+        if ($barcode?->article) {
+            return redirect()->route('tally-sheet.article-details', $barcode->article);
+        }
+
+        $user = $barcode?->user;
+
+        if (! $user || ! $user->hasRole(UserRole::Customer)) {
+            return redirect()->route('tally-sheet.auth.list-users')->with('toast', [
+                'type' => 'error',
+                'message' => 'Barcode wurde keinem Nutzer zugeordnet.',
+            ]);
+        }
 
         return $this->userStartPage($user);
     }

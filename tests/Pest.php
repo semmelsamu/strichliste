@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\UserType;
+use App\Enums\UserRole;
 use App\Models\Article;
 use App\Models\ArticlePrice;
 use App\Models\Category;
@@ -50,11 +50,17 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function testUser(array $attributes = []): User
+function testUser(array $attributes = [], ?UserRole $role = null): User
 {
-    return User::factory()->create(array_merge([
+    $user = User::factory()->create(array_merge([
         'name' => fake()->unique()->userName(),
     ], $attributes));
+
+    if ($role !== null) {
+        $user->assignRole($role);
+    }
+
+    return $user;
 }
 
 function testCategory(array $attributes = []): Category
@@ -72,8 +78,10 @@ function testCategory(array $attributes = []): Category
  */
 function tallySheetRunningSession(?User $world = null, ?User $vendor = null): array
 {
-    $world ??= testUser(['type' => UserType::World]);
-    $vendor ??= testUser(['type' => UserType::Vendor]);
+    $world ??= testUser();
+    $world->assignRole(UserRole::World);
+    $vendor ??= testUser();
+    $vendor->assignRole(UserRole::Vendor);
 
     return [
         TallySheetSessionService::WORLD_SESSION_KEY => $world->id,

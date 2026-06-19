@@ -9,6 +9,17 @@
             Registrieren
         </a>
     </header>
+    <x-scanner>
+        <form
+            method="POST"
+            action="{{ route('tally-sheet.auth.scan-barcode') }}"
+            x-ref="form"
+        >
+            @csrf
+            <input type="hidden" name="barcode" x-ref="barcode" />
+        </form>
+    </x-scanner>
+
     <x-wrapper
         class="grid grid-cols-[auto_1fr] gap-content overflow-hidden p-wrapper"
         x-data="scrollspy({{ $usersByLetter->keys()->first()?->id ?? 'null' }})"

@@ -2,11 +2,7 @@
     @csrf
     <input type="hidden" name="article" value="{{ $article->id }}" />
     <button class="h-full w-full">
-        <div
-            class="grid aspect-video place-items-center bg-black bg-fsim-light"
-        >
-            <x-lucide-file-image />
-        </div>
+        <x-article-image :article="$article" />
         <div class="flex justify-between p-inline">
             <strong>{{ $article->name }}</strong>
             <x-currency :amount="$article->currentPrice" :colors="false" />

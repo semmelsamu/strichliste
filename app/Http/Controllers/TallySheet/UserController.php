@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers\TallySheet;
 
-use App\Enums\UserType;
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
+use App\Models\Barcode;
 use App\Models\User;
 use App\Services\TallySheetSessionService;
 use Illuminate\Http\RedirectResponse;
@@ -41,13 +42,13 @@ class UserController extends Controller
         ]);
 
         $username = $validated['username'];
-        $pin = $validated['pin'];
+        $pin = $validated['pin'] ?? null;
 
         $user = new User;
         $user->name = $username;
         $user->pin = $pin;
-        $user->type = UserType::NormalUser;
         $user->save();
+        $user->assignRole(UserRole::Customer);
 
         $this->tallySheetSessionService->login($user);
 
@@ -122,6 +123,34 @@ class UserController extends Controller
         return redirect()
             ->route('tally-sheet.users.edit')
             ->with('toast', ['type' => 'success', 'message' => 'PIN entfernt.']);
+    }
+
+    public function addBarcode(Request $request): RedirectResponse
+    {
+        $user = $this->tallySheetSessionService->get('user');
+
+        $validated = $request->validate([
+            'barcode' => ['required', 'string', 'unique:barcodes,barcode'],
+        ]);
+
+        $barcode = new Barcode;
+        $barcode->barcode = $validated['barcode'];
+        $barcode->user_id = $user->id;
+        $barcode->save();
+
+        return redirect()
+            ->route('tally-sheet.users.edit')
+            ->with('toast', ['type' => 'success', 'message' => 'Barcode wurde verknüpft.']);
+    }
+
+    public function removeBarcode(Request $request, Barcode $barcode): RedirectResponse
+    {
+        $barcode->user()->dissociate();
+        $barcode->save();
+
+        return redirect()
+            ->route('tally-sheet.users.edit')
+            ->with('toast', ['type' => 'success', 'message' => 'Barcode wurde entfernt.']);
     }
 
     /**

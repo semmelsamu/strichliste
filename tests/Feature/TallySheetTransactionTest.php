@@ -1,26 +1,53 @@
 <?php
 
-use App\Enums\UserType;
+use App\Enums\SystemSound;
+use App\Enums\UserRole;
 use App\Models\BuyArticleTransaction;
+use App\Models\SystemSoundSetting;
 use App\Models\Transaction;
 use App\Models\UndoTransaction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 pest()->use(RefreshDatabase::class);
 
 function transactionUsers(): array
 {
     return [
-        'admin' => testUser(),
-        'world' => testUser(['type' => UserType::World]),
-        'vendor' => testUser(['type' => UserType::Vendor]),
-        'user' => testUser(['type' => UserType::NormalUser]),
+        'admin' => testUser([], UserRole::TallyHost),
+        'world' => testUser([], UserRole::World),
+        'vendor' => testUser([], UserRole::Vendor),
+        'user' => testUser([], UserRole::Customer),
     ];
 }
 
+function assignSystemSound(SystemSound $systemSound, string $name): void
+{
+    Storage::disk('public')->put("sounds/{$name}.mp3", 'sound');
+    SystemSoundSetting::create([
+        'system_sound' => $systemSound,
+        'sound' => $name,
+    ]);
+}
+
+test('no sound is played when no system sound is configured for an action', function () {
+    ['admin' => $admin, 'world' => $world, 'user' => $user] = transactionUsers();
+
+    $this->actingAs($admin)->withSession(tallySheetSession($user, $world ?? null, $vendor ?? null))->post(route('tally-sheet.deposit'), [
+        'action' => 'deposit',
+        'world' => $world->id,
+        'amount' => '10.50',
+    ])
+        ->assertRedirect()
+        ->assertSessionMissing('sound');
+});
+
 test('users can deposit money from a world account', function () {
     ['admin' => $admin, 'world' => $world, 'user' => $user] = transactionUsers();
+
+    Storage::fake('public');
+    assignSystemSound(SystemSound::Deposit, 'spongebob-moneten');
 
     $this->actingAs($admin)->withSession(tallySheetSession($user, $world ?? null, $vendor ?? null))->post(route('tally-sheet.deposit'), [
         'action' => 'deposit',
@@ -47,6 +74,9 @@ test('users can withdraw money without going below zero', function () {
         'to_user_id' => $user->id,
         'amount' => 5,
     ]);
+
+    Storage::fake('public');
+    assignSystemSound(SystemSound::Withdraw, 'wobble');
 
     $this->actingAs($admin)->withSession(tallySheetSession($user, $world ?? null, $vendor ?? null))->post(route('tally-sheet.deposit'), [
         'action' => 'withdraw',
@@ -133,6 +163,7 @@ test('deposit requests validate action and amount', function (array $payload, ar
     $this->actingAs($admin)->withSession(tallySheetSession($user, $world ?? null, $vendor ?? null))->post(route('tally-sheet.deposit'), $payload)
         ->assertSessionHasErrors($errors);
 })->with([
+    'missing action' => [['action' => null], ['action']],
     'invalid action' => [['action' => 'refund'], ['action']],
     'missing amount' => [['amount' => null], ['amount']],
     'too many decimals' => [['amount' => '1.234'], ['amount']],
@@ -213,6 +244,9 @@ test('users can undo one of their recent transactions', function () {
         'amount' => 5,
     ]);
 
+    Storage::fake('public');
+    assignSystemSound(SystemSound::UndoTransaction, 'wobble');
+
     $this->actingAs($admin)->withSession(tallySheetSession($user, $world ?? null, $vendor ?? null))->post(route('tally-sheet.undo'), [
         'transaction' => $deposit->id,
     ])
@@ -261,6 +295,24 @@ test('users cannot undo transactions that do not belong to them', function () {
         'transaction' => $deposit->id,
     ])->assertSessionHasErrors('transaction');
 });
+
+test('undo requests validate the transaction id', function (array $payload, array $errors) {
+    ['admin' => $admin, 'world' => $world, 'user' => $user] = transactionUsers();
+
+    $deposit = Transaction::factory()->create([
+        'from_user_id' => $world->id,
+        'to_user_id' => $user->id,
+        'amount' => 5,
+    ]);
+
+    $payload = array_replace(['transaction' => $deposit->id], $payload);
+
+    $this->actingAs($admin)->withSession(tallySheetSession($user, $world ?? null, $vendor ?? null))->post(route('tally-sheet.undo'), $payload)
+        ->assertSessionHasErrors($errors);
+})->with([
+    'missing transaction' => [['transaction' => null], ['transaction']],
+    'unknown transaction' => [['transaction' => 9999], ['transaction']],
+]);
 
 test('old transactions cannot be undone', function () {
     ['admin' => $admin, 'world' => $world, 'user' => $user] = transactionUsers();

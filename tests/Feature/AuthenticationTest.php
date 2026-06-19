@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\UserType;
+use App\Enums\UserRole;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 
@@ -21,8 +21,7 @@ test('guests can view the login form', function () {
 test('users can authenticate with their name and password', function () {
     $user = testUser([
         'password' => Hash::make('secret-password'),
-        'type' => UserType::NormalUser,
-    ]);
+    ], UserRole::Customer);
 
     $this->post(route('authenticate'), [
         'name' => $user->name,
@@ -32,6 +31,53 @@ test('users can authenticate with their name and password', function () {
         ->assertSessionHas('toast.type', 'success');
 
     $this->assertAuthenticatedAs($user);
+});
+
+test('authentication requires a name and password', function (array $payload, array $errors) {
+    $user = testUser([
+        'password' => Hash::make('secret-password'),
+    ]);
+
+    $payload = array_replace([
+        'name' => $user->name,
+        'password' => 'secret-password',
+    ], $payload);
+
+    $this->post(route('authenticate'), $payload)
+        ->assertSessionHasErrors($errors);
+
+    $this->assertGuest();
+})->with([
+    'missing name' => [['name' => null], ['name']],
+    'missing password' => [['password' => null], ['password']],
+]);
+
+test('users can authenticate with remember me enabled', function () {
+    $user = testUser([
+        'password' => Hash::make('secret-password'),
+    ], UserRole::Customer);
+
+    $this->post(route('authenticate'), [
+        'name' => $user->name,
+        'password' => 'secret-password',
+        'remember' => true,
+    ])->assertRedirect(route('dashboard'));
+
+    $this->assertAuthenticatedAs($user);
+    expect($user->refresh()->remember_token)->not->toBeNull();
+});
+
+test('tally hosts are redirected to the tally sheet session screen after authenticating', function () {
+    $tallyHost = testUser([
+        'password' => Hash::make('secret-password'),
+    ], UserRole::TallyHost);
+
+    $this->post(route('authenticate'), [
+        'name' => $tallyHost->name,
+        'password' => 'secret-password',
+    ])->assertRedirect(route('tally-sheet.start-session'));
+
+    $this->assertAuthenticatedAs($tallyHost);
 });
 
 test('users cannot authenticate with an invalid password', function () {

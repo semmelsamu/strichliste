@@ -35,6 +35,16 @@
                 />
             </div>
 
+            <div class="flex items-center gap-2">
+                <input
+                    type="checkbox"
+                    name="remember"
+                    id="remember"
+                    class="checkbox"
+                />
+                <label for="remember">Angemeldet bleiben</label>
+            </div>
+
             <br />
 
             <button type="submit" class="button ml-auto bg-fsim-light">

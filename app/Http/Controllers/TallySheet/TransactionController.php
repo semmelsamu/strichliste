@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers\TallySheet;
 
+use App\Enums\SystemSound;
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\Article;
 use App\Models\Barcode;
+use App\Models\SystemSoundSetting;
 use App\Models\Transaction;
 use App\Services\TallySheetSessionService;
 use App\Services\TransactionService;
@@ -63,7 +66,9 @@ class TransactionController extends Controller
                 'type' => 'success',
                 'message' => ($action == 'deposit' ? 'Aufgeladen: ' : 'Abgehoben: ').Number::currency($amount),
             ])
-            ->with('sound', $action == 'deposit' ? 'spongebob-moneten' : 'wobble');
+            ->with('sound', SystemSoundSetting::get(
+                $action == 'deposit' ? SystemSound::Deposit : SystemSound::Withdraw
+            ));
     }
 
     public function buyArticle(Request $request): RedirectResponse
@@ -96,7 +101,7 @@ class TransactionController extends Controller
                 'type' => 'success',
                 'message' => 'Gekauft: '.$article->name.' für '.Number::currency($article->currentPrice),
             ])
-            ->with('sound', collect($article->sounds ?? ['kaching'])->random());
+            ->with('sound', collect($article->sounds ?? [SystemSoundSetting::get(SystemSound::BuyFallback)])->random());
     }
 
     public function buyArticleByBarcode(Request $request): RedirectResponse
@@ -129,7 +134,43 @@ class TransactionController extends Controller
                 'type' => 'success',
                 'message' => 'Gekauft: '.$article->name.' für '.Number::currency($article->currentPrice),
             ])
-            ->with('sound', collect($article->sounds ?? ['kaching'])->random());
+            ->with('sound', collect($article->sounds ?? [SystemSoundSetting::get(SystemSound::BuyFallback)])->random());
+    }
+
+    public function buyArticleByScannedUser(Request $request, Article $article): RedirectResponse
+    {
+        $validated = $request->validate([
+            'barcode' => ['required', 'string'],
+        ]);
+
+        $user = Barcode::where('barcode', $validated['barcode'])->first()?->user;
+
+        if (! $user || ! $user->hasRole(UserRole::Customer)) {
+            return back()->with('toast', [
+                'type' => 'error',
+                'message' => 'Barcode wurde keinem Nutzer zugeordnet.',
+            ]);
+        }
+
+        if ($user->balance < $article->currentPrice) {
+            $this->tallySheetSessionService->login($user);
+
+            return redirect()->route('tally-sheet.show-deposit')->with('toast', [
+                'type' => 'error',
+                'message' => 'Nicht genügend Guthaben. Bitte aufladen.',
+            ]);
+        }
+
+        $vendor = $this->tallySheetSessionService->get('vendor');
+
+        $this->transactionService->buyArticle($user, $vendor, $article);
+
+        return back()
+            ->with('toast', [
+                'type' => 'success',
+                'message' => 'Gekauft: '.$article->name.' für '.Number::currency($article->currentPrice),
+            ])
+            ->with('sound', collect($article->sounds ?? [SystemSoundSetting::get(SystemSound::BuyFallback)])->random());
     }
 
     public function undoTransaction(Request $request): RedirectResponse
@@ -167,6 +208,6 @@ class TransactionController extends Controller
                 'type' => 'success',
                 'message' => 'Transaktion rückgängig gemacht',
             ])
-            ->with('sound', 'wobble');
+            ->with('sound', SystemSoundSetting::get(SystemSound::UndoTransaction));
     }
 }

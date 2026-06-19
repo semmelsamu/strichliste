@@ -1,3 +1,5 @@
+@use (App\Enums\SystemSound)
+
 <x-layouts.main title="Sounds">
     <header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
         <a class="button" href="{{ route('dashboard') }}">
@@ -12,7 +14,7 @@
             Sound hochladen
         </a>
     </header>
-    <x-wrapper>
+    <x-wrapper class="space-y-section">
         <table class="table">
             <thead>
                 <tr>
@@ -62,5 +64,34 @@
                 {{ sizeof($sounds) }} Sounds gesamt.
             </caption>
         </table>
+
+        <section class="space-y-content">
+            <h2>System-Sounds festlegen</h2>
+            <form
+                class="max-w-xl space-y-content"
+                method="POST"
+                action="{{ route("sounds.update-system-sounds") }}"
+            >
+                @method ("PUT")
+
+                <div class="grid grid-cols-[auto_1fr] items-center gap-content">
+                    @foreach (SystemSound::cases() as $sound)
+                        <label for="system-sound-{{ $sound->value }}">
+                            {{ $sound->displayName() }}
+                        </label>
+                        <x-sound-select
+                            id="system-sound-{{ $sound->value }}"
+                            name="{{ $sound->value }}"
+                            :sounds="$sounds"
+                            :selected="$sounds->first(fn ($s) => $s->name() === $systemSounds->get($sound->value)?->sound)"
+                        />
+                    @endforeach
+                </div>
+
+                <button type="submit" class="button ml-auto bg-fsim-light">
+                    Speichern
+                </button>
+            </form>
+        </section>
     </x-wrapper>
 </x-layouts.main>
