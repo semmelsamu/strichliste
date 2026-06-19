@@ -98,6 +98,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
         Route::post('articles/{article}/sounds', 'updateSounds')->name('articles.update-sounds');
 
+        Route::post('articles/{article}/image', 'updateImage')->name('articles.update-image');
+        Route::delete('articles/{article}/image', 'deleteImage')->name('articles.delete-image');
+
         Route::post('articles/{article}/barcode', 'addBarcode')->name('articles.add-barcode');
         Route::delete('articles/{article}/barcode/{barcode}', 'removeBarcode')->name('articles.remove-barcode');
 

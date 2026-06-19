@@ -129,6 +129,30 @@ class ArticleController extends Controller
         ]);
     }
 
+    public function updateImage(Request $request, Article $article)
+    {
+        $validated = $request->validate([
+            'image' => ['required', 'file', 'image', 'max:8192'],
+        ]);
+
+        $article->setImageFromUpload($validated['image']);
+
+        return redirect()->route('articles.edit', $article->id)->with('toast', [
+            'type' => 'success',
+            'message' => 'Bild wurde gespeichert.',
+        ]);
+    }
+
+    public function deleteImage(Article $article)
+    {
+        $article->deleteImage();
+
+        return redirect()->route('articles.edit', $article->id)->with('toast', [
+            'type' => 'success',
+            'message' => 'Bild wurde entfernt.',
+        ]);
+    }
+
     public function addBarcode(Request $request, Article $article)
     {
         $validated = $request->validate([
