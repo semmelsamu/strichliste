@@ -11,6 +11,20 @@ class Transaction extends Model
 {
     use HasFactory;
 
+    protected static function booted(): void
+    {
+        $forgetBalances = function (Transaction $transaction): void {
+            foreach ([$transaction->from_user_id, $transaction->to_user_id] as $userId) {
+                if ($userId !== null) {
+                    User::forgetCachedBalance($userId);
+                }
+            }
+        };
+
+        static::saved($forgetBalances);
+        static::deleted($forgetBalances);
+    }
+
     public function fromUser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'from_user_id');
