@@ -226,6 +226,8 @@ in
               # Cache config/routes/views/events now that a real .env exists and
               # bootstrap/cache is writable.
               echo "Optimizing..."
+              ${php} artisan cache:clear
+              ${php} artisan optimize:clear
               ${php} artisan optimize
               ${php} artisan icons:cache
 
