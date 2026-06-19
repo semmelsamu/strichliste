@@ -3,6 +3,7 @@
 @use (App\Services\TallySheetSessionService)
 
 <x-layouts.main :title="$title">
+    <x-tally-sheet-inactivity-logout />
     <header class="space-y-content bg-fsim-medium">
         <div
             class="flex items-center justify-between gap-content px-wrapper pt-wrapper"
