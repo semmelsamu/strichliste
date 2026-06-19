@@ -1,6 +1,6 @@
 <div
     {{ $attributes->class([
-        "absolute grid grid-cols-[auto_1fr] gap-2 right-2 bottom-2 w-sm rounded-md bg-fsim-light p-inline",
+        "rounded-md bg-fsim-light p-content text-lg grid grid-cols-[auto_1fr] gap-4 outline-2 items-center shadow-xl shadow-black/50",
         "bg-green-800" => $type == "success",
         "bg-red-800" => $type == "error",
     ]) }}
