@@ -41,6 +41,51 @@ test('the start session form is shown again when only one of world or vendor is 
         ->assertViewIs('pages.tally-sheet.start-session');
 });
 
+test('a tally host with an assigned world and vendor automatically starts a session', function () {
+    $world = testUser([], UserRole::World);
+    $vendor = testUser([], UserRole::Vendor);
+    $tallyHost = testUser([
+        'assigned_world_id' => $world->id,
+        'assigned_vendor_id' => $vendor->id,
+    ], UserRole::TallyHost);
+
+    $this->actingAs($tallyHost)->get(route('tally-sheet.start-session'))
+        ->assertRedirect(route('tally-sheet.auth.list-users'))
+        ->assertSessionHas(TallySheetSessionService::WORLD_SESSION_KEY, $world->id)
+        ->assertSessionHas(TallySheetSessionService::VENDOR_SESSION_KEY, $vendor->id);
+});
+
+test('a tally host falls back to the manual picker when the assigned vendor no longer has the vendor role', function () {
+    $world = testUser([], UserRole::World);
+    $invalidVendor = testUser();
+    $tallyHost = testUser([
+        'assigned_world_id' => $world->id,
+        'assigned_vendor_id' => $invalidVendor->id,
+    ], UserRole::TallyHost);
+
+    $this->actingAs($tallyHost)->get(route('tally-sheet.start-session'))
+        ->assertSuccessful()
+        ->assertViewIs('pages.tally-sheet.start-session');
+});
+
+test('tally hosts cannot stop a session', function () {
+    $tallyHost = testUser([], UserRole::TallyHost);
+
+    $this->actingAs($tallyHost)
+        ->withSession(tallySheetRunningSession())
+        ->get(route('tally-sheet.stop-session'))
+        ->assertForbidden();
+});
+
+test('admins can stop a session', function () {
+    $admin = testUser([], UserRole::Admin);
+
+    $this->actingAs($admin)
+        ->withSession(tallySheetRunningSession())
+        ->get(route('tally-sheet.stop-session'))
+        ->assertRedirect(route('dashboard'));
+});
+
 test('starting a session validates world and vendor', function (array $payload, array $errors) {
     $admin = testUser([], UserRole::TallyHost);
     $world = testUser([], UserRole::World);

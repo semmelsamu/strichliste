@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserRole;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -25,6 +26,11 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
+
+            // Auto-redirect tally hosts to session screen
+            if (Auth::user()->hasRole(UserRole::TallyHost)) {
+                return redirect()->route('tally-sheet.start-session');
+            }
 
             return redirect()->route('dashboard')->with('toast', [
                 'type' => 'success',
