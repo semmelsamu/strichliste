@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Drivers\Imagick\Driver;
 use Intervention\Image\Encoders\JpegEncoder;
@@ -31,8 +32,21 @@ class Article extends Model
     protected function currentPrice(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->prices()->latest('effective_since')->value('price')
+            get: fn () => Cache::rememberForever(
+                self::currentPriceCacheKey($this->id),
+                fn () => $this->prices()->latest('effective_since')->value('price')
+            )
         )->shouldCache();
+    }
+
+    public static function currentPriceCacheKey(int $articleId): string
+    {
+        return "article:{$articleId}:current_price";
+    }
+
+    public static function forgetCachedCurrentPrice(int $articleId): void
+    {
+        Cache::forget(self::currentPriceCacheKey($articleId));
     }
 
     protected function category(): BelongsTo
