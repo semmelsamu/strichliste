@@ -22,4 +22,11 @@ class SystemSoundSetting extends Model
             'system_sound' => SystemSound::class,
         ];
     }
+
+    public static function sound(SystemSound $systemSound): ?Sound
+    {
+        $name = static::where('system_sound', $systemSound)->first()?->sound;
+
+        return $name ? Sound::get($name) : null;
+    }
 }
