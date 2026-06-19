@@ -6,7 +6,7 @@
         </x-note>
         <section class="space-y-inline">
             <h2>Häufig gekauft</h2>
-            <div class="grid grid-cols-3 gap-inline">
+            <div class="grid grid-cols-4 gap-inline">
                 @forelse ($mostFrequentArticles as $article)
                     <x-article-card :article="$article" />
                 @empty
@@ -20,7 +20,7 @@
                 @foreach ($categories as $category)
                     <a
                         href="{{ route('tally-sheet.buy-categories', $category->id) }}"
-                        class="card block flex flex-col items-center gap-inline p-content text-center"
+                        class="card block flex flex-col items-center gap-inline p-section text-center"
                     >
                         @svg ($category->icon, "w-8 h-8")
                         <h3>{{ $category->name }}</h3>

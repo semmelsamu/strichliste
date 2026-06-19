@@ -27,7 +27,7 @@ class ViewController extends Controller
                 ->where('transactions.created_at', '>=', now()->subMonths(3))
                 ->groupBy('articles.id')
                 ->orderByDesc('purchases_count')
-                ->limit(3)
+                ->limit(4)
                 ->get(),
         ]);
     }

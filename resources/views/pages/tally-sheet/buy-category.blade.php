@@ -1,7 +1,7 @@
 <x-layouts.tally-sheet :title="$category->name . ' kaufen'" activeTab="buy">
     <x-wrapper class="space-y-inline">
         <h2>{{ $category->name }}</h2>
-        <div class="grid grid-cols-3 gap-inline">
+        <div class="grid grid-cols-4 gap-inline">
             @foreach ($category->articles as $article)
                 <x-article-card :article="$article" />
             @endforeach
