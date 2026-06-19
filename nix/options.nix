@@ -6,7 +6,8 @@ self:
   ...
 }:
 let
-  cfg = config.services.semmelstrichliste;
+  serviceName = "semmelstrichliste";
+  cfg = config.services.${serviceName};
 
   inherit (lib)
     mkEnableOption
@@ -27,9 +28,11 @@ let
   nginxUser = config.services.nginx.user;
 
   isSqlite = cfg.database.type == "sqlite";
+  isPgsql = cfg.database.type == "pgsql";
 
   appKeyFile = "${cfg.paths.rootDir}/app_key";
   setupMarker = "${cfg.paths.rootDir}/.is_setup";
+  dbKeyFile = "${cfg.paths.rootDir}/db_key";
 
   # Everything that goes into the runtime `.env` except APP_KEY, which is
   # generated once and persisted (see the setup service below).
@@ -50,9 +53,16 @@ let
   }
   // lib.optionalAttrs isSqlite {
     DB_DATABASE = cfg.paths.database;
+  }
+  // lib.optionalAttrs isPgsql {
+    DB_HOST = cfg.database.postgresql.host;
+    DB_PORT = toString cfg.database.postgresql.port;
+    DB_DATABASE = cfg.database.postgresql.database;
+    DB_USERNAME = cfg.database.postgresql.username;
+    DB_SSLMODE = cfg.database.postgresql.sslMode;
   };
 
-  envFile = pkgs.writeText "strichliste.env" (
+  envFile = pkgs.writeText "${serviceName}.env" (
     lib.concatStringsSep "\n" (lib.mapAttrsToList (name: value: "${name}=${value}") envSettings) + "\n"
   );
 
@@ -63,8 +73,8 @@ let
 in
 
 {
-  options.services.semmelstrichliste = {
-    enable = mkEnableOption "enable the strichliste";
+  options.services.${serviceName} = {
+    enable = mkEnableOption "enable the ${serviceName}";
 
     stateVersion = mkOption {
       type = types.enum [ 1 ];
@@ -143,36 +153,115 @@ in
       type = mkOption {
         type = types.enum [
           "sqlite"
-          "postgres"
+          "pgsql"
         ];
         default = "sqlite";
+      };
+
+      postgresql = mkSubmoduleOption {
+        host = mkOption {
+          type = types.str;
+          description = "The host of the postgres server";
+          default = "localhost";
+        };
+
+        port = mkOption {
+          type = types.port;
+          description = "The port of the postgres server";
+          default = config.services.postgresql.settings.port;
+        };
+
+        database = mkOption {
+          type = types.str;
+          description = "The database to use";
+          default = serviceName;
+        };
+
+        username = mkOption {
+          type = types.str;
+          description = "The user to use";
+          default = serviceName;
+        };
+
+        passwordFile = mkOption {
+          type = types.path;
+          description = "The passwordFile to use";
+        };
+
+        sslMode = mkOption {
+          type = types.str;
+          description = "The sslmode for laravel to use";
+          default = "disable";
+        };
       };
     };
   };
 
   config = mkIf cfg.enable {
-    assertions = [
-      {
-        assertion = isSqlite;
-        message = "services.semmelstrichliste currently only supports the sqlite database backend.";
-      }
-    ];
-
     # Convenience wrapper to run artisan against the live deployment, e.g.
     # `semmelstrichliste-php artisan tinker`.
     environment.systemPackages = [
-      (pkgs.writeShellScriptBin "semmelstrichliste-php" ''
+      (pkgs.writeShellScriptBin "${serviceName}-php" ''
         cd "${cfg.paths.application}"
         export PATH=$PATH:${pkgs.php}/bin:${pkgs.sqlite}/bin
         exec ${php} "$@"
       '')
     ];
 
-    systemd.services.strichliste-setup = {
-      description = "Deploy and migrate the strichliste application";
+    services.postgresql = lib.mkIf (isPgsql && cfg.database.configure) {
+      enable = true;
+
+      ensureDatabases = [
+        cfg.database.postgresql.database
+      ];
+
+      ensureUsers = [
+        {
+          name = cfg.database.postgresql.username;
+        }
+      ];
+
+      authentication =
+        let
+          pgConf = cfg.database.postgresql;
+        in
+        ''
+          local ${pgConf.database} ${pgConf.username} password
+        '';
+    };
+
+    systemd.services."${serviceName}-postgresql-setup" =
+      let
+        pgConf = cfg.database.postgresql;
+      in
+      lib.mkIf (isPgsql && cfg.database.configure) {
+        description = "Sets up database";
+
+        wantedBy = [ "multi-user.target" ];
+        after = [ "postgresql.service" ];
+        before = [ "${serviceName}-setup.service" ];
+
+        serviceConfig = {
+          Type = "oneshot";
+          RemainAfterExit = true;
+        };
+
+        script =
+          let
+            psql = "${sudo} -u postgres ${lib.getExe' config.services.postgresql.package "psql"}";
+          in
+          ''
+            export PW=$(cat ${pgConf.passwordFile})
+            echo "ALTER DATABASE ${pgConf.database} OWNER TO ${pgConf.username}" | ${psql}
+            echo "ALTER USER ${pgConf.username} WITH PASSWORD '$PW'" | ${psql}
+          '';
+      };
+
+    systemd.services."${serviceName}-setup" = {
+      description = "Deploy and migrate the ${serviceName} application";
       wantedBy = [ "multi-user.target" ];
       before = [
-        "phpfpm-strichliste.service"
+        "phpfpm-${serviceName}.service"
         "nginx.service"
       ];
 
@@ -190,7 +279,7 @@ in
       script =
         let
           # Runs unprivileged as the nginx user, in the writable app directory.
-          deployScript = pkgs.writeShellScript "strichliste-deploy" ''
+          deployScript = pkgs.writeShellScript "${serviceName}-deploy" ''
             set -euo pipefail
 
             # Generate and persist an application key on first run so that
@@ -205,15 +294,21 @@ in
             # read-only (storage/ and bootstrap/cache/ must be writable).
             mkdir -p "${cfg.paths.application}"
             ${rsync} -rlth -P --chmod=Du+rwx,Fu+rw \
-              "${cfg.package}/" "${cfg.paths.application}/" > /tmp/strichliste-setup.log
+              "${cfg.package}/" "${cfg.paths.application}/" > /tmp/${serviceName}-setup.log
 
-            echo "Written rsync log to /tmp/strichliste-setup.log"
+            echo "Written rsync log to /tmp/${serviceName}-setup.log"
 
             cd "${cfg.paths.application}"
 
             # Write the runtime environment file (base settings + persisted key).
             ${coreutils}/bin/cat ${envFile} > .env
             echo "APP_KEY=$(${coreutils}/bin/cat "${appKeyFile}")" >> .env
+
+            ${lib.optionalString isPgsql ''
+              echo "DB_PASSWORD=$(cat ${dbKeyFile})" >> .env
+              rm ${dbKeyFile}
+            ''}
+
             chmod 600 .env
 
             echo "Migrating database..."
@@ -236,8 +331,6 @@ in
             ${php} artisan optimize
             ${php} artisan icons:cache
 
-
-
             echo "Done :)"
           '';
         in
@@ -245,13 +338,15 @@ in
           set -euo pipefail
 
           mkdir -p "${cfg.paths.rootDir}"
+          cp ${cfg.database.postgresql.passwordFile} ${dbKeyFile}
+
           chown -R ${nginxUser} "${cfg.paths.rootDir}"
 
           ${sudo} -u ${nginxUser} ${deployScript}
         '';
     };
 
-    services.phpfpm.pools.strichliste = {
+    services.phpfpm.pools.${serviceName} = {
       user = nginxUser;
 
       phpPackage = pkgs.php.buildEnv {
