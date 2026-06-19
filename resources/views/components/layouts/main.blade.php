@@ -29,7 +29,7 @@
     @foreach (isset($errors) ? $errors->all() : [] as $error)
         <x-toast type="error">{{ $error }}</x-toast>
     @endforeach
-    @if (session('sound'))
+    @if (session('sound') && Sound::get(session("sound")) != null)
         <audio
             id="sound"
             preload="auto"

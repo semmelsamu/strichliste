@@ -24,7 +24,10 @@
         class="grid grid-cols-[auto_1fr] gap-content overflow-hidden p-wrapper"
         x-data="scrollspy({{ $usersByLetter->keys()->first()?->id ?? 'null' }})"
     >
-        <nav class="flex flex-col overflow-y-auto">
+        <nav
+            x-ref="nav"
+            class="flex touch-none flex-col overflow-y-auto select-none"
+        >
             @foreach ($usersByLetter as $letter => $users)
                 <a
                     href="#{{ $letter }}"
