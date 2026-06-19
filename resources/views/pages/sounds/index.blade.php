@@ -1,3 +1,5 @@
+@use (App\Enums\SystemSound)
+
 <x-layouts.main title="Sounds">
     <header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
         <a class="button" href="{{ route('dashboard') }}">
@@ -73,38 +75,16 @@
                 @method ("PUT")
 
                 <div class="grid grid-cols-[auto_1fr] items-center gap-content">
-                    <label for="deposit">Geld einzahlen</label>
-                    <x-sound-select
-                        id="deposit"
-                        name="deposit"
-                        :sounds="$sounds"
-                    />
-
-                    <label for="withdraw">Geld auszahlen</label>
-                    <x-sound-select
-                        id="withdraw"
-                        name="withdraw"
-                        :sounds="$sounds"
-                    />
-
-                    <label for="buy-fallback">Fallbacksound beim Kauf</label>
-                    <x-sound-select
-                        id="buy-fallback"
-                        name="buy-fallback"
-                        :sounds="$sounds"
-                    />
-
-                    <label for="undo-transaction">
-                        Transaktion rückgängig gemacht
-                    </label>
-                    <x-sound-select
-                        id="undo-transaction"
-                        name="undo-transaction"
-                        :sounds="$sounds"
-                    />
-
-                    <label for="error">Fehler</label>
-                    <x-sound-select id="error" name="error" :sounds="$sounds" />
+                    @foreach (SystemSound::cases() as $sound)
+                        <label for="system-sound-{{ $sound->value }}">
+                            {{ $sound->displayName() }}
+                        </label>
+                        <x-sound-select
+                            id="system-sound-{{ $sound->value }}"
+                            name="{{ $sound->value }}"
+                            :sounds="$sounds"
+                        />
+                    @endforeach
                 </div>
 
                 <button type="submit" class="button ml-auto bg-fsim-light">
