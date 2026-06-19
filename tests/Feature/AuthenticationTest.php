@@ -52,6 +52,21 @@ test('authentication requires a name and password', function (array $payload, ar
     'missing password' => [['password' => null], ['password']],
 ]);
 
+test('users can authenticate with remember me enabled', function () {
+    $user = testUser([
+        'password' => Hash::make('secret-password'),
+    ], UserRole::Customer);
+
+    $this->post(route('authenticate'), [
+        'name' => $user->name,
+        'password' => 'secret-password',
+        'remember' => true,
+    ])->assertRedirect(route('dashboard'));
+
+    $this->assertAuthenticatedAs($user);
+    expect($user->refresh()->remember_token)->not->toBeNull();
+});
+
 test('users cannot authenticate with an invalid password', function () {
     $user = testUser([
         'password' => Hash::make('secret-password'),
