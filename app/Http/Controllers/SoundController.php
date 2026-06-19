@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\SystemSound;
 use App\Models\Sound;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -86,6 +87,8 @@ class SoundController extends Controller
 
     public function updateSystemSounds(Request $request)
     {
-        dd($request);
+        foreach (SystemSound::cases() as $systemSound) {
+            dump($systemSound, $request->input($systemSound->value));
+        }
     }
 }

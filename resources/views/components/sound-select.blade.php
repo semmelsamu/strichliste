@@ -2,7 +2,7 @@
 
 <select {{ $attributes->class(["text-input"]) }}>
     @if ($allowNull)
-        <option value="">-- Sound auswählen --</option>
+        <option value="">Kein Sound</option>
     @endif
     @foreach ($sounds as $sound)
         <option
