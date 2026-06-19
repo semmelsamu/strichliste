@@ -46,6 +46,13 @@
                 Aufladen
             </x-tab-bar.tab>
             <x-tab-bar.tab
+                href="{{ route('tally-sheet.show-transfer') }}"
+                name="transfer"
+            >
+                <x-lucide-send />
+                Geld Senden
+            </x-tab-bar.tab>
+            <x-tab-bar.tab
                 href="{{ route('tally-sheet.history') }}"
                 name="history"
             >

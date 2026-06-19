@@ -9,6 +9,7 @@ use App\Models\Article;
 use App\Models\Barcode;
 use App\Models\SystemSoundSetting;
 use App\Models\Transaction;
+use App\Models\User;
 use App\Services\TallySheetSessionService;
 use App\Services\TransactionService;
 use Closure;
@@ -69,6 +70,55 @@ class TransactionController extends Controller
             ->with('sound', SystemSoundSetting::get(
                 $action == 'deposit' ? SystemSound::Deposit : SystemSound::Withdraw
             ));
+    }
+
+    public function transferMoney(Request $request): RedirectResponse
+    {
+        $user = $this->tallySheetSessionService->get('user');
+
+        $validated = $request->validate([
+            'recipient' => [
+                'required',
+                'integer',
+                'bail',
+                Rule::exists('users', 'id'),
+                function (string $attribute, mixed $value, Closure $fail) use ($user) {
+                    if ((int) $value === $user->id) {
+                        $fail('Du kannst dir nicht selbst Geld senden.');
+
+                        return;
+                    }
+
+                    if (! User::find($value)?->hasRole(UserRole::Customer)) {
+                        $fail('Der ausgewählte Nutzer ist ungültig.');
+                    }
+                },
+            ],
+            'amount' => [
+                'required',
+                'decimal:0,2',
+                'gt:0',
+                function (string $attribute, mixed $amount, Closure $fail) use ($user) {
+                    if ($amount > $user->balance) {
+                        $fail('Du kannst nicht mehr senden als du auf dem Konto hast.');
+                    }
+                },
+            ],
+        ]);
+
+        $recipient = User::findOrFail($validated['recipient']);
+        $amount = $validated['amount'];
+
+        $this->transactionService->transferMoney(
+            user: $recipient,
+            world: $user,
+            amount: $amount,
+        );
+
+        return back()->with('toast', [
+            'type' => 'success',
+            'message' => 'Gesendet: '.Number::currency($amount).' an '.$recipient->name,
+        ]);
     }
 
     public function buyArticle(Request $request): RedirectResponse
