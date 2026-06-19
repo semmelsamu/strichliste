@@ -9,6 +9,7 @@ use App\Models\Category;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Services\TallySheetSessionService;
+use Illuminate\Http\Request;
 
 class ViewController extends Controller
 {
@@ -62,16 +63,21 @@ class ViewController extends Controller
         ]);
     }
 
-    public function showHistory()
+    public function showHistory(Request $request)
     {
-        $user = $this->tallySheetSessionService->get('user');
+        $isFragmentRequest = $request->hasHeader('HX-Request');
 
-        return view('pages.tally-sheet.history', [
-            'normalizedTransactions' => $user->transactions()
+        $normalizedTransactions = $isFragmentRequest
+            ? $this->tallySheetSessionService->get('user')
+                ->transactions()
                 ->orderBy('created_at', 'desc')
                 ->orderBy('id', 'desc')
                 ->get()
-                ->map(fn ($t) => Transaction::normalize($t)),
-        ]);
+                ->map(fn ($t) => Transaction::normalize($t))
+            : collect();
+
+        return view('pages.tally-sheet.history', [
+            'normalizedTransactions' => $normalizedTransactions,
+        ])->fragmentIf($isFragmentRequest, 'transactions');
     }
 }
