@@ -31,7 +31,7 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware(['role:admin|tally_host', EnsureTallySessionRunning::class])->name('tally-sheet.')->prefix('tally-sheet')->group(function () {
 
-        Route::get('stop-session', [TallySheet\SessionController::class, 'stopSession'])->name('stop-session');
+        Route::get('stop-session', [TallySheet\SessionController::class, 'stopSession'])->middleware('role:admin')->name('stop-session');
 
         Route::name('auth.')->controller(TallySheet\LoginController::class)->group(function () {
             Route::get('/', 'listUsers')->name('list-users');

@@ -23,7 +23,7 @@
                     >
                         Strichliste
                     </a>
-                    @if (tally_session()->isRunning())
+                    @if (auth()->user()->hasRole(UserRole::Admin->value) && tally_session()->isRunning())
                         <a
                             class="card bg-red-800 p-inline"
                             href="{{ route('tally-sheet.stop-session') }}"
@@ -72,7 +72,9 @@
                 Account
             </p>
 
-            <a class="card p-inline">Einstellungen</a>
+            @unless (auth()->user()->hasRole(UserRole::TallyHost->value))
+                <a class="card p-inline">Einstellungen</a>
+            @endunless
             <a class="card p-inline" href="{{ route('logout') }}">Abmelden</a>
         </nav>
     </x-wrapper>
