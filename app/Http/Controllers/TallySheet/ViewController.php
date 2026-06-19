@@ -67,16 +67,21 @@ class ViewController extends Controller
     {
         $user = $this->tallySheetSessionService->get('user');
 
-        $isFragmentRequest = $request->hasHeader('HX-Request');
+        if (! $request->hasHeader('HX-Request')) {
 
-        return view('pages.tally-sheet.history', [
-            'normalizedTransactions' => $isFragmentRequest
-                ? $user->transactions()
+            return view('pages.tally-sheet.history');
+
+        } else {
+
+            return view('pages.tally-sheet.history', [
+                'normalizedTransactions' => $user->transactions()
                     ->orderBy('created_at', 'desc')
                     ->orderBy('id', 'desc')
                     ->get()
-                    ->map(fn ($t) => Transaction::normalize($t))
-                : null,
-        ])->fragmentIf($isFragmentRequest, 'transactions');
+                    ->map(fn ($t) => Transaction::normalize($t)),
+
+            ])->fragment('transactions');
+
+        }
     }
 }

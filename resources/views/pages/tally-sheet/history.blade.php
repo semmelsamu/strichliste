@@ -10,8 +10,8 @@
             hx-trigger="load"
             hx-swap="innerHTML"
         >
-            @fragment('transactions')
-                @if (is_null($normalizedTransactions))
+            @fragment ('transactions')
+                @if (!isset($normalizedTransactions))
                     <x-spinner />
                 @else
                     <table class="table">
@@ -91,7 +91,8 @@
                             @endforelse
                         </tbody>
                         <caption>
-                            {{ sizeof($normalizedTransactions) }} Transaktionen gesamt.
+                            {{ sizeof($normalizedTransactions) }} Transaktionen
+                            gesamt.
                         </caption>
                     </table>
                 @endif
