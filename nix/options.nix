@@ -191,51 +191,54 @@ in
         let
           # Runs unprivileged as the nginx user, in the writable app directory.
           deployScript = pkgs.writeShellScript "strichliste-deploy" ''
-              set -euo pipefail
+            set -euo pipefail
 
-              # Generate and persist an application key on first run so that
-              # sessions/encrypted data survive restarts and redeploys.
-              if [ ! -f "${appKeyFile}" ]; then
-                echo "base64:$(${coreutils}/bin/head -c 32 /dev/urandom | ${coreutils}/bin/base64)" > "${appKeyFile}"
-                chmod 600 "${appKeyFile}"
-              fi
+            # Generate and persist an application key on first run so that
+            # sessions/encrypted data survive restarts and redeploys.
+            if [ ! -f "${appKeyFile}" ]; then
+              echo "base64:$(${coreutils}/bin/head -c 32 /dev/urandom | ${coreutils}/bin/base64)" > "${appKeyFile}"
+              chmod 600 "${appKeyFile}"
+            fi
 
-              # Sync the immutable package into the writable state directory.
-              # --chmod ensures the copy is writable even though the Nix store is
-              # read-only (storage/ and bootstrap/cache/ must be writable).
-              mkdir -p "${cfg.paths.application}"
-              ${rsync} -rlt --delete --chmod=Du+rwx,Fu+rw \
-                "${cfg.package}/" "${cfg.paths.application}/"
+            # Sync the immutable package into the writable state directory.
+            # --chmod ensures the copy is writable even though the Nix store is
+            # read-only (storage/ and bootstrap/cache/ must be writable).
+            mkdir -p "${cfg.paths.application}"
+            ${rsync} -rlth -P --chmod=Du+rwx,Fu+rw \
+              "${cfg.package}/" "${cfg.paths.application}/" > /tmp/strichliste-setup.log
 
-              cd "${cfg.paths.application}"
+            echo "Written rsync log to /tmp/strichliste-setup.log"
 
-              # Write the runtime environment file (base settings + persisted key).
-              ${coreutils}/bin/cat ${envFile} > .env
-              echo "APP_KEY=$(${coreutils}/bin/cat "${appKeyFile}")" >> .env
-              chmod 600 .env
+            cd "${cfg.paths.application}"
 
-              echo "Migrating database..."
-              ${php} artisan migrate --force
+            # Write the runtime environment file (base settings + persisted key).
+            ${coreutils}/bin/cat ${envFile} > .env
+            echo "APP_KEY=$(${coreutils}/bin/cat "${appKeyFile}")" >> .env
+            chmod 600 .env
 
-              if [ ! -f "${setupMarker}" ]; then
-                echo "Seeding database..."
-                ${php} artisan db:seed --force
-                touch "${setupMarker}"
-              fi
+            echo "Migrating database..."
+            ${php} artisan migrate --force
 
-              # Cache config/routes/views/events now that a real .env exists and
-              # bootstrap/cache is writable.
-              echo "Optimizing..."
-              ${php} artisan cache:clear
-              ${php} artisan optimize:clear
-              ${php} artisan optimize
-              ${php} artisan icons:cache
+            if [ ! -f "${setupMarker}" ]; then
+              echo "Seeding database..."
+              ${php} artisan db:seed --force
+              touch "${setupMarker}"
+
+              echo "Creating link"
+              ${php} artisan storage:link
+            fi
+
+            # Cache config/routes/views/events now that a real .env exists and
+            # bootstrap/cache is writable.
+            echo "Optimizing..."
+            ${php} artisan cache:clear
+            ${php} artisan optimize:clear
+            ${php} artisan optimize
+            ${php} artisan icons:cache
 
 
-            echo "Creating link"
-            ${php} artisan storage:link
 
-              echo "Done :)"
+            echo "Done :)"
           '';
         in
         ''
