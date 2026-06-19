@@ -1,4 +1,4 @@
-@props(['url', 'name' => 'content'])
+@props (['url', 'name' => 'content'])
 
 {{--
     Lazily loads its content via HTMX. On the initial (non-HTMX) page load only a
@@ -7,7 +7,7 @@
     so the controller can pair this with `->fragmentIf($isHtmx, $name)`.
 --}}
 @if (request()->hasHeader('HX-Request'))
-    @fragment($name)
+    @fragment ($name)
         {{ $slot }}
     @endfragment
 @else

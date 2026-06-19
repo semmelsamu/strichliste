@@ -19,7 +19,9 @@
                             tabindex="-1"
                             onmousedown="event.preventDefault()"
                         >
-                            <td>{{ $transaction->created_at->diffForHumans() }}</td>
+                            <td>
+                                {{ $transaction->created_at->diffForHumans() }}
+                            </td>
                             <th>
                                 @if ($transaction->buyArticleTransaction)
                                     {{ $transaction->buyArticleTransaction->article->name }}
