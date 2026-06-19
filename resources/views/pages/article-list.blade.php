@@ -6,7 +6,10 @@
         class="grid grid-cols-[1fr_3fr] gap-content overflow-hidden p-wrapper"
         x-data="scrollspy({{ $categories->first()?->id ?? 'null' }})"
     >
-        <nav class="flex flex-col gap-inline overflow-y-auto">
+        <nav
+            x-ref="nav"
+            class="flex touch-none flex-col gap-inline overflow-y-auto select-none"
+        >
             @foreach ($categories as $category)
                 <a
                     href="#category-{{ $category->id }}"
