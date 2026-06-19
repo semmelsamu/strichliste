@@ -86,6 +86,64 @@
             </form>
         </section>
 
+        <section class="my-section">
+            <h2 class="mb-inline">Strichlisten-Zuweisung</h2>
+            <p class="mb-content max-w-prose text-text-secondary">
+                Ist eine Außenwelt und ein Verkäufer zugewiesen, startet dieser
+                Nutzer beim Anmelden automatisch eine Strichlisten-Session mit
+                diesen Konten.
+            </p>
+            <form
+                method="POST"
+                action="{{ route("users.update-assignment", $user->id) }}"
+            >
+                @csrf
+                @method ('PUT')
+
+                <label for="assigned_world_id" class="mb-2 block">
+                    Außenwelt
+                </label>
+                <select
+                    id="assigned_world_id"
+                    name="assigned_world_id"
+                    class="text-input mb-content w-md"
+                >
+                    <option value="">Keine Zuweisung</option>
+                    @foreach ($worlds as $world)
+                        <option
+                            value="{{ $world->id }}"
+                            @selected ($user->assigned_world_id === $world->id)
+                        >
+                            {{ $world->name }}
+                        </option>
+                    @endforeach
+                </select>
+
+                <label for="assigned_vendor_id" class="mb-2 block">
+                    Verkäufer
+                </label>
+                <select
+                    id="assigned_vendor_id"
+                    name="assigned_vendor_id"
+                    class="text-input mb-content w-md"
+                >
+                    <option value="">Keine Zuweisung</option>
+                    @foreach ($vendors as $vendor)
+                        <option
+                            value="{{ $vendor->id }}"
+                            @selected ($user->assigned_vendor_id === $vendor->id)
+                        >
+                            {{ $vendor->name }}
+                        </option>
+                    @endforeach
+                </select>
+
+                <button type="submit" class="button bg-fsim-light">
+                    Zuweisung speichern
+                </button>
+            </form>
+        </section>
+
         <h2 class="mt-section mb-content">Danger zone</h2>
 
         @if ($user->trashed())
