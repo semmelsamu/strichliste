@@ -12,7 +12,7 @@
             Sound hochladen
         </a>
     </header>
-    <x-wrapper>
+    <x-wrapper class="space-y-section">
         <table class="table">
             <thead>
                 <tr>
@@ -62,5 +62,49 @@
                 {{ sizeof($sounds) }} Sounds gesamt.
             </caption>
         </table>
+
+        <section class="space-y-content">
+            <h2>System-Sounds festlegen</h2>
+            <form class="max-w-xl space-y-content">
+                <div class="grid grid-cols-[auto_1fr] items-center gap-content">
+                    <label for="deposit">Geld einzahlen</label>
+                    <x-sound-select
+                        id="deposit"
+                        name="deposit"
+                        :sounds="$sounds"
+                    />
+
+                    <label for="withdraw">Geld auszahlen</label>
+                    <x-sound-select
+                        id="withdraw"
+                        name="withdraw"
+                        :sounds="$sounds"
+                    />
+
+                    <label for="buy-fallback">Fallbacksound beim Kauf</label>
+                    <x-sound-select
+                        id="buy-fallback"
+                        name="buy-fallback"
+                        :sounds="$sounds"
+                    />
+
+                    <label for="undo-transaction">
+                        Transaktion rückgängig gemacht
+                    </label>
+                    <x-sound-select
+                        id="undo-transaction"
+                        name="undo-transaction"
+                        :sounds="$sounds"
+                    />
+
+                    <label for="error">Fehler</label>
+                    <x-sound-select id="error" name="error" :sounds="$sounds" />
+                </div>
+
+                <button type="submit" class="button ml-auto bg-fsim-light">
+                    Speichern
+                </button>
+            </form>
+        </section>
     </x-wrapper>
 </x-layouts.main>
