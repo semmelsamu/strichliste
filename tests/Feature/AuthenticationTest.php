@@ -67,6 +67,19 @@ test('users can authenticate with remember me enabled', function () {
     expect($user->refresh()->remember_token)->not->toBeNull();
 });
 
+test('tally hosts are redirected to the tally sheet session screen after authenticating', function () {
+    $tallyHost = testUser([
+        'password' => Hash::make('secret-password'),
+    ], UserRole::TallyHost);
+
+    $this->post(route('authenticate'), [
+        'name' => $tallyHost->name,
+        'password' => 'secret-password',
+    ])->assertRedirect(route('tally-sheet.start-session'));
+
+    $this->assertAuthenticatedAs($tallyHost);
+});
+
 test('users cannot authenticate with an invalid password', function () {
     $user = testUser([
         'password' => Hash::make('secret-password'),
