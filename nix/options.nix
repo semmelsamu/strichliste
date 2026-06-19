@@ -220,6 +220,9 @@ in
             if [ ! -f "${setupMarker}" ]; then
               echo "Seeding database..."
               ${php} artisan db:seed --force
+
+              echo "Creating link"
+              ${php} artisan storage:link
               touch "${setupMarker}"
             fi
 
