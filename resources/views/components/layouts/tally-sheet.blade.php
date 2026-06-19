@@ -13,7 +13,7 @@
                 href="{{ route('tally-sheet.auth.logout') }}"
             >
                 <x-lucide-arrow-left />
-                Abmelden
+                Übersicht
             </a>
             <x-currency
                 class="mr-auto"
