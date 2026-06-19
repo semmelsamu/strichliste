@@ -8,11 +8,7 @@
                 action="{{ route('tally-sheet.transfer') }}"
             >
                 @csrf
-                <select
-                    name="recipient"
-                    class="text-input mr-content"
-                    required
-                >
+                <select name="recipient" class="text-input mr-content" required>
                     @foreach ($recipients as $recipient)
                         <option value="{{ $recipient->id }}">
                             {{ $recipient->name }}
@@ -31,10 +27,7 @@
                     €
                 </div>
 
-                <button
-                    type="submit"
-                    class="button bg-green-800 px-content"
-                >
+                <button type="submit" class="button bg-green-800 px-content">
                     Senden
                 </button>
             </form>
