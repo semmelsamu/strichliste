@@ -35,6 +35,19 @@
             </div>
             <p class="mt-2 max-w-prose text-sm text-text-secondary">Es kann ein beliebiges Icon aus dem Set der Lucide Icons gewählt werden. Dafür einfach den Namen des Icons in das Textfeld schreiben. Alle verfügbaren Icons können unter <a class="underline underline-offset-3" href="https://lucide.dev/icons/" target="_blank">lucide.dev</a> eingesehen werden.</p>
 
+            <label for="hidden" class="mt-content flex items-center gap-2">
+                <input
+                    id="hidden"
+                    type="checkbox"
+                    class="checkbox"
+                    name="hidden"
+                    value="1"
+                    @checked (old('hidden', $category->hidden))
+                />
+                Kategorie ausblenden
+            </label>
+            <p class="mt-2 max-w-prose text-sm text-text-secondary">Ausgeblendete Kategorien werden in der Strichliste nicht angezeigt.</p>
+
             <button type="submit" class="button mt-content bg-fsim-light">
                 Änderungen speichern
             </button>

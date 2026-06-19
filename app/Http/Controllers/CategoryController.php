@@ -17,7 +17,7 @@ class CategoryController extends Controller
     public function index()
     {
         return view('pages.categories.index', [
-            'categories' => Category::all(),
+            'categories' => Category::orderBy('order')->orderBy('name')->get(),
         ]);
     }
 
@@ -99,15 +99,37 @@ class CategoryController extends Controller
                     }
                 },
             ],
+            'hidden' => ['boolean'],
         ]);
 
         $category->name = $validated['name'];
         $category->icon = 'lucide-'.$validated['icon'];
+        $category->hidden = $request->boolean('hidden');
         $category->save();
 
         return redirect()->route('categories.index')->with('toast', [
             'type' => 'success',
             'message' => 'Änderungen wurden gespeichert.',
+        ]);
+    }
+
+    /**
+     * Update the ordering position of the categories.
+     */
+    public function reorder(Request $request)
+    {
+        $validated = $request->validate([
+            'order' => ['required', 'array'],
+            'order.*' => ['required', 'integer', 'min:0'],
+        ]);
+
+        foreach ($validated['order'] as $categoryId => $order) {
+            Category::whereKey($categoryId)->update(['order' => $order]);
+        }
+
+        return redirect()->route('categories.index')->with('toast', [
+            'type' => 'success',
+            'message' => 'Reihenfolge wurde gespeichert.',
         ]);
     }
 

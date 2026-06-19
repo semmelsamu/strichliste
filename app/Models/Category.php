@@ -16,4 +16,15 @@ class Category extends Model
     {
         return $this->hasMany(Article::class);
     }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'hidden' => 'boolean',
+            'order' => 'integer',
+        ];
+    }
 }
