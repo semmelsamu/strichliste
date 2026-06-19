@@ -17,6 +17,17 @@ class SessionController extends Controller
 
     public function startSession(Request $request)
     {
+        $user = $request->user();
+        $world = $user->assignedWorld;
+        $vendor = $user->assignedVendor;
+
+        // Auto-start session if user has assigned world and vendor
+        if ($world?->hasRole(UserRole::World) && $vendor?->hasRole(UserRole::Vendor)) {
+            $this->tallySheetSession->initialize($world, $vendor);
+
+            return redirect()->route('tally-sheet.auth.list-users');
+        }
+
         if (! $request->query('world') || ! $request->query('vendor')) {
             return view('pages.tally-sheet.start-session', [
                 'vendors' => User::role(UserRole::Vendor)->get(),
