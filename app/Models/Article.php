@@ -32,7 +32,7 @@ class Article extends Model
     {
         return Attribute::make(
             get: fn () => $this->prices()->latest('effective_since')->value('price')
-        );
+        )->shouldCache();
     }
 
     protected function category(): BelongsTo

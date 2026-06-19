@@ -40,6 +40,49 @@ test('user balances are incoming transactions minus outgoing transactions', func
         ->and((float) $vendor->fresh()->balance)->toBe(3.25);
 });
 
+test('user balance is memoized on the instance within a request', function () {
+    $world = testUser([], UserRole::World);
+    $user = testUser([], UserRole::Customer);
+
+    Transaction::factory()->create([
+        'from_user_id' => $world->id,
+        'to_user_id' => $user->id,
+        'amount' => 10,
+    ]);
+
+    expect((float) $user->balance)->toBe(10.0);
+
+    Transaction::factory()->create([
+        'from_user_id' => $world->id,
+        'to_user_id' => $user->id,
+        'amount' => 5,
+    ]);
+
+    expect((float) $user->balance)->toBe(10.0)
+        ->and((float) $user->fresh()->balance)->toBe(15.0);
+});
+
+test('article current price is memoized on the instance within a request', function () {
+    $article = testArticle(price: null);
+
+    $price = new ArticlePrice;
+    $price->article_id = $article->id;
+    $price->price = 0.80;
+    $price->effective_since = Carbon::now()->subDay();
+    $price->save();
+
+    expect((float) $article->currentPrice)->toBe(0.80);
+
+    $newPrice = new ArticlePrice;
+    $newPrice->article_id = $article->id;
+    $newPrice->price = 1.20;
+    $newPrice->effective_since = Carbon::now();
+    $newPrice->save();
+
+    expect((float) $article->currentPrice)->toBe(0.80)
+        ->and((float) $article->fresh()->currentPrice)->toBe(1.20);
+});
+
 test('a users transactions include sent and received transactions only', function () {
     $world = testUser([], UserRole::World);
     $vendor = testUser([], UserRole::Vendor);

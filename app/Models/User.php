@@ -76,7 +76,7 @@ class User extends Authenticatable
 
                 return $incoming - $outgoing;
             }
-        );
+        )->shouldCache();
     }
 
     public static function groupByFirstLetter(Collection $users)
