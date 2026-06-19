@@ -245,6 +245,10 @@ in
     services.phpfpm.pools.strichliste = {
       user = nginxUser;
 
+      phpPackage = pkgs.php.buildEnv {
+        extensions = ({ enabled, all }: enabled ++ (with all; [ imagick ]));
+      };
+
       settings = {
         "listen" = "127.0.0.1:${toString cfg.settings.port}";
         "listen.owner" = nginxUser;
@@ -259,6 +263,7 @@ in
         "php_admin_flag[log_errors]" = true;
         "catch_workers_output" = true;
       };
+
     };
 
     services.nginx = {
@@ -285,7 +290,7 @@ in
           };
 
           "~ ^/index\\.php(/|$)" = {
-            fastcgiParams = {
+            fastcgiParams = lib.mkForce {
               SCRIPT_FILENAME = "$realpath_root$fastcgi_script_name";
             };
 
