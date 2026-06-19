@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\TallySheet;
 
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\Article;
 use App\Models\Category;
 use App\Models\Transaction;
+use App\Models\User;
 use App\Services\TallySheetSessionService;
 
 class ViewController extends Controller
@@ -42,6 +44,15 @@ class ViewController extends Controller
     public function showDeposit()
     {
         return view('pages.tally-sheet.deposit');
+    }
+
+    public function showTransfer()
+    {
+        $user = $this->tallySheetSessionService->get('user');
+
+        return view('pages.tally-sheet.transfer', [
+            'recipients' => User::role(UserRole::Customer)->whereKeyNot($user->id)->orderBy('name')->get(),
+        ]);
     }
 
     public function showArticleDetails(Article $article)

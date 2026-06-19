@@ -169,6 +169,98 @@ test('deposit requests validate action and amount', function (array $payload, ar
     'too many decimals' => [['amount' => '1.234'], ['amount']],
 ]);
 
+test('users can send money to another user', function () {
+    ['admin' => $admin, 'world' => $world, 'user' => $user] = transactionUsers();
+    $recipient = testUser([], UserRole::Customer);
+
+    Transaction::factory()->create([
+        'from_user_id' => $world->id,
+        'to_user_id' => $user->id,
+        'amount' => 5,
+    ]);
+
+    $this->actingAs($admin)->withSession(tallySheetSession($user, $world ?? null, $vendor ?? null))->post(route('tally-sheet.transfer'), [
+        'recipient' => $recipient->id,
+        'amount' => '3.50',
+    ])
+        ->assertRedirect()
+        ->assertSessionHas('toast.type', 'success');
+
+    $transfer = Transaction::latest('id')->firstOrFail();
+
+    expect($transfer->from_user_id)->toBe($user->id)
+        ->and($transfer->to_user_id)->toBe($recipient->id)
+        ->and((float) $transfer->amount)->toBe(3.50)
+        ->and((float) $user->fresh()->balance)->toBe(1.50)
+        ->and((float) $recipient->fresh()->balance)->toBe(3.50);
+});
+
+test('transfers cannot exceed the senders balance', function () {
+    ['admin' => $admin, 'world' => $world, 'user' => $user] = transactionUsers();
+    $recipient = testUser([], UserRole::Customer);
+
+    Transaction::factory()->create([
+        'from_user_id' => $world->id,
+        'to_user_id' => $user->id,
+        'amount' => 2,
+    ]);
+
+    $this->actingAs($admin)->withSession(tallySheetSession($user, $world ?? null, $vendor ?? null))->post(route('tally-sheet.transfer'), [
+        'recipient' => $recipient->id,
+        'amount' => '2.01',
+    ])->assertSessionHasErrors('amount');
+
+    expect(Transaction::count())->toBe(1);
+});
+
+test('users cannot send money to themselves', function () {
+    ['admin' => $admin, 'world' => $world, 'user' => $user] = transactionUsers();
+
+    Transaction::factory()->create([
+        'from_user_id' => $world->id,
+        'to_user_id' => $user->id,
+        'amount' => 5,
+    ]);
+
+    $this->actingAs($admin)->withSession(tallySheetSession($user, $world ?? null, $vendor ?? null))->post(route('tally-sheet.transfer'), [
+        'recipient' => $user->id,
+        'amount' => '1.00',
+    ])->assertSessionHasErrors('recipient');
+
+    expect(Transaction::count())->toBe(1);
+});
+
+test('transfer requests validate recipient and amount', function (array $payload, array $errors) {
+    ['admin' => $admin, 'world' => $world, 'user' => $user] = transactionUsers();
+    $recipient = testUser([], UserRole::Customer);
+    $vendor = $vendor ?? testUser([], UserRole::Vendor);
+
+    Transaction::factory()->create([
+        'from_user_id' => $world->id,
+        'to_user_id' => $user->id,
+        'amount' => 5,
+    ]);
+
+    $payload = array_replace([
+        'recipient' => $recipient->id,
+        'amount' => '1.00',
+    ], $payload);
+
+    $payload = collect($payload)
+        ->map(fn ($value) => $value instanceof Closure ? $value() : $value)
+        ->all();
+
+    $this->actingAs($admin)->withSession(tallySheetSession($user, $world ?? null, $vendor ?? null))->post(route('tally-sheet.transfer'), $payload)
+        ->assertSessionHasErrors($errors);
+})->with([
+    'missing recipient' => [['recipient' => null], ['recipient']],
+    'unknown recipient' => [['recipient' => 9999], ['recipient']],
+    'recipient is not a customer' => [['recipient' => fn () => testUser([], UserRole::Vendor)->id], ['recipient']],
+    'missing amount' => [['amount' => null], ['amount']],
+    'zero amount' => [['amount' => '0'], ['amount']],
+    'too many decimals' => [['amount' => '1.234'], ['amount']],
+]);
+
 test('users can buy articles when they have enough balance', function () {
     ['admin' => $admin, 'world' => $world, 'vendor' => $vendor, 'user' => $user] = transactionUsers();
     $article = testArticle(['name' => 'Club Mate', 'sounds' => ['kaching']], 1.20);

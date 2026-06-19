@@ -68,6 +68,8 @@ Route::middleware('auth')->group(function () {
 
                 Route::get('/deposit', 'showDeposit')->name('show-deposit');
 
+                Route::get('/transfer', 'showTransfer')->name('show-transfer');
+
                 Route::get('/history', 'showHistory')->name('history');
 
             });
@@ -75,6 +77,8 @@ Route::middleware('auth')->group(function () {
             Route::controller(TallySheet\TransactionController::class)->group(function () {
 
                 Route::post('/deposit', 'depositMoney')->name('deposit');
+
+                Route::post('/transfer', 'transferMoney')->name('transfer');
 
                 Route::post('/buy', 'buyArticle')->name('buy');
                 Route::post('/buy-by-barcode', 'buyArticleByBarcode')->name('buy-by-barcode');
