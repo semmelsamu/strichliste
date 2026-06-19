@@ -10,10 +10,10 @@
         >
             <a
                 class="button bg-fsim-light"
-                href="{{ route('tally-sheet.users.edit') }}"
+                href="{{ route('tally-sheet.auth.logout') }}"
             >
-                <x-lucide-user />
-                {{ tally_session()->get('user')->name }}
+                <x-lucide-arrow-left />
+                Abmelden
             </a>
             <x-currency
                 class="mr-auto"
@@ -24,10 +24,10 @@
             </p>
             <a
                 class="button bg-fsim-light"
-                href="{{ route('tally-sheet.auth.logout') }}"
+                href="{{ route('tally-sheet.users.edit') }}"
             >
-                Abmelden
-                <x-lucide-log-out />
+                <x-lucide-user />
+                {{ tally_session()->get('user')->name }}
             </a>
         </div>
         <x-tab-bar class="w-full px-wrapper" activeTab="{{ $activeTab }}">
