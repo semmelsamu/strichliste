@@ -65,7 +65,13 @@
 
         <section class="space-y-content">
             <h2>System-Sounds festlegen</h2>
-            <form class="max-w-xl space-y-content">
+            <form
+                class="max-w-xl space-y-content"
+                method="POST"
+                action="{{ route("sounds.update-system-sounds") }}"
+            >
+                @method ("PUT")
+
                 <div class="grid grid-cols-[auto_1fr] items-center gap-content">
                     <label for="deposit">Geld einzahlen</label>
                     <x-sound-select

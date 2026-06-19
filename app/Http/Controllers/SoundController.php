@@ -83,4 +83,9 @@ class SoundController extends Controller
             'message' => 'Sound wurde gelöscht.',
         ]);
     }
+
+    public function updateSystemSounds(Request $request)
+    {
+        dd($request);
+    }
 }
