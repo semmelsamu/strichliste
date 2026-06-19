@@ -57,8 +57,8 @@ class TransactionController extends Controller
         $world = $this->tallySheetSessionService->get('world');
 
         $this->transactionService->transferMoney(
-            user: $user,
-            world: $world,
+            from: $world,
+            to: $user,
             amount: $action == 'deposit' ? $amount : -1 * $amount,
         );
 
@@ -110,8 +110,8 @@ class TransactionController extends Controller
         $amount = $validated['amount'];
 
         $this->transactionService->transferMoney(
-            user: $recipient,
-            world: $user,
+            from: $user,
+            to: $recipient,
             amount: $amount,
         );
 
