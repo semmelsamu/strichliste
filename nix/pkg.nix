@@ -6,7 +6,7 @@
 }:
 let
   version = "0.1";
-  name = "strichliste";
+  name = "semmel-strichliste";
 
   # Frontend assets (Vite -> public/build). Built independently of PHP.
   assets = buildNpmPackage {
