@@ -79,7 +79,13 @@ class SoundController extends Controller
      */
     public function destroy(string $id)
     {
-        Sound::get($id)->destroy();
+        $sound = Sound::get($id);
+
+        if (! isset($sound)) {
+            abort(404, 'Sound wurde nicht gefunden');
+        }
+
+        $sound->destroy();
 
         return back()->with('toast', [
             'type' => 'success',
