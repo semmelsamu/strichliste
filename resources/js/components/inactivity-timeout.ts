@@ -9,7 +9,7 @@
  * Usage:
  * - Add `x-data="inactivityTimeout('<redirectUrl>')"` to any element.
  */
-const INACTIVITY_TIMEOUT = 30_000;
+const INACTIVITY_TIMEOUT = 23_456;
 
 export default (redirectUrl: string) => ({
     timer: undefined as ReturnType<typeof setTimeout> | undefined,

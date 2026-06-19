@@ -1,5 +1,1 @@
-@unless (app()->environment('local'))
-    <div
-        x-data="inactivityTimeout('{{ route('tally-sheet.auth.logout') }}')"
-    ></div>
-@endunless
+<div x-data="inactivityTimeout('{{ route('tally-sheet.auth.logout') }}')"></div>
