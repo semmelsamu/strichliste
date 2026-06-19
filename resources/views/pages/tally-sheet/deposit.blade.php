@@ -42,7 +42,7 @@
         $amounts = [0.2, 0.5, 1, 2, 5, 10, 20, 50];
         $variants = [
             [
-                "heading" => "Oder schnell einzanlen",
+                "heading" => "Oder schnell einzahlen",
                 "action" => "deposit"
             ],
             [

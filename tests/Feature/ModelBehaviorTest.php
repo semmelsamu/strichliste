@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\UserRole;
+use App\Models\Article;
 use App\Models\ArticlePrice;
 use App\Models\Barcode;
 use App\Models\BuyArticleTransaction;
@@ -9,6 +10,7 @@ use App\Models\UndoTransaction;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 
 pest()->use(RefreshDatabase::class);
 
@@ -38,6 +40,112 @@ test('user balances are incoming transactions minus outgoing transactions', func
     expect((float) $user->fresh()->balance)->toBe(5.25)
         ->and((float) $world->fresh()->balance)->toBe(-8.50)
         ->and((float) $vendor->fresh()->balance)->toBe(3.25);
+});
+
+test('user balance is memoized on the instance within a request', function () {
+    $world = testUser([], UserRole::World);
+    $user = testUser([], UserRole::Customer);
+
+    Transaction::factory()->create([
+        'from_user_id' => $world->id,
+        'to_user_id' => $user->id,
+        'amount' => 10,
+    ]);
+
+    expect((float) $user->balance)->toBe(10.0);
+
+    Transaction::factory()->create([
+        'from_user_id' => $world->id,
+        'to_user_id' => $user->id,
+        'amount' => 5,
+    ]);
+
+    expect((float) $user->balance)->toBe(10.0)
+        ->and((float) $user->fresh()->balance)->toBe(15.0);
+});
+
+test('article current price is memoized on the instance within a request', function () {
+    $article = testArticle(price: null);
+
+    $price = new ArticlePrice;
+    $price->article_id = $article->id;
+    $price->price = 0.80;
+    $price->effective_since = Carbon::now()->subDay();
+    $price->save();
+
+    expect((float) $article->currentPrice)->toBe(0.80);
+
+    $newPrice = new ArticlePrice;
+    $newPrice->article_id = $article->id;
+    $newPrice->price = 1.20;
+    $newPrice->effective_since = Carbon::now();
+    $newPrice->save();
+
+    expect((float) $article->currentPrice)->toBe(0.80)
+        ->and((float) $article->fresh()->currentPrice)->toBe(1.20);
+});
+
+test('user balance is served from the persistent cache across instances', function () {
+    $world = testUser([], UserRole::World);
+    $user = testUser([], UserRole::Customer);
+
+    Transaction::factory()->create([
+        'from_user_id' => $world->id,
+        'to_user_id' => $user->id,
+        'amount' => 10,
+    ]);
+
+    // Prime the cache via one instance, then poison it to prove a fresh instance reads the cache.
+    expect((float) User::find($user->id)->balance)->toBe(10.0);
+    Cache::forever(User::balanceCacheKey($user->id), 99);
+
+    expect((float) User::find($user->id)->balance)->toBe(99.0);
+});
+
+test('creating a transaction invalidates the cached balance of both parties', function () {
+    $world = testUser([], UserRole::World);
+    $user = testUser([], UserRole::Customer);
+
+    expect((float) User::find($user->id)->balance)->toBe(0.0)
+        ->and((float) User::find($world->id)->balance)->toBe(0.0);
+
+    Transaction::factory()->create([
+        'from_user_id' => $world->id,
+        'to_user_id' => $user->id,
+        'amount' => 10,
+    ]);
+
+    expect((float) User::find($user->id)->balance)->toBe(10.0)
+        ->and((float) User::find($world->id)->balance)->toBe(-10.0);
+});
+
+test('article current price is served from the persistent cache across instances', function () {
+    $article = testArticle(price: 0.80);
+
+    expect((float) Article::find($article->id)->currentPrice)->toBe(0.80);
+    Cache::forever(Article::currentPriceCacheKey($article->id), 9.99);
+
+    expect((float) Article::find($article->id)->currentPrice)->toBe(9.99);
+});
+
+test('adding an article price invalidates the cached current price', function () {
+    $article = testArticle(price: null);
+
+    $oldPrice = new ArticlePrice;
+    $oldPrice->article_id = $article->id;
+    $oldPrice->price = 0.80;
+    $oldPrice->effective_since = Carbon::now()->subDay();
+    $oldPrice->save();
+
+    expect((float) Article::find($article->id)->currentPrice)->toBe(0.80);
+
+    $newPrice = new ArticlePrice;
+    $newPrice->article_id = $article->id;
+    $newPrice->price = 1.20;
+    $newPrice->effective_since = Carbon::now();
+    $newPrice->save();
+
+    expect((float) Article::find($article->id)->currentPrice)->toBe(1.20);
 });
 
 test('a users transactions include sent and received transactions only', function () {

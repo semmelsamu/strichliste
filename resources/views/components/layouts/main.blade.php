@@ -12,7 +12,7 @@
     @vite (['resources/css/app.css', 'resources/js/app.ts'])
 </head>
 <body
-    class="relative mx-auto flex h-screen max-w-5xl flex-col overflow-y-hidden bg-fsim-dark"
+    class="relative mx-auto flex h-screen max-w-6xl flex-col overflow-y-hidden bg-fsim-dark"
 >
     <nav
         class="flex w-full items-center justify-center gap-inline bg-black p-inline"
@@ -21,14 +21,16 @@
         <a href="/">Strichliste der FSIM</a>
     </nav>
     {{ $slot }}
-    @if (session('toast'))
-        <x-toast :type="session('toast.type')">
-            {{ session('toast.message') }}
-        </x-toast>
-    @endif
-    @foreach (isset($errors) ? $errors->all() : [] as $error)
-        <x-toast type="error">{{ $error }}</x-toast>
-    @endforeach
+    <x-toast.toaster>
+        @if (session('toast'))
+            <x-toast :type="session('toast.type')">
+                {{ session('toast.message') }}
+            </x-toast>
+        @endif
+        @foreach (isset($errors) ? $errors->all() : [] as $error)
+            <x-toast type="error">{{ $error }}</x-toast>
+        @endforeach
+    </x-toast.toaster>
     @if (session('sound') && Sound::get(session("sound")) != null)
         <audio
             id="sound"

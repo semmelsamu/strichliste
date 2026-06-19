@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Spatie\Permission\Traits\HasRoles;
 
 #[Fillable(['name'])]
@@ -70,13 +71,26 @@ class User extends Authenticatable
     protected function balance(): Attribute
     {
         return Attribute::make(
-            get: function () {
-                $incoming = $this->receivedTransactions()->sum('amount');
-                $outgoing = $this->sentTransactions()->sum('amount');
+            get: fn () => Cache::rememberForever(
+                self::balanceCacheKey($this->id),
+                function () {
+                    $incoming = $this->receivedTransactions()->sum('amount');
+                    $outgoing = $this->sentTransactions()->sum('amount');
 
-                return $incoming - $outgoing;
-            }
-        );
+                    return $incoming - $outgoing;
+                }
+            )
+        )->shouldCache();
+    }
+
+    public static function balanceCacheKey(int $userId): string
+    {
+        return "user:{$userId}:balance";
+    }
+
+    public static function forgetCachedBalance(int $userId): void
+    {
+        Cache::forget(self::balanceCacheKey($userId));
     }
 
     public static function groupByFirstLetter(Collection $users)

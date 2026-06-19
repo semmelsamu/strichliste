@@ -13,36 +13,61 @@
         </a>
     </header>
     <x-wrapper>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Icon</th>
-                    <th>Kategorie</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse ($categories as $category)
+        <form action="{{ route("categories.reorder") }}" method="POST">
+            @csrf
+            @method ('PATCH')
+
+            <table class="table">
+                <thead>
                     <tr>
-                        <td class="w-6">
-                            @svg ($category->icon)
-                        </td>
-                        <th class="w-auto">{{ $category->name }}</th>
-                        <td class="flex items-center justify-end">
-                            <a
-                                href="{{ route("categories.edit", $category->id) }}"
+                        <th>Position</th>
+                        <th>Icon</th>
+                        <th>Kategorie</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($categories as $category)
+                        <tr>
+                            <td class="w-20">
+                                <input
+                                    type="number"
+                                    class="w-16"
+                                    name="order[{{ $category->id }}]"
+                                    min="0"
+                                    value="{{ old("order.".$category->id, $category->order) }}"
+                                />
+                            </td>
+                            <td class="w-6">
+                                @svg ($category->icon)
+                            </td>
+                            <th
+                                @class (["w-auto", "text-text-secondary" => $category->hidden])
                             >
-                                <x-lucide-square-pen />
-                            </a>
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <th colspan="3" class="text-center">
-                            Keine Kategorien gefunden.
-                        </th>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
+                                {{ $category->name }}
+                            </th>
+                            <td class="w-6 align-middle">
+                                <a
+                                    href="{{ route("categories.edit", $category->id) }}"
+                                >
+                                    <x-lucide-square-pen />
+                                </a>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <th colspan="4" class="text-center">
+                                Keine Kategorien gefunden.
+                            </th>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+
+            @if ($categories->isNotEmpty())
+                <button type="submit" class="button mt-content bg-fsim-light">
+                    Reihenfolge speichern
+                </button>
+            @endif
+        </form>
     </x-wrapper>
 </x-layouts.main>

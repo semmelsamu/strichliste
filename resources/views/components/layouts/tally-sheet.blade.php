@@ -3,16 +3,17 @@
 @use (App\Services\TallySheetSessionService)
 
 <x-layouts.main :title="$title">
+    <x-tally-sheet-inactivity-logout />
     <header class="space-y-content bg-fsim-medium">
         <div
             class="flex items-center justify-between gap-content px-wrapper pt-wrapper"
         >
             <a
                 class="button bg-fsim-light"
-                href="{{ route('tally-sheet.users.edit') }}"
+                href="{{ route('tally-sheet.auth.logout') }}"
             >
-                <x-lucide-user />
-                {{ tally_session()->get('user')->name }}
+                <x-lucide-arrow-left />
+                Übersicht
             </a>
             <x-currency
                 class="mr-auto"
@@ -23,10 +24,10 @@
             </p>
             <a
                 class="button bg-fsim-light"
-                href="{{ route('tally-sheet.auth.logout') }}"
+                href="{{ route('tally-sheet.users.edit') }}"
             >
-                Abmelden
-                <x-lucide-log-out />
+                <x-lucide-user />
+                {{ tally_session()->get('user')->name }}
             </a>
         </div>
         <x-tab-bar class="w-full px-wrapper" activeTab="{{ $activeTab }}">
@@ -43,6 +44,13 @@
             >
                 <x-lucide-coins />
                 Aufladen
+            </x-tab-bar.tab>
+            <x-tab-bar.tab
+                href="{{ route('tally-sheet.show-transfer') }}"
+                name="transfer"
+            >
+                <x-lucide-send />
+                Geld Senden
             </x-tab-bar.tab>
             <x-tab-bar.tab
                 href="{{ route('tally-sheet.history') }}"

@@ -11,11 +11,11 @@ use Illuminate\Support\Facades\DB;
 
 class TransactionService
 {
-    public function transferMoney(User $user, User $world, float $amount): void
+    public function transferMoney(User $from, User $to, float $amount): void
     {
         $transaction = new Transaction;
-        $transaction->from_user_id = $world->id;
-        $transaction->to_user_id = $user->id;
+        $transaction->from_user_id = $from->id;
+        $transaction->to_user_id = $to->id;
         $transaction->amount = $amount;
         $transaction->save();
     }

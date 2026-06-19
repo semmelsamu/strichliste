@@ -1,9 +1,9 @@
-name: "Nix Build"
+name: "Nix"
 on:
-    pull_request:
     push:
 jobs:
     tests:
+        name: Build
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v5

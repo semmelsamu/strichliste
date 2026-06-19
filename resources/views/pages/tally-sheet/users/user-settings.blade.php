@@ -1,4 +1,5 @@
 <x-layouts.main title="Account-Einstellungen">
+    <x-tally-sheet-inactivity-logout />
     <header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
         <a class="button" href="{{ route('tally-sheet.buy-overview') }}">
             <x-lucide-arrow-left />

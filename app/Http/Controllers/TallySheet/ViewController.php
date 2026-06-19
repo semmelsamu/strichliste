@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\TallySheet;
 
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\Article;
 use App\Models\Category;
 use App\Models\Transaction;
+use App\Models\User;
 use App\Services\TallySheetSessionService;
 
 class ViewController extends Controller
@@ -17,7 +19,7 @@ class ViewController extends Controller
         $user = $this->tallySheetSessionService->get('user');
 
         return view('pages.tally-sheet.buy-overview', [
-            'categories' => Category::all(),
+            'categories' => Category::where('hidden', false)->orderBy('order')->orderBy('name')->get(),
             'mostFrequentArticles' => Article::query()
                 ->select('articles.*')
                 ->selectRaw('COUNT(buy_article_transactions.transaction_id) as purchases_count')
@@ -27,7 +29,7 @@ class ViewController extends Controller
                 ->where('transactions.created_at', '>=', now()->subMonths(3))
                 ->groupBy('articles.id')
                 ->orderByDesc('purchases_count')
-                ->limit(3)
+                ->limit(4)
                 ->get(),
         ]);
     }
@@ -42,6 +44,15 @@ class ViewController extends Controller
     public function showDeposit()
     {
         return view('pages.tally-sheet.deposit');
+    }
+
+    public function showTransfer()
+    {
+        $user = $this->tallySheetSessionService->get('user');
+
+        return view('pages.tally-sheet.transfer', [
+            'recipients' => User::role(UserRole::Customer)->whereKeyNot($user->id)->orderBy('name')->get(),
+        ]);
     }
 
     public function showArticleDetails(Article $article)
