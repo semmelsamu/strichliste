@@ -21,14 +21,16 @@
         <a href="/">Strichliste der FSIM</a>
     </nav>
     {{ $slot }}
-    @if (session('toast'))
-        <x-toast :type="session('toast.type')">
-            {{ session('toast.message') }}
-        </x-toast>
-    @endif
-    @foreach (isset($errors) ? $errors->all() : [] as $error)
-        <x-toast type="error">{{ $error }}</x-toast>
-    @endforeach
+    <x-toast.toaster>
+        @if (session('toast'))
+            <x-toast :type="session('toast.type')">
+                {{ session('toast.message') }}
+            </x-toast>
+        @endif
+        @foreach (isset($errors) ? $errors->all() : [] as $error)
+            <x-toast type="error">{{ $error }}</x-toast>
+        @endforeach
+    </x-toast.toaster>
     @if (session('sound') && Sound::get(session("sound")) != null)
         <audio
             id="sound"
