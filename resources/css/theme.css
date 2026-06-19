@@ -15,4 +15,12 @@
     --spacing-inline: calc(4 * var(--spacing));
     --spacing-content: calc(8 * var(--spacing));
     --spacing-section: calc(12 * var(--spacing));
+
+    --animate-toast-in: toast-in 0.3s ease-out;
+}
+
+@keyframes toast-in {
+    from {
+        transform: translateY(100%);
+    }
 }
