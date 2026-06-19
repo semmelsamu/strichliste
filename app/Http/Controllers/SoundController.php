@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\SystemSound;
 use App\Models\Sound;
+use App\Models\SystemSoundSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -87,8 +88,28 @@ class SoundController extends Controller
 
     public function updateSystemSounds(Request $request)
     {
-        foreach (SystemSound::cases() as $systemSound) {
-            dump($systemSound, $request->input($systemSound->value));
-        }
+        $validated = $request->validate(
+            collect(SystemSound::cases())
+                ->mapWithKeys(fn (SystemSound $systemSound) => [
+                    $systemSound->value => ['nullable', 'string'],
+                ])
+                ->all()
+        );
+
+        SystemSoundSetting::upsert(
+            collect(SystemSound::cases())
+                ->map(fn (SystemSound $systemSound) => [
+                    'system_sound' => $systemSound->value,
+                    'sound' => $validated[$systemSound->value] ?? null,
+                ])
+                ->all(),
+            uniqueBy: ['system_sound'],
+            update: ['sound'],
+        );
+
+        return back()->with('toast', [
+            'type' => 'success',
+            'message' => 'System-Sounds wurden gespeichert.',
+        ]);
     }
 }
