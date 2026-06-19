@@ -12,6 +12,7 @@
     "skills": [
         "laravel-best-practices",
         "pulse-development",
-        "pest-testing"
+        "pest-testing",
+        "tailwindcss-development"
     ]
 }
