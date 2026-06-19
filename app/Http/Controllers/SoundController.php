@@ -17,6 +17,7 @@ class SoundController extends Controller
     {
         return view('pages.sounds.index', [
             'sounds' => Sound::all(),
+            'systemSounds' => SystemSoundSetting::all()->keyBy(fn (SystemSoundSetting $systemSoundSetting) => $systemSoundSetting->system_sound->value),
         ]);
     }
 

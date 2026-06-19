@@ -83,6 +83,7 @@
                             id="system-sound-{{ $sound->value }}"
                             name="{{ $sound->value }}"
                             :sounds="$sounds"
+                            :selected="$sounds->first(fn ($s) => $s->name() === $systemSounds->get($sound->value)?->sound)"
                         />
                     @endforeach
                 </div>

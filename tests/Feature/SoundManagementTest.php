@@ -21,6 +21,21 @@ test('admins can list stored sounds', function () {
         ->assertViewHas('sounds', fn ($sounds) => $sounds->pluck('filename')->contains('kaching.mp3'));
 });
 
+test('the index page preselects sounds already assigned to system sounds', function () {
+    Storage::fake('public');
+
+    $admin = testUser([], UserRole::Admin);
+    Storage::disk('public')->put('sounds/kaching.mp3', 'sound');
+    SystemSoundSetting::create([
+        'system_sound' => SystemSound::Deposit,
+        'sound' => 'kaching',
+    ]);
+
+    $this->actingAs($admin)->get(route('sounds.index'))
+        ->assertSuccessful()
+        ->assertSeeInOrder(['value="kaching"', 'selected'], false);
+});
+
 test('admins can upload mp3 sounds with slugged filenames', function () {
     Storage::fake('public');
 
