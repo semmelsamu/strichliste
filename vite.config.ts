@@ -11,7 +11,7 @@ export default defineConfig({
             fonts: [
                 local("Rubik", {
                     alias: "rubik",
-                    src: "resources/fonts/rubik/*.ttf",
+                    src: "resources/fonts/rubik/*.woff2",
                 }),
             ],
         }),
