@@ -142,3 +142,84 @@ test('admins cannot delete categories that are still used by articles', function
 
     expect(Category::whereKey($category->id)->exists())->toBeTrue();
 });
+
+test('admins can reorder categories', function () {
+    $admin = testUser([], UserRole::Admin);
+    $first = testCategory(['name' => 'Softdrinks']);
+    $second = testCategory(['name' => 'Kaffee']);
+
+    $this->actingAs($admin)->patch(route('categories.reorder'), [
+        'order' => [
+            $first->id => 2,
+            $second->id => 1,
+        ],
+    ])
+        ->assertRedirect(route('categories.index'))
+        ->assertSessionHas('toast.type', 'success');
+
+    expect($first->fresh()->order)->toBe(2)
+        ->and($second->fresh()->order)->toBe(1);
+});
+
+test('the admin index lists categories sorted by order', function () {
+    $admin = testUser([], UserRole::Admin);
+    $second = testCategory(['name' => 'Softdrinks']);
+    $second->order = 2;
+    $second->save();
+    $first = testCategory(['name' => 'Kaffee']);
+    $first->order = 1;
+    $first->save();
+
+    $this->actingAs($admin)->get(route('categories.index'))
+        ->assertSuccessful()
+        ->assertViewHas('categories', fn ($categories) => $categories->pluck('id')->all() === [$first->id, $second->id]);
+});
+
+test('the tally sheet lists categories sorted by order', function () {
+    $admin = testUser([], UserRole::Admin);
+    $user = testUser([], UserRole::Customer);
+    $second = testCategory(['name' => 'Softdrinks']);
+    $second->order = 2;
+    $second->save();
+    $first = testCategory(['name' => 'Kaffee']);
+    $first->order = 1;
+    $first->save();
+
+    $this->actingAs($admin)->withSession(tallySheetSession($user))->get(route('tally-sheet.buy-overview'))
+        ->assertSuccessful()
+        ->assertViewHas('categories', fn ($categories) => $categories->pluck('id')->all() === [$first->id, $second->id]);
+});
+
+test('categories with the same order are accepted and tiebroken by name', function () {
+    $admin = testUser([], UserRole::Admin);
+    $banana = testCategory(['name' => 'Banane']);
+    $apple = testCategory(['name' => 'Apfel']);
+
+    $this->actingAs($admin)->patch(route('categories.reorder'), [
+        'order' => [
+            $banana->id => 1,
+            $apple->id => 1,
+        ],
+    ])
+        ->assertRedirect(route('categories.index'))
+        ->assertSessionHas('toast.type', 'success');
+
+    expect($banana->fresh()->order)->toBe(1)
+        ->and($apple->fresh()->order)->toBe(1);
+
+    $this->actingAs($admin)->get(route('categories.index'))
+        ->assertViewHas('categories', fn ($categories) => $categories->pluck('id')->all() === [$apple->id, $banana->id]);
+});
+
+test('reorder validates that positions are non-negative integers', function (array $payload) {
+    $admin = testUser([], UserRole::Admin);
+    $category = testCategory();
+
+    $this->actingAs($admin)->patch(route('categories.reorder'), [
+        'order' => [$category->id => $payload['value']],
+    ])
+        ->assertSessionHasErrors('order.'.$category->id);
+})->with([
+    'negative' => [['value' => -1]],
+    'non-integer' => [['value' => 'abc']],
+]);

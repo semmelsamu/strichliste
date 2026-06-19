@@ -17,7 +17,7 @@ class ViewController extends Controller
         $user = $this->tallySheetSessionService->get('user');
 
         return view('pages.tally-sheet.buy-overview', [
-            'categories' => Category::where('hidden', false)->get(),
+            'categories' => Category::where('hidden', false)->orderBy('order')->orderBy('name')->get(),
             'mostFrequentArticles' => Article::query()
                 ->select('articles.*')
                 ->selectRaw('COUNT(buy_article_transactions.transaction_id) as purchases_count')

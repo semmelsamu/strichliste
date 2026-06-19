@@ -110,6 +110,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     });
 
+    Route::patch('categories/reorder', [CategoryController::class, 'reorder'])->name('categories.reorder');
+
     Route::resource('categories', CategoryController::class)->only([
         'index', 'edit', 'update', 'create', 'store', 'destroy',
     ]);

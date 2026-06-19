@@ -24,6 +24,7 @@ class Category extends Model
     {
         return [
             'hidden' => 'boolean',
+            'order' => 'integer',
         ];
     }
 }
