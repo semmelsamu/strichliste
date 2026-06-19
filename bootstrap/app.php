@@ -1,5 +1,7 @@
 <?php
 
+use App\Enums\SystemSound;
+use App\Models\SystemSoundSetting;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -24,9 +26,10 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        // Play error sound if any error occurs
         $exceptions->respond(function (Response $response, Throwable $exception): Response {
             if ($exception instanceof ValidationException && $response instanceof RedirectResponse) {
-                return $response->with('sound', 'windows-error');
+                return $response->with('sound', SystemSoundSetting::get(SystemSound::Error));
             }
 
             return $response;
