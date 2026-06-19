@@ -166,6 +166,49 @@
         </section>
 
         <section>
+            <h2 class="mb-inline">Bild</h2>
+            <form
+                method="POST"
+                action="{{ route("articles.update-image", $article->id) }}"
+                enctype="multipart/form-data"
+            >
+                @csrf
+                <div class="mt-content flex items-center gap-inline">
+                    <input
+                        type="file"
+                        name="image"
+                        accept="image/*"
+                        class="file-input"
+                        required
+                    />
+                    <button type="submit" class="button bg-fsim-light">
+                        Bild hochladen
+                    </button>
+                </div>
+            </form>
+            @if ($article->imageUrl())
+                <h3 class="mt-content mb-inline">Aktuelles Bild</h3>
+                <div class="flex items-end gap-inline">
+                    <x-article-image :article="$article" class="w-md" />
+                    <form
+                        method="POST"
+                        action="{{ route("articles.delete-image", $article->id) }}"
+                    >
+                        @csrf
+                        @method ("DELETE")
+                        <button
+                            type="submit"
+                            class="button bg-red-800"
+                            aria-label="Bild entfernen"
+                        >
+                            <x-lucide-trash-2 />
+                        </button>
+                    </form>
+                </div>
+            @endif
+        </section>
+
+        <section>
             <h2 class="mb-inline">Barcodes</h2>
             <form
                 method="POST"
