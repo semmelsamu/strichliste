@@ -27,17 +27,15 @@ class LoginController extends Controller
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
 
-            $toast = [
-                'type' => 'success',
-                'message' => 'Willkommen, '.Auth::user()->name.'!',
-            ];
-
             // Auto-redirect tally hosts to session screen
             if (Auth::user()->hasRole(UserRole::TallyHost)) {
-                return redirect()->route('tally-sheet.start-session')->with('toast', $toast);
+                return redirect()->route('tally-sheet.start-session');
             }
 
-            return redirect()->route('dashboard')->with('toast', $toast);
+            return redirect()->route('dashboard')->with('toast', [
+                'type' => 'success',
+                'message' => 'Willkommen, '.Auth::user()->name.'!',
+            ]);
         }
 
         return back()->withErrors([
