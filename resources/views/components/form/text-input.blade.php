@@ -2,7 +2,7 @@
 
 <x-form.field :$name :$label :$bottomText {{ $attributes }}>
     <input
-        id="text-input-{{ $name }}"
+        id="form-{{ $name }}"
         type="text"
         class="text-input w-full"
         name="{{ $name }}"

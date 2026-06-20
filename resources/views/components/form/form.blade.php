@@ -21,7 +21,7 @@ if(isset($delete)) {$action = $delete; $method = "DELETE";}
 
 <form
     {{ $attributes
-    ->class(["flex flex-col gap-inline items-start"])
+    ->class(["flex flex-col gap-content items-start"])
     ->merge(["method" => $method == "GET" ? "GET" : "POST", "action" => $action])
 }}
 >

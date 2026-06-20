@@ -1,6 +1,6 @@
 <div {{ $attributes->class(["space-y-3 w-full"]) }}>
     @isset ($label)
-        <label for="text-input-{{ $name }}" class="block"> {{ $label }} </label>
+        <label for="form-{{ $name }}" class="block"> {{ $label }} </label>
     @endisset
 
     {{ $slot }}

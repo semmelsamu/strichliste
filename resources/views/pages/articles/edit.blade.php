@@ -9,26 +9,25 @@
         class="space-y-section *:rounded-2xl *:border-4 *:border-fsim-medium *:p-content"
     >
         <section>
-            <h2 class="mb-inline">Generelle Informationen</h2>
             <x-form put="{{ route('articles.update', $article->id) }}">
+                <h2>Generelle Informationen</h2>
+
                 <x-form.text-input
                     name="name"
                     label="Name"
                     class="max-w-md"
                     value="{{ $article->name }}"
                 />
-                <label for="category" class="mb-2 block">Kategorie</label>
-                <select name="category" id="category" class="text-input">
-                    @foreach ($categories as $category)
-                        <option
-                            value="{{ $category->id }}"
-                            @selected ($category->is($article->category))
-                        >
-                            {{ $category->name }}
-                        </option>
-                    @endforeach
-                </select>
-                <p class="mt-2 text-sm text-text-secondary">Kategorien können im Hauptmenü unter "Artikel bearbeiten" > "Kategorien" bearbeitet werden.</p>
+
+                <x-form.select
+                    name="category"
+                    label="Kategorie"
+                    class="max-w-xs"
+                    placeholder="Kategorie wählen"
+                    :options="$categories->pluck('name', 'id')"
+                    :selected="$article->category->id"
+                />
+
                 <button type="submit" class="button mt-content bg-fsim-light">
                     Änderungen speichern
                 </button>
