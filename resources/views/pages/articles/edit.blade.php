@@ -142,13 +142,7 @@
                 post="{{ route('articles.update-image', $article->id) }}"
                 enctype="multipart/form-data"
             >
-                <x-input.file
-                    name="image"
-                    label="Bild"
-                    bottomText="Hello"
-                    required
-                    accept="image/*"
-                />
+                <x-input.file name="image" required accept="image/*" />
                 <x-input.submit>Bild hochladen</x-input.submit>
             </x-form>
             @if ($article->imageUrl())
