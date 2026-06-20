@@ -11,7 +11,7 @@ a.card:not([href]) {
 }
 
 .text-input {
-    @apply my-2 h-12 rounded-md px-inline ring ring-offset-2;
+    @apply h-12 rounded-md px-inline ring ring-offset-2;
 }
 
 .file-input {
