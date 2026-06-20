@@ -19,7 +19,12 @@ if(isset($delete)) {$action = $delete; $method = "DELETE";}
 
 @endphp
 
-<form {{ $attributes->merge(["method" => $method, "action" => $action]) }}>
+<form
+    {{ $attributes
+    ->class(["flex flex-col gap-inline items-start"])
+    ->merge(["method" => $method == "GET" ? "GET" : "POST", "action" => $action])
+}}
+>
     @if ($method !== "GET")
         @method ($method)
         @if ($csrf)

@@ -11,12 +11,10 @@
         <section>
             <h2 class="mb-inline">Generelle Informationen</h2>
             <x-form put="{{ route('articles.update', $article->id) }}">
-                <label for="name" class="mb-2 block">Name</label>
-                <input
-                    id="name"
-                    type="text"
-                    class="text-input mb-content w-md"
+                <x-form.text-input
                     name="name"
+                    label="Name"
+                    class="max-w-md"
                     value="{{ $article->name }}"
                 />
                 <label for="category" class="mb-2 block">Kategorie</label>

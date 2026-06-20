@@ -28,6 +28,7 @@
             </x-toast>
         @endif
         @foreach (isset($errors) ? $errors->all() : [] as $error)
+            @dump ($errors)
             <x-toast type="error">{{ $error }}</x-toast>
         @endforeach
     </x-toast.toaster>

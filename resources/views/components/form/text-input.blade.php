@@ -5,6 +5,7 @@
         id="text-input-{{ $name }}"
         type="text"
         class="text-input w-full"
+        name="{{ $name }}"
         {{ $attributes }}
     />
 </x-form.field>
