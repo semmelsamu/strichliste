@@ -10,10 +10,7 @@
     >
         <section>
             <h2 class="mb-inline">Generelle Informationen</h2>
-            <x-form
-                action="{{ route('articles.update', $article->id) }}"
-                method="PUT"
-            >
+            <x-form put="{{ route('articles.update', $article->id) }}">
                 <label for="name" class="mb-2 block">Name</label>
                 <input
                     id="name"
@@ -21,7 +18,7 @@
                     class="text-input mb-content w-md"
                     name="name"
                     value="{{ $article->name }}"
-                />
+                />2
                 <label for="category" class="mb-2 block">Kategorie</label>
                 <select name="category" id="category" class="text-input">
                     @foreach ($categories as $category)
