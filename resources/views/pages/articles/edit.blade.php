@@ -17,6 +17,7 @@
                     label="Name"
                     class="max-w-md"
                     value="{{ $article->name }}"
+                    required
                 />
 
                 <x-input.select
@@ -26,6 +27,7 @@
                     placeholder="Kategorie wählen"
                     :options="$categories->pluck('name', 'id')"
                     :selected="$article->category->id"
+                    required
                 />
 
                 <x-input.submit>Änderungen speichern</x-input.submit>
@@ -34,10 +36,7 @@
 
         <section>
             <h2 class="mb-inline">Preis</h2>
-            <form
-                method="POST"
-                action="{{ route("articles.update-price", $article->id) }}"
-            >
+            <x-form post="{{ route('articles.update-price', $article->id) }}">
                 <div class="flex items-end gap-inline">
                     <x-input.currency
                         name="price"
@@ -49,7 +48,7 @@
                         Preis aktualisieren
                     </button>
                 </div>
-            </form>
+            </x-form>
             <h3 class="mt-content mb-inline">Preisverlauf</h3>
             <table class="table w-md">
                 <thead>

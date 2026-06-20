@@ -4,7 +4,8 @@
     "bottomText" => null,
     "options",
     "placeholder" => null,
-    "selected" => null
+    "selected" => null,
+    "required" => false
 ])
 
 <div {{ $attributes->class(["space-y-3 w-full"]) }}>
@@ -12,7 +13,12 @@
         <label for="form-{{ $name }}" class="block"> {{ $label }} </label>
     @endisset
 
-    <select name="{{ $name }}" id="form-{{ $name }}" class="text-input w-full">
+    <select
+        name="{{ $name }}"
+        id="form-{{ $name }}"
+        class="text-input w-full"
+        @required ($required)
+    >
         @if ($placeholder)
             <option value="" disabled hidden>{{ $placeholder }}</option>
         @endif

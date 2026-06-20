@@ -1,4 +1,4 @@
-@props (["name", "label", "bottomText" => null])
+@props (["name", "label", "bottomText" => null, "required" => false])
 
 <div {{ $attributes->class(["space-y-3 w-full"]) }}>
     @isset ($label)
@@ -10,7 +10,7 @@
         type="text"
         class="text-input w-full"
         name="{{ $name }}"
-        {{ $attributes }}
+        @required ($required)
     />
 
     @isset ($bottomText)
