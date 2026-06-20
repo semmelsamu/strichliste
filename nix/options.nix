@@ -290,13 +290,10 @@ in
             fi
 
             # Sync the immutable package into the writable state directory.
-            # --chmod ensures the copy is writable even though the Nix store is
-            # read-only (storage/ and bootstrap/cache/ must be writable).
             mkdir -p "${cfg.paths.application}"
-            ${rsync} -rlth -P --chmod=Du+rwx,Fu+rw \
-              "${cfg.package}/" "${cfg.paths.application}/" > /tmp/${serviceName}-setup.log
+            cp -r ${cfg.package}/* "${cfg.paths.application}/"
 
-            echo "Written rsync log to /tmp/${serviceName}-setup.log"
+            chmod -R 0755 ${cfg.paths.application}
 
             cd "${cfg.paths.application}"
 
