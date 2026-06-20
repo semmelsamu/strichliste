@@ -7,7 +7,11 @@
     "selected" => null
 ])
 
-<x-form.field :$name :$label :$bottomText {{ $attributes }}>
+<div {{ $attributes->class(["space-y-3 w-full"]) }}>
+    @isset ($label)
+        <label for="form-{{ $name }}" class="block"> {{ $label }} </label>
+    @endisset
+
     <select name="{{ $name }}" id="form-{{ $name }}" class="text-input w-full">
         @if ($placeholder)
             <option value="" disabled hidden>{{ $placeholder }}</option>
@@ -19,4 +23,8 @@
             </option>
         @endforeach
     </select>
-</x-form.field>
+
+    @isset ($bottomText)
+        <p class="text-sm text-text-secondary">{{ $bottomText }}</p>
+    @endisset
+</div>

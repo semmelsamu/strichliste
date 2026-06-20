@@ -1,6 +1,10 @@
 @props (["name", "label", "bottomText" => null])
 
-<x-form.field :$name :$label :$bottomText {{ $attributes }}>
+<div {{ $attributes->class(["space-y-3 w-full"]) }}>
+    @isset ($label)
+        <label for="form-{{ $name }}" class="block"> {{ $label }} </label>
+    @endisset
+
     <input
         id="form-{{ $name }}"
         type="text"
@@ -8,4 +12,8 @@
         name="{{ $name }}"
         {{ $attributes }}
     />
-</x-form.field>
+
+    @isset ($bottomText)
+        <p class="text-sm text-text-secondary">{{ $bottomText }}</p>
+    @endisset
+</div>
