@@ -12,7 +12,7 @@
                 class="button bg-fsim-light"
                 href="{{ route('tally-sheet.auth.logout') }}"
             >
-                <x-lucide-arrow-left />
+                <x-lucide-house />
                 Startseite
             </a>
             <x-currency
