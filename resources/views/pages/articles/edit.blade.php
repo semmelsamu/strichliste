@@ -38,20 +38,13 @@
                 method="POST"
                 action="{{ route("articles.update-price", $article->id) }}"
             >
-                <label for="price" class="mb-2 block"
-                    >Neuen Preis festlegen</label
-                >
-                <div class="mr-content flex items-center gap-inline">
-                    <input
-                        type="number"
+                <div class="flex items-end gap-inline">
+                    <x-input.currency
                         name="price"
-                        id="price"
-                        min="0"
-                        step="0.01"
-                        class="text-input w-40"
+                        label="Neuer Preis"
                         required
                     />
-                    €
+
                     <button type="submit" class="button bg-fsim-light">
                         Preis aktualisieren
                     </button>
