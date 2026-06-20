@@ -12,14 +12,14 @@
             <h2>Generelle Informationen</h2>
 
             <x-form put="{{ route('articles.update', $article->id) }}">
-                <x-form.text-input
+                <x-input.text
                     name="name"
                     label="Name"
                     class="max-w-md"
                     value="{{ $article->name }}"
                 />
 
-                <x-form.select
+                <x-input.select
                     name="category"
                     label="Kategorie"
                     class="max-w-xs"
@@ -28,7 +28,7 @@
                     :selected="$article->category->id"
                 />
 
-                <x-form.submit>Änderungen speichern</x-form.submit>
+                <x-input.submit>Änderungen speichern</x-input.submit>
             </x-form>
         </section>
 
