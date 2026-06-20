@@ -41,12 +41,10 @@
                 <h2>{{ $variant["heading"] }}</h2>
                 <div class="grid grid-cols-4 gap-inline">
                     @foreach ($amounts as $amount)
-                        <form
+                        <x-form
                             class="w-full"
-                            method="POST"
-                            action="{{ route('tally-sheet.deposit') }}"
+                            post="{{ route('tally-sheet.deposit') }}"
                         >
-                            @csrf
                             <input
                                 type="hidden"
                                 name="amount"
@@ -67,7 +65,7 @@
                             >
                                 <x-currency :colors="false" :amount="$amount" />
                             </button>
-                        </form>
+                        </x-form>
                     @endforeach
                 </div>
             </section>
