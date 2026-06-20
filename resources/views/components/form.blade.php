@@ -3,6 +3,7 @@
 "get" => null,
 "post" => null,
 "put" => null,
+"patch" => null,
 "delete" => null
 ])
 
