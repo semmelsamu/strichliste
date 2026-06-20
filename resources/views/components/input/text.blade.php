@@ -1,4 +1,4 @@
-@props (["name", "label", "bottomText" => null])
+@props (["name", "label", "bottomText" => null, "prefix" => null])
 
 <div class="w-full space-y-form-labels">
     @isset ($label)
@@ -6,12 +6,16 @@
     @endisset
 
     <div class="flex items-center gap-form-contents">
-        <input
-            id="text-{{ $name }}"
-            type="text"
-            {{ $attributes->class(["text-input w-full"]) }}
-            name="{{ $name }}"
-        />
+        <div class="flex items-center gap-form-labels">
+            {{ $prefix }}
+
+            <input
+                id="text-{{ $name }}"
+                type="text"
+                {{ $attributes->class(["text-input w-full"]) }}
+                name="{{ $name }}"
+            />
+        </div>
 
         {{ $slot }}
     </div>
