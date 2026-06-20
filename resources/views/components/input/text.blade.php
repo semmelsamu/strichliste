@@ -1,17 +1,20 @@
-@props (["name", "label", "bottomText" => null, "required" => false])
+@props (["name", "label", "bottomText" => null])
 
-<div {{ $attributes->class(["space-y-3 w-full"]) }}>
+<div class="w-full space-y-3">
     @isset ($label)
         <label for="form-{{ $name }}" class="block"> {{ $label }} </label>
     @endisset
 
-    <input
-        id="form-{{ $name }}"
-        type="text"
-        class="text-input w-full"
-        name="{{ $name }}"
-        @required ($required)
-    />
+    <div class="flex items-center gap-inline">
+        <input
+            id="form-{{ $name }}"
+            type="text"
+            {{ $attributes->class(["text-input w-full"]) }}
+            name="{{ $name }}"
+        />
+
+        {{ $slot }}
+    </div>
 
     @isset ($bottomText)
         <p class="text-sm text-text-secondary">{{ $bottomText }}</p>

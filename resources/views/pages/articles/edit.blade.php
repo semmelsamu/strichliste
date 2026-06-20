@@ -37,17 +37,11 @@
         <section>
             <h2 class="mb-inline">Preis</h2>
             <x-form post="{{ route('articles.update-price', $article->id) }}">
-                <div class="flex items-end gap-inline">
-                    <x-input.currency
-                        name="price"
-                        label="Neuer Preis"
-                        required
-                    />
-
+                <x-input.currency name="price" label="Neuer Preis" required>
                     <button type="submit" class="button bg-fsim-light">
                         Preis aktualisieren
                     </button>
-                </div>
+                </x-input.currency>
             </x-form>
             <h3 class="mt-content mb-inline">Preisverlauf</h3>
             <table class="table w-md">

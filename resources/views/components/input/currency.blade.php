@@ -1,19 +1,24 @@
-@props (["name", "label", "bottomText" => null, "required" => false])
+@props (["name", "label", "bottomText" => null])
 
-<div {{ $attributes->class(["space-y-3 w-full max-w-40"]) }}>
+<div class="w-full space-y-3">
     @isset ($label)
         <label for="currency-{{ $name }}" class="block"> {{ $label }} </label>
     @endisset
 
-    <input
-        id="currency-{{ $name }}"
-        type="number"
-        min="0"
-        step="0.01"
-        class="text-input w-full"
-        name="{{ $name }}"
-        @required ($required)
-    />
+    <div class="flex items-center gap-inline">
+        <input
+            id="currency-{{ $name }}"
+            type="number"
+            min="0"
+            step="0.01"
+            name="{{ $name }}"
+            {{ $attributes->class(["text-input w-full max-w-40"]) }}
+        />
+
+        €
+
+        {{ $slot }}
+    </div>
 
     @isset ($bottomText)
         <p class="text-sm text-text-secondary">{{ $bottomText }}</p>
