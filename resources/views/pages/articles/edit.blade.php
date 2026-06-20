@@ -18,7 +18,7 @@
                     class="text-input mb-content w-md"
                     name="name"
                     value="{{ $article->name }}"
-                />2
+                />
                 <label for="category" class="mb-2 block">Kategorie</label>
                 <select name="category" id="category" class="text-input">
                     @foreach ($categories as $category)
