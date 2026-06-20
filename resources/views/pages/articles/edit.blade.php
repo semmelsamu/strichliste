@@ -75,10 +75,7 @@
         <section>
             <h2 class="mb-inline">Sounds</h2>
             <p>Beim Kauf wird einer der gewählten Sounds zufällig abgespielt.</p>
-            <form
-                method="POST"
-                action="{{ route("articles.update-sounds", $article->id) }}"
-            >
+            <x-form post="{{ route('articles.update-sounds', $article->id) }}">
                 <table class="table w-lg">
                     <thead>
                         <tr>
@@ -135,43 +132,32 @@
                         {{ sizeof($sounds) }} Sounds gesamt.
                     </caption>
                 </table>
-                <button type="submit" class="button bg-fsim-light">
-                    Auswahl speichern
-                </button>
-            </form>
+                <x-input.submit>Auswahl speichern</x-input.submit>
+            </x-form>
         </section>
 
         <section>
             <h2 class="mb-inline">Bild</h2>
-            <form
-                method="POST"
-                action="{{ route("articles.update-image", $article->id) }}"
+            <x-form
+                post="{{ route('articles.update-image', $article->id) }}"
                 enctype="multipart/form-data"
             >
-                @csrf
-                <div class="mt-content flex items-center gap-inline">
-                    <input
-                        type="file"
-                        name="image"
-                        accept="image/*"
-                        class="file-input"
-                        required
-                    />
-                    <button type="submit" class="button bg-fsim-light">
-                        Bild hochladen
-                    </button>
-                </div>
-            </form>
+                <input
+                    type="file"
+                    name="image"
+                    accept="image/*"
+                    class="file-input"
+                    required
+                />
+                <x-input.submit>Bild hochladen</x-input.submit>
+            </x-form>
             @if ($article->imageUrl())
                 <h3 class="mt-content mb-inline">Aktuelles Bild</h3>
                 <div class="flex items-end gap-inline">
                     <x-article-image :article="$article" class="w-md" />
-                    <form
-                        method="POST"
-                        action="{{ route("articles.delete-image", $article->id) }}"
+                    <x-form
+                        delete="{{ route('articles.delete-image', $article->id) }}"
                     >
-                        @csrf
-                        @method ("DELETE")
                         <button
                             type="submit"
                             class="button bg-red-800"
@@ -179,31 +165,23 @@
                         >
                             <x-lucide-trash-2 />
                         </button>
-                    </form>
+                    </x-form>
                 </div>
             @endif
         </section>
 
         <section>
             <h2 class="mb-inline">Barcodes</h2>
-            <form
-                method="POST"
-                action="{{ route("articles.add-barcode", $article) }}"
-            >
-                <label for="barcode" class="mb-2 block">Barcode</label>
-                <div class="mr-content flex items-center gap-inline">
-                    <input
-                        type="text"
-                        name="barcode"
-                        id="barcode"
-                        class="text-input w-sm"
-                        required
-                    />
-                    <button type="submit" class="button bg-fsim-light">
-                        Barcode verknüpfen
-                    </button>
-                </div>
-            </form>
+            <x-form post="{{ route('articles.add-barcode', $article) }}">
+                <x-input.text
+                    name="barcode"
+                    label="Barcode"
+                    class="w-xs"
+                    required
+                >
+                    <x-input.submit>Barcode verknüpfen</x-input.submit>
+                </x-input.text>
+            </x-form>
             <h3 class="mt-content mb-inline">Verknüpfte Barcodes</h3>
             <table class="table w-sm">
                 <thead>
@@ -216,18 +194,16 @@
                         <tr>
                             <th class="flex w-min">{{ $barcode->barcode }}</th>
                             <td class="w-6">
-                                <form
-                                    method="POST"
-                                    action="{{ route("articles.remove-barcode", [$article, $barcode]) }}"
+                                <x-form
+                                    delete="{{ route('articles.remove-barcode', [$article, $barcode]) }}"
                                 >
-                                    @method ("DELETE")
                                     <button
                                         type="submit"
                                         class="flex items-center"
                                     >
                                         <x-lucide-trash-2 />
                                     </button>
-                                </form>
+                                </x-form>
                             </td>
                         </tr>
                     @empty
@@ -246,18 +222,14 @@
 
         <section class="border-red-900!">
             <h2 class="mb-content">Danger Zone</h2>
-            <form
-                method="POST"
-                action="{{ route("articles.destroy", $article->id) }}"
-                class="flex items-center"
-            >
-                @csrf
-                @method ("DELETE")
-                <button type="submit" class="button bg-red-800">
-                    <x-lucide-archive /> Artikel archivieren
-                </button>
-            </form>
-            <p class="mt-2 text-sm text-text-secondary">Dadurch wird der Artikel nicht mehr im Kaufmenü angezeigt.</p>
+            <x-form delete="{{ route('articles.destroy', $article->id) }}">
+                <div class="space-y-3">
+                    <x-input.submit class="bg-red-800">
+                        <x-lucide-archive /> Artikel archivieren
+                    </x-input.submit>
+                    <p class="text-sm text-text-secondary">Dadurch wird der Artikel nicht mehr im Kaufmenü angezeigt.</p>
+                </div>
+            </x-form>
         </section>
     </x-wrapper>
 </x-layouts.main>
