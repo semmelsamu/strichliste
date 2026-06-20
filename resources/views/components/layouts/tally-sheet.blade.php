@@ -50,7 +50,7 @@
                 name="transfer"
             >
                 <x-lucide-send />
-                Geld Senden
+                Senden
             </x-tab-bar.tab>
             <x-tab-bar.tab
                 href="{{ route('tally-sheet.history') }}"
