@@ -10,12 +10,10 @@
     >
         <section>
             <h2 class="mb-inline">Generelle Informationen</h2>
-            <form
-                action="{{ route("articles.update", $article->id) }}"
-                method="POST"
+            <x-form
+                action="{{ route('articles.update', $article->id) }}"
+                method="PUT"
             >
-                @csrf
-                @method ('PUT')
                 <label for="name" class="mb-2 block">Name</label>
                 <input
                     id="name"
@@ -39,7 +37,7 @@
                 <button type="submit" class="button mt-content bg-fsim-light">
                     Änderungen speichern
                 </button>
-            </form>
+            </x-form>
         </section>
 
         <section>
