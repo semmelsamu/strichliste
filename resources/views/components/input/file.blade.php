@@ -16,6 +16,10 @@
         {{ $slot }}
     </div>
 
+    @error ($name)
+        <p class="form-error-text">{{ $message }}</p>
+    @enderror
+
     @isset ($bottomText)
         <p class="form-bottom-text">{{ $bottomText }}</p>
     @endisset

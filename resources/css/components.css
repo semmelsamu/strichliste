@@ -85,3 +85,7 @@ input[type="checkbox"]:checked::after {
 .form-bottom-text {
     @apply max-w-prose text-sm text-text-secondary;
 }
+
+.form-error-text {
+    @apply max-w-prose text-sm text-red-500;
+}
