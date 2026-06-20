@@ -1,4 +1,10 @@
-@props (["name", "label", "bottomText" => null, "prefix" => null])
+@props ([
+    "name",
+    "label",
+    "bottomText" => null,
+    "prefix" => null,
+    "type" => "text",
+])
 
 <div class="w-full space-y-form-labels">
     @isset ($label)
@@ -11,7 +17,7 @@
 
             <input
                 id="text-{{ $name }}"
-                type="text"
+                type="{{ $type }}"
                 {{ $attributes->class(["text-input w-full"]) }}
                 name="{{ $name }}"
             />

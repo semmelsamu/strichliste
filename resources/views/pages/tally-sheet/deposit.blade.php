@@ -2,41 +2,26 @@
     <x-wrapper class="space-y-section">
         <section class="space-y-content">
             <h2>Betrag eingeben</h2>
-            <form
-                class="flex items-center"
-                method="POST"
-                action="{{ route('tally-sheet.deposit') }}"
-            >
-                @csrf
-                <div class="mr-content flex items-center gap-inline">
-                    <input
-                        type="number"
-                        name="amount"
-                        min="0"
-                        step="0.01"
-                        class="text-input"
-                        required
-                    />
-                    €
-                </div>
-
-                <button
-                    type="submit"
-                    class="button mr-inline bg-green-800 px-content"
-                    name="action"
-                    value="deposit"
-                >
-                    Einzahlen
-                </button>
-                <button
-                    type="submit"
-                    class="button bg-red-800 px-content"
-                    name="action"
-                    value="withdraw"
-                >
-                    Abbuchen
-                </button>
-            </form>
+            <x-form post="{{ route('tally-sheet.deposit') }}">
+                <x-input.currency name="amount" required>
+                    <button
+                        type="submit"
+                        class="button bg-green-800 px-content"
+                        name="action"
+                        value="deposit"
+                    >
+                        Einzahlen
+                    </button>
+                    <button
+                        type="submit"
+                        class="button bg-red-800 px-content"
+                        name="action"
+                        value="withdraw"
+                    >
+                        Abbuchen
+                    </button>
+                </x-input.currency>
+            </x-form>
         </section>
         @php
         $amounts = [0.2, 0.5, 1, 2, 5, 10, 20, 50];

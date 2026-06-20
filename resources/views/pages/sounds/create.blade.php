@@ -6,19 +6,13 @@
         <h1>Sound hochladen</h1>
     </header>
     <x-wrapper>
-        <form
-            action="{{ route("sounds.store") }}"
-            method="POST"
+        <x-form
+            post="{{ route('sounds.store') }}"
             enctype="multipart/form-data"
         >
-            @csrf
+            <x-input.file name="sound" required />
 
-            <label for="name" class="mt-content mb-2 block">Sound</label>
-            <input type="file" name="sound" class="file-input w-sm" />
-
-            <button type="submit" class="button mt-content bg-fsim-light">
-                Sound hochladen
-            </button>
-        </form>
+            <x-input.submit>Sound hochladen</x-input.submit>
+        </x-form>
     </x-wrapper>
 </x-layouts.main>

@@ -10,111 +10,56 @@
         <section class="space-y-content">
             <h2>Nutzername</h2>
 
-            <form
-                method="POST"
-                action="{{ route('tally-sheet.users.update') }}"
-            >
-                @csrf
-                @method ("PUT")
-
-                <div class="space-y-2">
-                    <label class="block" for="username">
-                        Nutzername ändern
-                    </label>
-                    <div class="flex w-sm items-center gap-inline">
-                        <input
-                            type="text"
-                            name="username"
-                            id="username"
-                            class="text-input flex-1"
-                            required
-                            value="{{ old('username', $user->name) }}"
-                        />
-
-                        <button
-                            type="submit"
-                            class="button ml-auto bg-fsim-light"
-                        >
-                            Speichern
-                        </button>
-                    </div>
-                </div>
-            </form>
+            <x-form put="{{ route('tally-sheet.users.update') }}">
+                <x-input.text
+                    name="username"
+                    label="Nutzername ändern"
+                    class="max-w-sm"
+                    value="{{ old('username', $user->name) }}"
+                    required
+                >
+                    <x-input.submit>Speichern</x-input.submit>
+                </x-input.text>
+            </x-form>
         </section>
 
         <section class="space-y-content">
             <h2>PIN</h2>
 
-            <form
-                method="POST"
-                action="{{ route('tally-sheet.users.update-pin') }}"
-            >
-                @csrf
-
-                <div class="space-y-2">
-                    <label class="block" for="pin">
-                        @if ($user->pin)
-                            PIN ändern
-                        @else
-                            PIN hinzufügen
-                        @endif
-                    </label>
-                    <div class="flex w-sm items-center gap-inline">
-                        <input
-                            type="password"
-                            name="pin"
-                            id="pin"
-                            class="text-input flex-1"
-                            required
-                            placeholder="Neue PIN eingeben"
-                        />
-
-                        <button
-                            type="submit"
-                            class="button ml-auto bg-fsim-light"
-                        >
-                            Speichern
-                        </button>
-                    </div>
-                </div>
-            </form>
+            <x-form post="{{ route('tally-sheet.users.update-pin') }}">
+                <x-input.text
+                    name="pin"
+                    type="password"
+                    label="{{ $user->pin ? 'PIN ändern' : 'PIN hinzufügen' }}"
+                    class="max-w-sm"
+                    placeholder="Neue PIN eingeben"
+                    required
+                >
+                    <x-input.submit>Speichern</x-input.submit>
+                </x-input.text>
+            </x-form>
 
             @if ($user->pin)
-                <form
-                    method="POST"
-                    action="{{ route('tally-sheet.users.remove-pin') }}"
-                >
-                    @csrf
-                    @method ("DELETE")
-                    <div class="space-y-2">
-                        <label class="block">PIN entfernen</label>
-                        <button class="button bg-red-800">Pin entfernen</button>
-                    </div>
-                </form>
+                <x-form delete="{{ route('tally-sheet.users.remove-pin') }}">
+                    <x-input.submit class="bg-red-800">
+                        PIN entfernen</x-input.submit
+                    >
+                </x-form>
             @endif
         </section>
 
         <section class="space-y-content">
             <h2>Barcodes</h2>
-            <form
-                method="POST"
-                action="{{ route('tally-sheet.users.add-barcode') }}"
-            >
-                @csrf
-                <label for="barcode" class="mb-2 block">Barcode</label>
-                <div class="flex w-lg items-center gap-inline">
-                    <input
-                        type="text"
-                        name="barcode"
-                        id="barcode"
-                        class="text-input flex-1"
-                        required
-                    />
-                    <button type="submit" class="button ml-auto bg-fsim-light">
-                        Barcode verknüpfen
-                    </button>
-                </div>
-            </form>
+            <x-form post="{{ route('tally-sheet.users.add-barcode') }}">
+                <x-input.text
+                    name="barcode"
+                    label="Barcode"
+                    class="max-w-lg"
+                    required
+                >
+                    <x-input.submit>Barcode verknüpfen</x-input.submit>
+                </x-input.text>
+            </x-form>
             <h3 class="mt-content mb-inline">Verknüpfte Barcodes</h3>
             <table class="table w-sm">
                 <thead>
@@ -127,19 +72,16 @@
                         <tr>
                             <th class="flex w-min">{{ $barcode->barcode }}</th>
                             <td class="w-6">
-                                <form
-                                    method="POST"
-                                    action="{{ route('tally-sheet.users.remove-barcode', $barcode) }}"
+                                <x-form
+                                    delete="{{ route('tally-sheet.users.remove-barcode', $barcode) }}"
                                 >
-                                    @csrf
-                                    @method ('DELETE')
                                     <button
                                         type="submit"
                                         class="flex items-center"
                                     >
                                         <x-lucide-trash-2 />
                                     </button>
-                                </form>
+                                </x-form>
                             </td>
                         </tr>
                     @empty
@@ -159,17 +101,11 @@
         <section class="space-y-content">
             <h2>Danger Zone</h2>
 
-            <form
-                method="POST"
-                action="{{ route('tally-sheet.users.destroy') }}"
-                class="flex items-center"
-            >
-                @csrf
-                @method ("DELETE")
-                <button type="submit" class="button bg-red-800">
-                    Account deaktivieren
-                </button>
-            </form>
+            <x-form delete="{{ route('tally-sheet.users.destroy') }}">
+                <x-input.submit class="bg-red-800">
+                    Account deaktivieren</x-input.submit
+                >
+            </x-form>
         </section>
     </x-wrapper>
 </x-layouts.main>

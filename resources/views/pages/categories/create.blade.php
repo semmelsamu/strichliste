@@ -6,15 +6,11 @@
         <h1>Kategorie erstellen</h1>
     </header>
     <x-wrapper>
-        <form action="{{ route("categories.store") }}" method="POST">
-            @csrf
-
-            <label for="name" class="mb-2 block">Name</label>
-            <input
-                id="name"
-                type="text"
-                class="text-input mb-content w-md"
+        <x-form post="{{ route('categories.store') }}">
+            <x-input.text
                 name="name"
+                label="Name"
+                class="max-w-md"
                 value="{{ old('name') }}"
             />
 
@@ -23,12 +19,11 @@
                 class="max-w-64"
                 prefix="lucide-"
                 label="Icon"
+                value="{{ old('icon') }}"
                 bottomText="Es kann ein beliebiges Icon aus dem Set der Lucide Icons gewählt werden. Dafür einfach den Namen des Icons in das Textfeld schreiben. Alle verfügbaren Icons können unter lucide.dev eingesehen werden."
             />
 
-            <button type="submit" class="button mt-content bg-fsim-light">
-                Kategorie erstellen
-            </button>
-        </form>
+            <x-input.submit>Kategorie erstellen</x-input.submit>
+        </x-form>
     </x-wrapper>
 </x-layouts.main>
