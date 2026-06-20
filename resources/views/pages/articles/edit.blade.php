@@ -8,10 +8,10 @@
     <x-wrapper
         class="space-y-section *:rounded-2xl *:border-4 *:border-fsim-medium *:p-content"
     >
-        <section>
-            <x-form put="{{ route('articles.update', $article->id) }}">
-                <h2>Generelle Informationen</h2>
+        <section class="space-y-content">
+            <h2>Generelle Informationen</h2>
 
+            <x-form put="{{ route('articles.update', $article->id) }}">
                 <x-form.text-input
                     name="name"
                     label="Name"
@@ -28,9 +28,7 @@
                     :selected="$article->category->id"
                 />
 
-                <button type="submit" class="button mt-content bg-fsim-light">
-                    Änderungen speichern
-                </button>
+                <x-form.submit>Änderungen speichern</x-form.submit>
             </x-form>
         </section>
 
