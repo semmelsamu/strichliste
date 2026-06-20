@@ -2,12 +2,12 @@
 
 <div class="w-full space-y-form-labels">
     @isset ($label)
-        <label for="form-{{ $name }}" class="block"> {{ $label }} </label>
+        <label for="text-{{ $name }}" class="block"> {{ $label }} </label>
     @endisset
 
     <div class="flex items-center gap-form-contents">
         <input
-            id="form-{{ $name }}"
+            id="text-{{ $name }}"
             type="text"
             {{ $attributes->class(["text-input w-full"]) }}
             name="{{ $name }}"

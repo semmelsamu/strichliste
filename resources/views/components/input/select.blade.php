@@ -9,13 +9,13 @@
 
 <div class="w-full space-y-form-labels">
     @isset ($label)
-        <label for="form-{{ $name }}" class="block"> {{ $label }} </label>
+        <label for="select-{{ $name }}" class="block"> {{ $label }} </label>
     @endisset
 
     <div class="flex items-center gap-form-contents">
         <select
             name="{{ $name }}"
-            id="form-{{ $name }}"
+            id="select-{{ $name }}"
             {{ $attributes->class(["text-input w-full"]) }}
         >
             @if ($placeholder)
