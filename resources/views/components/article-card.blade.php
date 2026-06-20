@@ -1,5 +1,4 @@
-<form class="card" method="POST" action="{{ route('tally-sheet.buy') }}">
-    @csrf
+<x-form class="card" post="{{ route('tally-sheet.buy') }}">
     <input type="hidden" name="article" value="{{ $article->id }}" />
     <button class="flex h-full w-full flex-col">
         <x-article-image :article="$article" />
@@ -8,4 +7,4 @@
             <x-currency :amount="$article->currentPrice" :colors="false" />
         </div>
     </button>
-</form>
+</x-form>

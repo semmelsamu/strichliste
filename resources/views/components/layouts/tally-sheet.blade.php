@@ -63,14 +63,9 @@
     </header>
 
     <x-scanner>
-        <form
-            method="POST"
-            action="{{ route('tally-sheet.buy-by-barcode') }}"
-            x-ref="form"
-        >
-            @csrf
+        <x-form post="{{ route('tally-sheet.buy-by-barcode') }}" x-ref="form">
             <input type="hidden" name="barcode" x-ref="barcode" />
-        </form>
+        </x-form>
     </x-scanner>
 
     {{ $slot }}

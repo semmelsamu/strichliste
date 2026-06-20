@@ -11,11 +11,15 @@ a.card:not([href]) {
 }
 
 .text-input {
-    @apply my-2 h-12 rounded-md px-inline ring ring-offset-2;
+    @apply h-12 rounded-md border-2 px-inline;
 }
 
 .file-input {
-    @apply rounded-md bg-fsim-medium px-inline py-content;
+    @apply rounded-xl border-4 border-dashed border-text-secondary bg-fsim-medium px-inline py-content text-center;
+}
+
+.file-input::file-selector-button {
+    @apply rounded-sm bg-fsim-light px-4 py-2;
 }
 
 .table {
@@ -76,4 +80,8 @@ input[type="checkbox"]:checked::after {
 
 .badge svg {
     @apply size-4;
+}
+
+.form-bottom-text {
+    @apply max-w-prose text-sm text-text-secondary;
 }

@@ -5,51 +5,20 @@
         <h1>Anmelden</h1>
     </header>
     <x-wrapper>
-        <form
-            class="mx-auto flex max-w-sm flex-col gap-4"
-            method="POST"
-            action="{{ route('authenticate') }}"
-        >
-            @csrf
+        <x-form post="{{ route('authenticate') }}" class="mx-auto max-w-sm">
+            <x-input.text
+                name="name"
+                label="Nutzername"
+                value="{{ old('name') }}"
+                required
+                autofocus
+            />
 
-            <div class="flex flex-col gap-2">
-                <label for="name">Nutzername</label>
-                <input
-                    type="text"
-                    name="name"
-                    id="name"
-                    class="text-input"
-                    required
-                    autofocus
-                    value="{{old('name')}}"
-                />
-            </div>
+            <x-input.text name="password" type="password" label="Passwort" />
 
-            <div class="flex flex-col gap-2">
-                <label for="password">Passwort</label>
-                <input
-                    type="password"
-                    name="password"
-                    id="password"
-                    class="text-input"
-                />
-            </div>
+            <x-input.checkbox name="remember" label="Angemeldet bleiben" />
 
-            <div class="flex items-center gap-2">
-                <input
-                    type="checkbox"
-                    name="remember"
-                    id="remember"
-                    class="checkbox"
-                />
-                <label for="remember">Angemeldet bleiben</label>
-            </div>
-
-            <br />
-
-            <button type="submit" class="button ml-auto bg-fsim-light">
-                Anmelden
-            </button>
-        </form>
+            <x-input.submit class="ml-auto">Anmelden</x-input.submit>
+        </x-form>
     </x-wrapper>
 </x-layouts.main>

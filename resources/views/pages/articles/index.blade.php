@@ -73,16 +73,14 @@
                         <td>{{ $article->name }}</td>
                         <td>{{ $article->deleted_at->diffForHumans() }}</td>
                         <td class="flex items-center justify-end">
-                            <form
-                                method="POST"
-                                action="{{ route("articles.restore", $article->id) }}"
+                            <x-form
+                                post="{{ route('articles.restore', $article->id) }}"
                                 class="flex items-center"
                             >
-                                @csrf
                                 <button type="submit">
                                     <x-lucide-archive-restore />
                                 </button>
-                            </form>
+                            </x-form>
                         </td>
                     </tr>
                 @empty

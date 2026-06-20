@@ -6,29 +6,22 @@
         <h1>Nutzer erstellen</h1>
     </header>
     <x-wrapper>
-        <form action="{{ route("users.store") }}" method="POST">
-            @csrf
-
-            <label for="name" class="mb-2 block">Nutzername</label>
-            <input
-                id="name"
-                type="text"
-                class="text-input mb-content w-md"
+        <x-form post="{{ route('users.store') }}">
+            <x-input.text
                 name="username"
+                label="Nutzername"
+                class="max-w-md"
                 value="{{ old('username') }}"
             />
 
-            <label for="password" class="mb-2 block">Passwort</label>
-            <input
-                id="password"
-                type="password"
-                class="text-input w-md"
+            <x-input.text
                 name="password"
+                type="password"
+                label="Passwort"
+                class="max-w-md"
             />
 
-            <button type="submit" class="button mt-content bg-fsim-light">
-                Nutzer erstellen
-            </button>
-        </form>
+            <x-input.submit>Nutzer erstellen</x-input.submit>
+        </x-form>
     </x-wrapper>
 </x-layouts.main>

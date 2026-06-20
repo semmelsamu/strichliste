@@ -6,14 +6,11 @@
         <h1>Pin eingeben</h1>
     </header>
     <x-wrapper>
-        <form
-            class="mx-auto flex max-w-sm flex-col gap-8"
-            method="POST"
-            action="{{ route('tally-sheet.auth.validate-pin', $user) }}"
+        <x-form
+            post="{{ route('tally-sheet.auth.validate-pin', $user) }}"
+            class="mx-auto max-w-sm"
         >
-            @csrf
-
-            <div class="flex flex-col items-center gap-2 text-center">
+            <div class="mx-auto flex flex-col items-center gap-2 text-center">
                 <div
                     class="grid aspect-square w-16 place-items-center rounded-full bg-fsim-medium"
                 >
@@ -22,21 +19,15 @@
                 {{ $user->name }}
             </div>
 
-            <div class="flex flex-col gap-2">
-                <label for="pin">PIN</label>
-                <input
-                    type="password"
-                    name="pin"
-                    id="pin"
-                    class="text-input"
-                    required
-                    autofocus
-                />
-            </div>
+            <x-input.text
+                name="pin"
+                type="password"
+                label="PIN"
+                required
+                autofocus
+            />
 
-            <button type="submit" class="button ml-auto bg-fsim-light">
-                Anmelden
-            </button>
-        </form>
+            <x-input.submit class="ml-auto">Anmelden</x-input.submit>
+        </x-form>
     </x-wrapper>
 </x-layouts.main>

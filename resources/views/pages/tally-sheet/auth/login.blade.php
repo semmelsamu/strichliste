@@ -10,14 +10,12 @@
         </a>
     </header>
     <x-scanner>
-        <form
-            method="POST"
-            action="{{ route('tally-sheet.auth.scan-barcode') }}"
+        <x-form
+            post="{{ route('tally-sheet.auth.scan-barcode') }}"
             x-ref="form"
         >
-            @csrf
             <input type="hidden" name="barcode" x-ref="barcode" />
-        </form>
+        </x-form>
     </x-scanner>
 
     <x-wrapper

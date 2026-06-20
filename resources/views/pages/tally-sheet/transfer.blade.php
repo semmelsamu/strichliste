@@ -2,36 +2,24 @@
     <x-wrapper class="space-y-section">
         <section class="space-y-content">
             <h2>Geld an einen anderen Nutzer senden</h2>
-            <form
-                class="flex items-center"
-                method="POST"
-                action="{{ route('tally-sheet.transfer') }}"
-            >
-                @csrf
-                <select name="recipient" class="text-input mr-content" required>
-                    <option value="">Empfänger auswählen</option>
-                    @foreach ($recipients as $recipient)
-                        <option value="{{ $recipient->id }}">
-                            {{ $recipient->name }}
-                        </option>
-                    @endforeach
-                </select>
-                <div class="mr-content flex items-center gap-inline">
-                    <input
-                        type="number"
-                        name="amount"
-                        min="0"
-                        step="0.01"
-                        class="text-input"
-                        required
-                    />
-                    €
-                </div>
+            <x-form post="{{ route('tally-sheet.transfer') }}">
+                <x-input.select
+                    name="recipient"
+                    class="max-w-xs"
+                    placeholder="Empfänger auswählen"
+                    :options="$recipients->pluck('name', 'id')"
+                    required
+                />
 
-                <button type="submit" class="button bg-green-800 px-content">
-                    Senden
-                </button>
-            </form>
+                <x-input.currency name="amount" required>
+                    <button
+                        type="submit"
+                        class="button bg-green-800 px-content"
+                    >
+                        Senden
+                    </button>
+                </x-input.currency>
+            </x-form>
         </section>
     </x-wrapper>
 </x-layouts.tally-sheet>

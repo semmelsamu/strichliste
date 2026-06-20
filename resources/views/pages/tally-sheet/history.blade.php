@@ -53,12 +53,10 @@
                             </td>
                             @if ($transaction->created_at->gt(now()->subMinutes(5)) && !$transaction->undone()->exists())
                                 <td>
-                                    <form
-                                        method="post"
-                                        action="{{ route('tally-sheet.undo') }}"
+                                    <x-form
+                                        post="{{ route('tally-sheet.undo') }}"
                                         class="grid place-items-center"
                                     >
-                                        @csrf
                                         <input
                                             type="hidden"
                                             name="transaction"
@@ -67,7 +65,7 @@
                                         <button type="submit">
                                             <x-lucide-undo-2 />
                                         </button>
-                                    </form>
+                                    </x-form>
                                 </td>
                             @endif
                         </tr>

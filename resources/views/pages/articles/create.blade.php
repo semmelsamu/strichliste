@@ -6,50 +6,33 @@
         <h1>Artikel erstellen</h1>
     </header>
     <x-wrapper>
-        <form action="{{ route("articles.store") }}" method="POST">
-            @csrf
-
-            <label for="name" class="mb-2 block">Name</label>
-            <input
-                id="name"
-                type="text"
-                class="text-input mb-content w-md"
+        <x-form post="{{ route('articles.store') }}">
+            <x-input.text
                 name="name"
-                required
+                label="Name"
+                class="max-w-md"
                 value="{{ old('name') }}"
+                required
             />
 
-            <label for="category" class="mb-2 block">Kategorie</label>
-            <select name="category" id="category" class="text-input">
-                @foreach ($categories as $category)
-                    <option
-                        value="{{ $category->id }}"
-                        @selected (old('category') == $category->id)
-                    >
-                        {{ $category->name }}
-                    </option>
-                @endforeach
-            </select>
-            <p class="mt-2 text-sm text-text-secondary">Kategorien können im Hauptmenü unter "Artikel bearbeiten" > "Kategorien" bearbeitet werden.</p>
+            <x-input.select
+                name="category"
+                label="Kategorie"
+                class="max-w-xs"
+                :options="$categories->pluck('name', 'id')"
+                :selected="old('category') !== null ? (int) old('category') : null"
+                bottomText='Kategorien können im Hauptmenü unter "Artikel bearbeiten" > "Kategorien" bearbeitet werden.'
+                required
+            />
 
-            <label for="price" class="mt-content mb-2 block">Preis</label>
-            <div class="mr-content flex items-center gap-inline">
-                <input
-                    type="number"
-                    name="price"
-                    id="price"
-                    min="0"
-                    step="0.01"
-                    class="text-input w-40"
-                    required
-                    value="{{ old('price') }}"
-                />
-                €
-            </div>
+            <x-input.currency
+                name="price"
+                label="Preis"
+                value="{{ old('price') }}"
+                required
+            />
 
-            <button type="submit" class="button mt-content bg-fsim-light">
-                Artikel erstellen
-            </button>
-        </form>
+            <x-input.submit>Artikel erstellen</x-input.submit>
+        </x-form>
     </x-wrapper>
 </x-layouts.main>
