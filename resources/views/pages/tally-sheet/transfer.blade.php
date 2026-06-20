@@ -9,6 +9,7 @@
             >
                 @csrf
                 <select name="recipient" class="text-input mr-content" required>
+                    <option value="">Empfänger auswählen</option>
                     @foreach ($recipients as $recipient)
                         <option value="{{ $recipient->id }}">
                             {{ $recipient->name }}
