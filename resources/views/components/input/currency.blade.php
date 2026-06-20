@@ -5,22 +5,24 @@
         <label for="currency-{{ $name }}" class="block"> {{ $label }} </label>
     @endisset
 
-    <div class="flex items-center gap-inline">
-        <input
-            id="currency-{{ $name }}"
-            type="number"
-            min="0"
-            step="0.01"
-            name="{{ $name }}"
-            {{ $attributes->class(["text-input w-full max-w-40"]) }}
-        />
+    <div class="flex items-center gap-form-contents">
+        <div class="flex items-center gap-form-labels">
+            <input
+                id="currency-{{ $name }}"
+                type="number"
+                min="0"
+                step="0.01"
+                name="{{ $name }}"
+                {{ $attributes->class(["text-input w-full max-w-40"]) }}
+            />
 
-        €
+            €
+        </div>
 
         {{ $slot }}
     </div>
 
     @isset ($bottomText)
-        <p class="text-sm text-text-secondary">{{ $bottomText }}</p>
+        <p class="form-bottom-text">{{ $bottomText }}</p>
     @endisset
 </div>

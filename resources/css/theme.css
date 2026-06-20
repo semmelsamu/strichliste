@@ -17,6 +17,9 @@
     --spacing-section: calc(12 * var(--spacing));
 
     --animate-toast-in: toast-in 0.3s ease-out;
+
+    --spacing-form-contents: var(--spacing-content);
+    --spacing-form-labels: calc(3 * var(--spacing));
 }
 
 @keyframes toast-in {

@@ -223,7 +223,7 @@
         <section class="border-red-900!">
             <h2 class="mb-content">Danger Zone</h2>
             <x-form delete="{{ route('articles.destroy', $article->id) }}">
-                <div class="space-y-3">
+                <div class="space-y-form-labels">
                     <x-input.submit class="bg-red-800">
                         <x-lucide-archive /> Artikel archivieren
                     </x-input.submit>

@@ -77,3 +77,7 @@ input[type="checkbox"]:checked::after {
 .badge svg {
     @apply size-4;
 }
+
+.form-bottom-text {
+    @apply text-sm text-text-secondary;
+}
