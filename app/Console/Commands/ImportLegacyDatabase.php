@@ -59,6 +59,14 @@ class ImportLegacyDatabase extends Command
     private array $articles = [];
 
     /**
+     * Maps a legacy user id to its stored balance in cents, used to reconcile
+     * against the balance recomputed from the imported transactions.
+     *
+     * @var array<int, int>
+     */
+    private array $legacyBalances = [];
+
+    /**
      * The category every imported article is filed under.
      */
     private ?Category $category = null;
@@ -71,12 +79,22 @@ class ImportLegacyDatabase extends Command
 
     private int $transactionCount = 0;
 
+    private int $compensationCount = 0;
+
     /**
      * Non-fatal issues collected during the import, rendered together at the end.
      *
      * @var list<string>
      */
     private array $warnings = [];
+
+    /**
+     * Informational notes about balances that were off and got compensated,
+     * rendered together at the end.
+     *
+     * @var list<string>
+     */
+    private array $compensations = [];
 
     public function handle(): int
     {
@@ -106,6 +124,7 @@ class ImportLegacyDatabase extends Command
                 $this->components->task('Importing article barcodes', fn () => $this->importBarcodes());
                 $this->components->task('Importing user barcodes', fn () => $this->importUserBarcodes());
                 $this->importTransactions();
+                $this->components->task('Reconciling user balances', fn () => $this->reconcileBalances());
             });
         } catch (Throwable $e) {
             $this->newLine();
@@ -115,6 +134,7 @@ class ImportLegacyDatabase extends Command
         }
 
         $this->renderSummary();
+        $this->renderCompensations();
         $this->renderWarnings();
 
         $this->newLine();
@@ -134,6 +154,18 @@ class ImportLegacyDatabase extends Command
         $this->components->twoColumnDetail('<fg=green>Article barcodes</>', '<fg=white;options=bold>'.$this->articleBarcodeCount.'</>');
         $this->components->twoColumnDetail('<fg=green>User barcodes</>', '<fg=white;options=bold>'.$this->userBarcodeCount.'</>');
         $this->components->twoColumnDetail('<fg=green>Transactions</>', '<fg=white;options=bold>'.$this->transactionCount.'</>');
+        $this->components->twoColumnDetail('<fg=green>Balance compensations</>', '<fg=white;options=bold>'.$this->compensationCount.'</>');
+    }
+
+    private function renderCompensations(): void
+    {
+        if ($this->compensations === []) {
+            return;
+        }
+
+        $this->newLine();
+        $this->components->info(count($this->compensations).' user balance(s) were off and have been compensated via the aufladung user:');
+        $this->components->bulletList($this->compensations);
     }
 
     private function renderWarnings(): void
@@ -211,6 +243,7 @@ class ImportLegacyDatabase extends Command
             $user->assignRole($this->roleForLegacyUser((int) $legacyUser->id)->value);
 
             $this->users[(int) $legacyUser->id] = $user;
+            $this->legacyBalances[(int) $legacyUser->id] = (int) $legacyUser->money;
         }
     }
 
@@ -375,6 +408,76 @@ class ImportLegacyDatabase extends Command
 
         $bar->finish();
         $this->newLine();
+    }
+
+    /**
+     * Reconciles each imported customer's stored legacy balance against the
+     * balance recomputed from the imported transactions, appending a single
+     * compensating base transaction to/from the aufladung user for any
+     * discrepancy. System users (snackbar / aufladung) carry no meaningful
+     * stored balance in the legacy data and are skipped.
+     */
+    private function reconcileBalances(): void
+    {
+        $aufladung = $this->users[self::AUFLADUNG_USER_ID] ?? null;
+
+        foreach ($this->users as $legacyUserId => $user) {
+            if ($this->roleForLegacyUser($legacyUserId) !== UserRole::Customer) {
+                continue;
+            }
+
+            User::forgetCachedBalance($user->id);
+
+            $expectedCents = $this->legacyBalances[$legacyUserId] ?? 0;
+            $actualCents = (int) round((float) $user->balance * 100);
+            $differenceCents = $expectedCents - $actualCents;
+
+            if ($differenceCents === 0) {
+                continue;
+            }
+
+            if ($aufladung === null) {
+                $this->recordWarning(sprintf(
+                    "User '%s' balance is off by %+.2f but no aufladung user exists to compensate.",
+                    $user->name,
+                    $this->centsToAmount($differenceCents),
+                ));
+
+                continue;
+            }
+
+            $this->compensateBalance($aufladung, $user, $differenceCents);
+        }
+    }
+
+    /**
+     * Appends a single base transaction to/from the aufladung (world) user so
+     * the customer's computed balance matches their stored legacy balance. A
+     * positive difference pulls money in from aufladung, a negative one
+     * transfers the excess back out to it.
+     */
+    private function compensateBalance(User $aufladung, User $user, int $differenceCents): void
+    {
+        $fromUser = $differenceCents > 0 ? $aufladung : $user;
+        $toUser = $differenceCents > 0 ? $user : $aufladung;
+
+        $transaction = new Transaction;
+        $transaction->from_user_id = $fromUser->id;
+        $transaction->to_user_id = $toUser->id;
+        $transaction->amount = $this->centsToAmount(abs($differenceCents));
+        $transaction->save();
+
+        $this->transactionCount++;
+        $this->compensationCount++;
+
+        User::forgetCachedBalance($user->id);
+        User::forgetCachedBalance($aufladung->id);
+
+        $this->compensations[] = sprintf(
+            "User '%s' balance was off by %+.2f and has been compensated via the aufladung user.",
+            $user->name,
+            $this->centsToAmount($differenceCents),
+        );
     }
 
     private function createTransaction(
