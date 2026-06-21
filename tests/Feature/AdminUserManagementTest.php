@@ -13,7 +13,7 @@ test('admin user index renders the users table component', function () {
     $this->actingAs($admin)->get(route('users.index'))
         ->assertSuccessful()
         ->assertViewIs('pages.users.index')
-        ->assertSeeLivewire('users.users-table');
+        ->assertSeeLivewire('livewire.users-table');
 });
 
 test('admins can create users with a hashed password', function () {

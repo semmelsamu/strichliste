@@ -12,7 +12,7 @@ test('lists both active and deactivated users', function () {
     testUser(['name' => 'Active Person']);
     testUser(['name' => 'Deactivated Person'])->delete();
 
-    Livewire::test('users.users-table')
+    Livewire::test('livewire.users-table')
         ->assertOk()
         ->assertSee('Active Person')
         ->assertSee('Deactivated Person');
@@ -22,7 +22,7 @@ test('search filters users by name', function () {
     testUser(['name' => 'Alice']);
     testUser(['name' => 'Bob']);
 
-    Livewire::test('users.users-table')
+    Livewire::test('livewire.users-table')
         ->set('search', 'Ali')
         ->assertSee('Alice')
         ->assertDontSee('Bob');
@@ -31,7 +31,7 @@ test('search filters users by name', function () {
 test('searching resets the page back to one', function () {
     User::factory()->count(30)->create();
 
-    Livewire::test('users.users-table')
+    Livewire::test('livewire.users-table')
         ->call('setPage', 2)
         ->set('search', 'a')
         ->assertSet('paginators.page', 1);
@@ -41,7 +41,7 @@ test('role filter narrows users by role', function () {
     testUser(['name' => 'The Admin'], UserRole::Admin);
     testUser(['name' => 'The Customer'], UserRole::Customer);
 
-    Livewire::test('users.users-table')
+    Livewire::test('livewire.users-table')
         ->set('roleFilter', UserRole::Admin->value)
         ->assertSee('The Admin')
         ->assertDontSee('The Customer');
@@ -50,7 +50,7 @@ test('role filter narrows users by role', function () {
 test('show trashed toggle hides deactivated users', function () {
     testUser(['name' => 'Gone User'])->delete();
 
-    Livewire::test('users.users-table')
+    Livewire::test('livewire.users-table')
         ->assertSee('Gone User')
         ->set('showTrashed', false)
         ->assertDontSee('Gone User');
@@ -60,7 +60,7 @@ test('sorting by name toggles direction', function () {
     testUser(['name' => 'Anna']);
     testUser(['name' => 'Zoe']);
 
-    Livewire::test('users.users-table')
+    Livewire::test('livewire.users-table')
         ->assertSet('sortField', 'name')
         ->assertSet('sortDirection', 'asc')
         ->assertSeeInOrder(['Anna', 'Zoe'])
@@ -81,7 +81,7 @@ test('sorting by balance orders users independently of their name', function () 
         'amount' => 100,
     ]);
 
-    Livewire::test('users.users-table')
+    Livewire::test('livewire.users-table')
         ->call('sortBy', 'balance')
         ->assertSet('sortDirection', 'asc')
         ->assertSeeInOrder(['Zoe Poor', 'Aaron Rich'])
@@ -95,7 +95,7 @@ test('paginates users beyond the page size', function () {
         testUser(['name' => sprintf('User %02d', $number)]);
     }
 
-    Livewire::test('users.users-table')
+    Livewire::test('livewire.users-table')
         ->assertSee('User 01')
         ->assertDontSee('User 30')
         ->call('setPage', 2)
