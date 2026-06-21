@@ -217,23 +217,43 @@ it('produces reconciling balances', function () {
     expect((float) $bob->balance)->toBe(5.00);
 });
 
-it('reconciles legacy balances without warnings when they match', function () {
+it('adds no compensation when legacy balances already match', function () {
     $this->artisan('import:legacy-database', ['path' => $this->legacyPath])
         ->assertSuccessful()
-        ->doesntExpectOutputToContain('balance mismatch');
+        ->doesntExpectOutputToContain('compensated');
+
+    // The import only created the six transactions from the legacy data.
+    expect(Transaction::count())->toBe(8);
 });
 
-it('warns but still succeeds when a legacy balance does not match', function () {
+it('compensates a mismatched legacy balance with a base transaction from aufladung', function (int $legacyMoney, float $expectedBalance, float $compensationAmount, bool $aufladungIsSender) {
     // Corrupt alice's stored legacy balance so it no longer matches the
     // balance computed from her transactions (2.50).
     $pdo = new PDO('sqlite:'.$this->legacyPath);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $pdo->exec('update Users set money = 999 where nickname = "alice"');
+    $pdo->exec("update Users set money = {$legacyMoney} where nickname = 'alice'");
     $pdo = null;
 
     $this->artisan('import:legacy-database', ['path' => $this->legacyPath])
         ->assertSuccessful()
-        ->expectsOutputToContain("User 'alice' balance mismatch: legacy 9.99 vs computed 2.50");
+        ->expectsOutputToContain("User 'alice' balance was off");
 
-    expect((float) User::where('name', 'alice')->first()->balance)->toBe(2.50);
-});
+    $alice = User::where('name', 'alice')->first();
+    $aufladung = User::where('name', 'aufladung')->first();
+
+    // The compensation lifts/lowers her balance to the stored legacy value.
+    expect((float) $alice->balance)->toEqualWithDelta($expectedBalance, 0.001);
+
+    $compensation = Transaction::orderByDesc('id')->first();
+
+    expect((float) $compensation->amount)->toBe($compensationAmount);
+    expect($compensation->from_user_id)->toBe($aufladungIsSender ? $aufladung->id : $alice->id);
+    expect($compensation->to_user_id)->toBe($aufladungIsSender ? $alice->id : $aufladung->id);
+
+    // It is a plain base transaction, not an article purchase or an undo.
+    expect($compensation->buyArticleTransaction)->toBeNull();
+    expect($compensation->undoTransaction)->toBeNull();
+})->with([
+    'pulls money in from aufladung' => [999, 9.99, 7.49, true],
+    'transfers the excess back to aufladung' => [100, 1.00, 1.50, false],
+]);
