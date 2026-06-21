@@ -1,4 +1,3 @@
-import "htmx.org";
 import { Livewire, Alpine } from "../../vendor/livewire/livewire/dist/livewire.esm";
 import inactivityTimeout from "./components/inactivity-timeout";
 import scrollspy from "./components/scrollspy";
