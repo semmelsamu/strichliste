@@ -15,7 +15,7 @@ let
 
     src = ../.;
 
-    npmDepsHash = "sha256-lWnpET0U/gEBUE8jr4orQXBnluSM4cAvskQff+pW0jk=";
+    npmDepsHash = "sha256-eIjVZv40yaE/aAVIG5oRma5JXGId6z5GhCClusSGPJk=U";
 
     # Don't run the postinstall composer/npm scripts; we only want `vite build`.
     npmPackFlags = [ "--ignore-scripts" ];
