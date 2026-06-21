@@ -14,13 +14,7 @@
 <body
     class="relative mx-auto flex h-screen max-w-6xl flex-col overflow-y-hidden bg-fsim-dark"
 >
-    @if (app()->environment('local'))
-        <span
-            class="absolute top-0 left-0 z-50 rounded-br bg-yellow-500 px-inline py-0.5 text-xs font-bold text-black"
-        >
-            DEV
-        </span>
-    @endif
+    <x-env-badge />
     <nav
         class="flex w-full items-center justify-center gap-inline bg-black p-inline"
     >
