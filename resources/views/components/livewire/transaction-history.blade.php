@@ -97,9 +97,7 @@ new class extends Component
                     tabindex="-1"
                     onmousedown="event.preventDefault()"
                 >
-                    <td>
-                        {{ $transaction->created_at->diffForHumans() }}
-                    </td>
+                    <td>{{ $transaction->created_at->diffForHumans() }}</td>
                     <th>
                         @if ($transaction->buyArticleTransaction)
                             {{ $transaction->buyArticleTransaction->article->name }}
@@ -161,7 +159,10 @@ new class extends Component
     </table>
 
     @if ($this->hasMorePages)
-        <div wire:intersect="loadMore" class="grid place-items-center p-content">
+        <div
+            wire:intersect="loadMore"
+            class="grid place-items-center p-content"
+        >
             <x-spinner />
         </div>
     @endif
