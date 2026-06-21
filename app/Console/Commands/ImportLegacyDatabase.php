@@ -59,6 +59,14 @@ class ImportLegacyDatabase extends Command
     private array $articles = [];
 
     /**
+     * Maps a legacy user id to its stored balance in cents, used to reconcile
+     * against the balance recomputed from the imported transactions.
+     *
+     * @var array<int, int>
+     */
+    private array $legacyBalances = [];
+
+    /**
      * The category every imported article is filed under.
      */
     private ?Category $category = null;
@@ -106,6 +114,7 @@ class ImportLegacyDatabase extends Command
                 $this->components->task('Importing article barcodes', fn () => $this->importBarcodes());
                 $this->components->task('Importing user barcodes', fn () => $this->importUserBarcodes());
                 $this->importTransactions();
+                $this->components->task('Reconciling user balances', fn () => $this->reconcileBalances());
             });
         } catch (Throwable $e) {
             $this->newLine();
@@ -211,6 +220,7 @@ class ImportLegacyDatabase extends Command
             $user->assignRole($this->roleForLegacyUser((int) $legacyUser->id)->value);
 
             $this->users[(int) $legacyUser->id] = $user;
+            $this->legacyBalances[(int) $legacyUser->id] = (int) $legacyUser->money;
         }
     }
 
@@ -375,6 +385,35 @@ class ImportLegacyDatabase extends Command
 
         $bar->finish();
         $this->newLine();
+    }
+
+    /**
+     * Verifies that each imported customer's stored legacy balance matches the
+     * balance recomputed from the imported transactions, recording a warning
+     * for any discrepancy. System users (snackbar / aufladung) carry no
+     * meaningful stored balance in the legacy data and are skipped.
+     */
+    private function reconcileBalances(): void
+    {
+        foreach ($this->users as $legacyUserId => $user) {
+            if ($this->roleForLegacyUser($legacyUserId) !== UserRole::Customer) {
+                continue;
+            }
+
+            User::forgetCachedBalance($user->id);
+
+            $expectedCents = $this->legacyBalances[$legacyUserId] ?? 0;
+            $actualCents = (int) round((float) $user->balance * 100);
+
+            if ($expectedCents !== $actualCents) {
+                $this->recordWarning(sprintf(
+                    "User '%s' balance mismatch: legacy %.2f vs computed %.2f.",
+                    $user->name,
+                    $this->centsToAmount($expectedCents),
+                    $this->centsToAmount($actualCents),
+                ));
+            }
+        }
     }
 
     private function createTransaction(

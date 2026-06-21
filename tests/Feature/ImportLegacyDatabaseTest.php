@@ -216,3 +216,24 @@ it('produces reconciling balances', function () {
     expect((float) $alice->balance)->toBe(2.50);
     expect((float) $bob->balance)->toBe(5.00);
 });
+
+it('reconciles legacy balances without warnings when they match', function () {
+    $this->artisan('import:legacy-database', ['path' => $this->legacyPath])
+        ->assertSuccessful()
+        ->doesntExpectOutputToContain('balance mismatch');
+});
+
+it('warns but still succeeds when a legacy balance does not match', function () {
+    // Corrupt alice's stored legacy balance so it no longer matches the
+    // balance computed from her transactions (2.50).
+    $pdo = new PDO('sqlite:'.$this->legacyPath);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo->exec('update Users set money = 999 where nickname = "alice"');
+    $pdo = null;
+
+    $this->artisan('import:legacy-database', ['path' => $this->legacyPath])
+        ->assertSuccessful()
+        ->expectsOutputToContain("User 'alice' balance mismatch: legacy 9.99 vs computed 2.50");
+
+    expect((float) User::where('name', 'alice')->first()->balance)->toBe(2.50);
+});
