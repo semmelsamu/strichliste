@@ -12,6 +12,26 @@ new class extends Component
 {
     use WithPagination;
 
+    /**
+     * Guard the component on every request. The page route is admin-only, but
+     * Livewire does not re-apply the spatie role middleware on subsequent
+     * component requests, so the check is enforced here as well.
+     */
+    public function mount(): void
+    {
+        $this->authorizeAccess();
+    }
+
+    public function hydrate(): void
+    {
+        $this->authorizeAccess();
+    }
+
+    protected function authorizeAccess(): void
+    {
+        abort_unless(auth()->user()?->hasRole(UserRole::Admin) ?? false, 403);
+    }
+
     #[Url]
     public string $search = '';
 
@@ -69,11 +89,14 @@ new class extends Component
     {
         $direction = $this->sortDirection === 'desc' ? 'desc' : 'asc';
 
+        $role = UserRole::tryFrom($this->roleFilter);
+        $search = addcslashes($this->search, '\\%_');
+
         $query = User::query()
             ->with('roles')
             ->when($this->showTrashed, fn ($query) => $query->withTrashed())
-            ->when($this->search !== '', fn ($query) => $query->where('name', 'like', '%'.$this->search.'%'))
-            ->when($this->roleFilter !== '', fn ($query) => $query->role($this->roleFilter));
+            ->when($this->search !== '', fn ($query) => $query->whereRaw('name like ? escape ?', ['%'.$search.'%', '\\']))
+            ->when($role !== null, fn ($query) => $query->role($role));
 
         if ($this->sortField === 'balance') {
             $query

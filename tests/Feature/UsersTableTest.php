@@ -8,6 +8,12 @@ use Livewire\Livewire;
 
 pest()->use(RefreshDatabase::class);
 
+beforeEach(function () {
+    // The component is admin-only. The name sorts after every fixture used in
+    // this file so it never interferes with ordering or search assertions.
+    $this->actingAs(testUser(['name' => 'zzz-admin'], UserRole::Admin));
+});
+
 test('lists both active and deactivated users', function () {
     testUser(['name' => 'Active Person']);
     testUser(['name' => 'Deactivated Person'])->delete();

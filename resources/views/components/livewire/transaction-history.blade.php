@@ -5,10 +5,12 @@ use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 new class extends Component
 {
+    #[Locked]
     public int $perPage = 50;
 
     public function loadMore(): void
