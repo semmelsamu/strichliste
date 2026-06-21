@@ -134,9 +134,7 @@ new class extends Component
                 wire:model.live="showTrashed"
             />
         </div>
-        <div wire:loading.flex class="ml-auto items-center">
-            <x-spinner />
-        </div>
+        <x-spinner class="ml-auto self-center" wire:loading.flex />
     </div>
 
     <table class="table">
