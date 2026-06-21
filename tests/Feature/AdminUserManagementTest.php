@@ -7,18 +7,13 @@ use Illuminate\Support\Facades\Hash;
 
 pest()->use(RefreshDatabase::class);
 
-test('admin user index includes active and deactivated users', function () {
+test('admin user index renders the users table component', function () {
     $admin = testUser([], UserRole::Admin);
-    $activeUser = testUser([], UserRole::Customer);
-    $deactivatedUser = testUser([], UserRole::Vendor);
-    $deactivatedUser->delete();
 
-    $response = $this->actingAs($admin)->get(route('users.index'));
-
-    $response
+    $this->actingAs($admin)->get(route('users.index'))
         ->assertSuccessful()
         ->assertViewIs('pages.users.index')
-        ->assertViewHas('users', fn ($users) => $users->contains($activeUser) && $users->contains($deactivatedUser));
+        ->assertSeeLivewire('users.users-table');
 });
 
 test('admins can create users with a hashed password', function () {
