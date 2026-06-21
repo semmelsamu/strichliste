@@ -13,6 +13,6 @@
         </a>
     </header>
     <x-wrapper>
-        <livewire:users.users-table defer />
+        <livewire:livewire.users-table defer />
     </x-wrapper>
 </x-layouts.main>
