@@ -14,6 +14,7 @@
 <body
     class="relative mx-auto flex h-screen max-w-6xl flex-col overflow-y-hidden bg-fsim-dark"
 >
+    <x-version-badge />
     <nav
         class="flex w-full items-center justify-center gap-inline bg-black p-inline"
     >
