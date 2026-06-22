@@ -278,9 +278,17 @@ in
 
       script =
         let
+          deleteFolderIfExists = name: ''
+            if [ -d "${name}" ]; then
+                rm -fr "${name}"
+            fi
+
+          '';
           # Runs unprivileged as the nginx user, in the writable app directory.
           deployScript = pkgs.writeShellScript "${serviceName}-deploy" ''
             set -euo pipefail
+
+            echo "Store path is: ${cfg.package}"
 
             # Generate and persist an application key on first run so that
             # sessions/encrypted data survive restarts and redeploys.
@@ -291,6 +299,10 @@ in
 
             # Sync the immutable package into the writable state directory.
             mkdir -p "${cfg.paths.application}"
+
+            ${deleteFolderIfExists "${cfg.paths.application}/public/build"}
+            ${deleteFolderIfExists "${cfg.paths.application}/resources"}
+
             cp -r ${cfg.package}/* "${cfg.paths.application}/"
 
             chmod -R 0755 ${cfg.paths.application}
@@ -329,6 +341,10 @@ in
             ${php} artisan icons:cache
 
             echo "Done :)"
+
+            echo "Diff between ${cfg.package} and ${cfg.paths.application}"
+
+            diff -r ${cfg.package} ${cfg.paths.application}
           '';
         in
         ''
