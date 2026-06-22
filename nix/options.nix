@@ -9,6 +9,8 @@ let
   serviceName = "semmelstrichliste";
   cfg = config.services.${serviceName};
 
+  version = toString (self.shortRev or self.dirtyShortRev or self.lastModified or "unknown");
+
   inherit (lib)
     mkEnableOption
     mkOption
@@ -43,6 +45,8 @@ let
     APP_URL = "${if cfg.settings.expectSSL then "https" else "http"}://${cfg.settings.domain}";
     APP_LOCALE = cfg.settings.locale;
 
+    APP_VERSION = version;
+
     LOG_CHANNEL = "stderr";
 
     DB_CONNECTION = cfg.database.type;
@@ -67,7 +71,7 @@ let
   );
 
   php = lib.getExe pkgs.php;
-  rsync = lib.getExe pkgs.rsync;
+  # rsync = lib.getExe pkgs.rsync;
   sudo = lib.getExe' pkgs.sudo "sudo";
   coreutils = pkgs.coreutils;
 in
