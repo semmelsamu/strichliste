@@ -291,6 +291,11 @@ in
 
             # Sync the immutable package into the writable state directory.
             mkdir -p "${cfg.paths.application}"
+
+            if [ -d "${cfg.paths.application}/public/build" ]; then
+                rm -fr "${cfg.paths.application}/public/build"
+            fi
+
             cp -r ${cfg.package}/* "${cfg.paths.application}/"
 
             chmod -R 0755 ${cfg.paths.application}
