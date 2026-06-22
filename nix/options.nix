@@ -344,7 +344,7 @@ in
 
             echo "Diff between ${cfg.package} and ${cfg.paths.application}"
 
-            diff -r ${cfg.package} ${cfg.paths.application}
+            ${lib.getExe' pkgs.diffutils "diff"} -r ${cfg.package} ${cfg.paths.application}
           '';
         in
         ''
