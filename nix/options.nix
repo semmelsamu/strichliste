@@ -341,6 +341,10 @@ in
             ${php} artisan icons:cache
 
             echo "Done :)"
+
+            echo "Diff between ${cfg.package} and ${cfg.paths.application}"
+
+            diff -r ${cfg.package} ${cfg.paths.application}
           '';
         in
         ''
