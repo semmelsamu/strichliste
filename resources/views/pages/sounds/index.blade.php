@@ -41,17 +41,14 @@
                         </td>
                         <th>{{ $sound->name() }}</th>
                         <td class="w-6">
-                            <form
-                                method="POST"
-                                action="{{ route("sounds.destroy", $sound->name()) }}"
+                            <x-form
+                                delete="{{ route('sounds.destroy', $sound->name()) }}"
                                 class="flex items-center"
                             >
-                                @csrf
-                                @method ("DELETE")
                                 <button type="submit" class="flex items-center">
                                     <x-lucide-trash-2 />
                                 </button>
-                            </form>
+                            </x-form>
                         </td>
                     </tr>
                 @empty

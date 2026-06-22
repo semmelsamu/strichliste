@@ -6,34 +6,24 @@
         <h1>Kategorie erstellen</h1>
     </header>
     <x-wrapper>
-        <form action="{{ route("categories.store") }}" method="POST">
-            @csrf
-
-            <label for="name" class="mb-2 block">Name</label>
-            <input
-                id="name"
-                type="text"
-                class="text-input mb-content w-md"
+        <x-form post="{{ route('categories.store') }}">
+            <x-input.text
                 name="name"
+                label="Name"
+                class="max-w-md"
                 value="{{ old('name') }}"
             />
 
-            <label for="icon" class="mt-content mb-2 block">Icon</label>
-            <div class="flex items-center gap-2">
-                <span>lucide-</span>
-                <input
-                    id="icon"
-                    type="text"
-                    class="text-input w-64"
-                    name="icon"
-                    value="{{ old('icon') }}"
-                />
-            </div>
-            <p class="mt-2 max-w-prose text-sm text-text-secondary">Es kann ein beliebiges Icon aus dem Set der Lucide Icons gewählt werden. Dafür einfach den Namen des Icons in das Textfeld schreiben. Alle verfügbaren Icons können unter <a class="underline underline-offset-3" href="https://lucide.dev/icons/" target="_blank">lucide.dev</a> eingesehen werden.</p>
+            <x-input.text
+                name="icon"
+                class="max-w-64"
+                prefix="lucide-"
+                label="Icon"
+                value="{{ old('icon') }}"
+                bottomText="Es kann ein beliebiges Icon aus dem Set der Lucide Icons gewählt werden. Dafür einfach den Namen des Icons in das Textfeld schreiben. Alle verfügbaren Icons können unter lucide.dev eingesehen werden."
+            />
 
-            <button type="submit" class="button mt-content bg-fsim-light">
-                Kategorie erstellen
-            </button>
-        </form>
+            <x-input.submit>Kategorie erstellen</x-input.submit>
+        </x-form>
     </x-wrapper>
 </x-layouts.main>

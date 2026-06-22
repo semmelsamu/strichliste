@@ -12,7 +12,7 @@
                 class="button bg-fsim-light"
                 href="{{ route('tally-sheet.auth.logout') }}"
             >
-                <x-lucide-arrow-left />
+                <x-lucide-house />
                 Startseite
             </a>
             <x-currency
@@ -50,7 +50,7 @@
                 name="transfer"
             >
                 <x-lucide-send />
-                Geld Senden
+                Senden
             </x-tab-bar.tab>
             <x-tab-bar.tab
                 href="{{ route('tally-sheet.history') }}"
@@ -63,14 +63,9 @@
     </header>
 
     <x-scanner>
-        <form
-            method="POST"
-            action="{{ route('tally-sheet.buy-by-barcode') }}"
-            x-ref="form"
-        >
-            @csrf
+        <x-form post="{{ route('tally-sheet.buy-by-barcode') }}" x-ref="form">
             <input type="hidden" name="barcode" x-ref="barcode" />
-        </form>
+        </x-form>
     </x-scanner>
 
     {{ $slot }}

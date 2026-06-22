@@ -42,6 +42,16 @@ test('category creation validates name and icon existence', function (array $pay
     'unknown icon' => [['name' => 'Coffee', 'icon' => 'not-a-real-lucide-icon'], ['icon']],
 ]);
 
+test('validation errors are translated instead of showing raw keys', function () {
+    $admin = testUser([], UserRole::Admin);
+
+    $this->actingAs($admin)->post(route('categories.store'), [])
+        ->assertSessionHasErrors([
+            'name' => 'Name muss ausgefüllt werden.',
+            'icon' => 'Icon muss ausgefüllt werden.',
+        ]);
+});
+
 test('category update validates name and icon existence', function (array $payload, array $errors) {
     $admin = testUser([], UserRole::Admin);
     $category = testCategory();

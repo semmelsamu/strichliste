@@ -13,10 +13,7 @@
         </a>
     </header>
     <x-wrapper>
-        <form action="{{ route("categories.reorder") }}" method="POST">
-            @csrf
-            @method ('PATCH')
-
+        <x-form patch="{{ route('categories.reorder') }}">
             <table class="table">
                 <thead>
                     <tr>
@@ -68,6 +65,6 @@
                     Reihenfolge speichern
                 </button>
             @endif
-        </form>
+        </x-form>
     </x-wrapper>
 </x-layouts.main>

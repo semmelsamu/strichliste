@@ -10,7 +10,7 @@
                 @forelse ($mostFrequentArticles as $article)
                     <x-article-card :article="$article" />
                 @empty
-                    <p class="col-span-full p-section text-center text-text-secondary">Häufig gekaufte Artikel werden hier angezeigt, allerdings hast du noch keine Artikel gekauft.</p>
+                    <p class="col-span-full p-section text-center text-text-secondary">Häufig gekaufte Artikel werden hier angezeigt, allerdings hast du keine Artikel in letzter Zeit gekauft.</p>
                 @endforelse
             </div>
         </section>

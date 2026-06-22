@@ -78,6 +78,23 @@ test('article creation validates name category and non-negative decimal price', 
     'too many price decimals' => [['price' => '1.234'], ['price']],
 ]);
 
+test('article creation form shows inline validation errors', function () {
+    $admin = testUser([], UserRole::Admin);
+    $category = testCategory();
+
+    $this->actingAs($admin)
+        ->from(route('articles.create'))
+        ->post(route('articles.store'), [
+            'name' => null,
+            'category' => $category->id,
+            'price' => '1.20',
+        ])
+        ->assertRedirect(route('articles.create'));
+
+    $this->get(route('articles.create'))
+        ->assertSee('Name muss ausgefüllt werden.');
+});
+
 test('article update validates name and category', function (array $payload, array $errors) {
     $admin = testUser([], UserRole::Admin);
     $category = testCategory();

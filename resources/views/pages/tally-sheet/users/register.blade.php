@@ -6,36 +6,21 @@
         <h1>Registrieren</h1>
     </header>
     <x-wrapper>
-        <form
-            class="mx-auto flex max-w-sm flex-col gap-4"
-            method="POST"
-            action="{{ route('tally-sheet.users.store') }}"
+        <x-form
+            post="{{ route('tally-sheet.users.store') }}"
+            class="mx-auto max-w-sm"
         >
-            @csrf
+            <x-input.text
+                name="username"
+                label="Nutzername"
+                value="{{ old('username') }}"
+                required
+                autofocus
+            />
 
-            <div class="flex flex-col gap-2">
-                <label for="username">Nutzername</label>
-                <input
-                    type="text"
-                    name="username"
-                    id="username"
-                    class="text-input"
-                    required
-                    autofocus
-                    value="{{old('username')}}"
-                />
-            </div>
+            <x-input.text name="pin" type="password" label="PIN (Optional)" />
 
-            <div class="flex flex-col gap-2">
-                <label for="pin">PIN (Optional)</label>
-                <input type="password" name="pin" id="pin" class="text-input" />
-            </div>
-
-            <br />
-
-            <button type="submit" class="button ml-auto bg-fsim-light">
-                Registrieren
-            </button>
-        </form>
+            <x-input.submit class="ml-auto">Registrieren</x-input.submit>
+        </x-form>
     </x-wrapper>
 </x-layouts.main>
