@@ -5,7 +5,7 @@
   ...
 }:
 let
-  version = "0.1";
+  version = "1.1.0";
   name = "semmel-strichliste";
 
   # Frontend assets (Vite -> public/build). Built independently of PHP.
@@ -41,7 +41,7 @@ let
 
     src = ../.;
 
-    vendorHash = "sha256-R7gzBTip8Jh5dBTKGAvsrUVVuV05FBS5IvEpZQ4rdy8=";
+    vendorHash = "";
 
     composerNoDev = true;
 
