@@ -41,7 +41,7 @@ let
 
     src = ../.;
 
-    vendorHash = "";
+    vendorHash = "sha256-k1VTqHv66gUk7mHDtHNSQTh3opv861SlgX+HpTgWPWM=";
 
     composerNoDev = true;
 
