@@ -13,7 +13,7 @@ let
     pname = "${name}-assets";
     inherit version;
 
-    src = ../.;
+    src = "${php-app}/share/php/${name}-php/";
 
     npmDepsHash = "sha256-lWnpET0U/gEBUE8jr4orQXBnluSM4cAvskQff+pW0jk=";
 
@@ -23,7 +23,7 @@ let
     installPhase = ''
       runHook preInstall
       mkdir -p $out
-      cp -r public/build/* $out/
+      cp -r * $out/
       runHook postInstall
     '';
   };
@@ -49,23 +49,9 @@ let
     postInstall = ''
       appDir="$out/share/php/${name}-php"
       mkdir -p "$appDir/public/build"
-      cp -r ${assets}/* "$appDir/public/build/"
     '';
   };
 
 in
-# Thin wrapper so the application lives at the package root, which keeps the
-# NixOS module paths simple (`${cfg.package}/public`, `${cfg.package}/artisan`).
-stdenvNoCC.mkDerivation {
-  pname = name;
-  inherit version;
 
-  dontUnpack = true;
-
-  installPhase = ''
-    runHook preInstall
-    mkdir -p $out
-    cp -r ${php-app}/share/php/${name}-php/. $out/
-    runHook postInstall
-  '';
-}
+assets
