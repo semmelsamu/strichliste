@@ -1,5 +1,5 @@
 <main
-    {{ $attributes->merge(["class" => "flex-1 w-full h-full px-wrapper py-section overflow-y-scroll"])}}
+    {{ $attributes->merge(["class" => "flex-1 w-full px-wrapper py-section"])}}
 >
     {{ $slot }}
 </main>

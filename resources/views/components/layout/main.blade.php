@@ -16,9 +16,7 @@
     @fonts
     @vite (['resources/css/app.css', 'resources/js/app.ts'])
 </head>
-<body
-    class="relative mx-auto flex h-screen max-w-6xl flex-col overflow-y-hidden bg-fsim-dark"
->
+<body class="relative mx-auto flex h-screen max-w-6xl flex-col bg-fsim-dark">
     <x-version-badge />
 
     @unless ($withoutHeader)

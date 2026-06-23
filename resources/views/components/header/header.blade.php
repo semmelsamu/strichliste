@@ -1,4 +1,4 @@
-<header class="w-full bg-fsim-medium">
+<header class="sticky top-0 w-full bg-fsim-medium">
     <nav
         class="flex w-full items-center justify-center gap-inline bg-black p-inline"
     >
