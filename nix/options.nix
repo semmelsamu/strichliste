@@ -9,6 +9,8 @@ let
   serviceName = "semmelstrichliste";
   cfg = config.services.${serviceName};
 
+  version = toString (self.shortRev or self.dirtyShortRev or self.lastModified or "unknown");
+
   inherit (lib)
     mkEnableOption
     mkOption
@@ -43,6 +45,8 @@ let
     APP_URL = "${if cfg.settings.expectSSL then "https" else "http"}://${cfg.settings.domain}";
     APP_LOCALE = cfg.settings.locale;
 
+    APP_VERSION = version;
+
     LOG_CHANNEL = "stderr";
 
     DB_CONNECTION = cfg.database.type;
@@ -67,7 +71,7 @@ let
   );
 
   php = lib.getExe pkgs.php;
-  rsync = lib.getExe pkgs.rsync;
+  # rsync = lib.getExe pkgs.rsync;
   sudo = lib.getExe' pkgs.sudo "sudo";
   coreutils = pkgs.coreutils;
 in
@@ -278,9 +282,17 @@ in
 
       script =
         let
+          deleteFolderIfExists = name: ''
+            if [ -d "${name}" ]; then
+                rm -fr "${name}"
+            fi
+
+          '';
           # Runs unprivileged as the nginx user, in the writable app directory.
           deployScript = pkgs.writeShellScript "${serviceName}-deploy" ''
             set -euo pipefail
+
+            echo "Store path is: ${cfg.package}"
 
             # Generate and persist an application key on first run so that
             # sessions/encrypted data survive restarts and redeploys.
@@ -291,6 +303,10 @@ in
 
             # Sync the immutable package into the writable state directory.
             mkdir -p "${cfg.paths.application}"
+
+            ${deleteFolderIfExists "${cfg.paths.application}/public/build"}
+            ${deleteFolderIfExists "${cfg.paths.application}/resources"}
+
             cp -r ${cfg.package}/* "${cfg.paths.application}/"
 
             chmod -R 0755 ${cfg.paths.application}
@@ -329,6 +345,12 @@ in
             ${php} artisan icons:cache
 
             echo "Done :)"
+
+            echo "Diff between ${cfg.package} and ${cfg.paths.application}"
+
+            # ignore output
+            ${lib.getExe' pkgs.diffutils "diff"} -r ${cfg.package} ${cfg.paths.application} || true
+
           '';
         in
         ''

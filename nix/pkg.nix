@@ -5,7 +5,7 @@
   ...
 }:
 let
-  version = "0.1";
+  version = "1.1.0";
   name = "semmel-strichliste";
 
   # Frontend assets (Vite -> public/build). Built independently of PHP.
@@ -13,7 +13,7 @@ let
     pname = "${name}-assets";
     inherit version;
 
-    src = ../.;
+    src = "${php-app}/share/php/${name}-php/";
 
     npmDepsHash = "sha256-eIjVZv40yaE/aAVIG5oRma5JXGId6z5GhCClusSGPJk=U";
 
@@ -23,7 +23,7 @@ let
     installPhase = ''
       runHook preInstall
       mkdir -p $out
-      cp -r public/build/* $out/
+      cp -r * $out/
       runHook postInstall
     '';
   };
@@ -41,7 +41,7 @@ let
 
     src = ../.;
 
-    vendorHash = "sha256-R7gzBTip8Jh5dBTKGAvsrUVVuV05FBS5IvEpZQ4rdy8=";
+    vendorHash = "sha256-k1VTqHv66gUk7mHDtHNSQTh3opv861SlgX+HpTgWPWM=";
 
     composerNoDev = true;
 
@@ -49,23 +49,9 @@ let
     postInstall = ''
       appDir="$out/share/php/${name}-php"
       mkdir -p "$appDir/public/build"
-      cp -r ${assets}/* "$appDir/public/build/"
     '';
   };
 
 in
-# Thin wrapper so the application lives at the package root, which keeps the
-# NixOS module paths simple (`${cfg.package}/public`, `${cfg.package}/artisan`).
-stdenvNoCC.mkDerivation {
-  pname = name;
-  inherit version;
 
-  dontUnpack = true;
-
-  installPhase = ''
-    runHook preInstall
-    mkdir -p $out
-    cp -r ${php-app}/share/php/${name}-php/. $out/
-    runHook postInstall
-  '';
-}
+assets
