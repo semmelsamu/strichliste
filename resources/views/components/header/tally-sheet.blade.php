@@ -1,9 +1,9 @@
 @use (Illuminate\Support\Facades\Auth)
 @use (App\Models\User)
 
-<x-header class="wrapper">
+<x-header>
     <div
-        class="mb-content flex items-center justify-between gap-content px-wrapper pt-6"
+        class="wrapper mb-content flex items-center justify-between gap-content px-wrapper pt-6"
     >
         <a
             class="button bg-fsim-light"
@@ -27,7 +27,8 @@
             {{ tally_session()->get('user')->name }}
         </a>
     </div>
-    <x-tab-bar class="w-full px-wrapper" activeTab="{{ $activeTab }}">
+
+    <x-tab-bar class="wrapper px-wrapper" activeTab="{{ $activeTab }}">
         <x-tab-bar.tab
             href="{{ route('tally-sheet.buy-overview') }}"
             name="buy"
