@@ -6,10 +6,8 @@
         <h1>Artikel bearbeiten</h1>
     </x-header>
 
-    <main
-        class="wrapper space-y-section px-wrapper py-section *:rounded-2xl *:border-4 *:border-fsim-medium *:p-content"
-    >
-        <section class="space-y-content">
+    <main class="wrapper space-y-section px-wrapper py-section">
+        <section class="section space-y-content">
             <h2>Generelle Informationen</h2>
 
             <x-form put="{{ route('articles.update', $article->id) }}">
@@ -35,7 +33,7 @@
             </x-form>
         </section>
 
-        <section>
+        <section class="section">
             <h2 class="mb-inline">Preis</h2>
             <x-form post="{{ route('articles.update-price', $article->id) }}">
                 <x-input.currency name="price" label="Neuer Preis" required>
@@ -73,7 +71,7 @@
             </table>
         </section>
 
-        <section>
+        <section class="section">
             <h2 class="mb-inline">Sounds</h2>
             <p>Beim Kauf wird einer der gewählten Sounds zufällig abgespielt.</p>
             <x-form post="{{ route('articles.update-sounds', $article->id) }}">
@@ -137,7 +135,7 @@
             </x-form>
         </section>
 
-        <section>
+        <section class="section">
             <h2 class="mb-inline">Bild</h2>
             <x-form
                 post="{{ route('articles.update-image', $article->id) }}"
@@ -165,7 +163,7 @@
             @endif
         </section>
 
-        <section>
+        <section class="section">
             <h2 class="mb-inline">Barcodes</h2>
             <x-form post="{{ route('articles.add-barcode', $article) }}">
                 <x-input.text
@@ -215,7 +213,7 @@
             </table>
         </section>
 
-        <section class="border-red-900!">
+        <section class="section border-red-900">
             <h2 class="mb-content">Danger Zone</h2>
             <x-form delete="{{ route('articles.destroy', $article->id) }}">
                 <div class="space-y-form-labels">

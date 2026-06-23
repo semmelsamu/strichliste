@@ -93,3 +93,7 @@ input[type="checkbox"]:checked::after {
 .wrapper {
     @apply mx-auto w-full max-w-5xl;
 }
+
+.section {
+    @apply w-full rounded-2xl border-4 border-fsim-medium p-content;
+}
