@@ -1,7 +1,7 @@
 <x-layout.main :title="$category->name . ' kaufen'">
     <x-header.tally-sheet
         activeTab="buy"
-        class="space-y-content bg-fsim-dark pt-section pb-content"
+        class="space-y-content bg-fsim-dark px-wrapper pt-section pb-content"
     >
         <a
             href="{{ route('tally-sheet.buy-overview') }}"
