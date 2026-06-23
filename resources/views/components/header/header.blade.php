@@ -6,5 +6,7 @@
         <a href="/">Strichliste der FSIM</a>
     </nav>
 
-    {{ $slot }}
+    @unless ($slot->isEmpty())
+        <div {{ $attributes }}> {{ $slot }}</div>
+    @endunless
 </header>

@@ -1,7 +1,8 @@
-<x-layout.main title="Preisliste">
-    <header class="bg-fsim-medium p-wrapper">
+<x-layout.main without-header title="Preisliste">
+    <x-header class="bg-fsim-medium p-wrapper">
         <h1>Preisliste</h1>
-    </header>
+    </x-header>
+
     <x-wrapper
         class="grid grid-cols-[1fr_3fr] gap-content overflow-hidden p-wrapper"
         x-data="scrollspy({{ $categories->first()?->id ?? 'null' }})"
