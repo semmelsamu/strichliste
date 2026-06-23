@@ -1,8 +1,6 @@
-<x-layouts.tally-sheet :title="$category->name . ' kaufen'" activeTab="buy">
-    <x-wrapper class="relative pt-0">
-        <header
-            class="sticky top-0 space-y-content bg-fsim-dark pt-section pb-content"
-        >
+<x-layout.main :title="$category->name . ' kaufen'">
+    <x-header.tally-sheet activeTab="buy" class="w-full bg-fsim-dark">
+        <nav class="wrapper space-y-content px-wrapper pt-section pb-content">
             <a
                 href="{{ route('tally-sheet.buy-overview') }}"
                 class="button w-fit bg-fsim-medium"
@@ -11,12 +9,14 @@
             </a>
 
             <h2>{{ $category->name }}</h2>
-        </header>
+        </nav>
+    </x-header.tally-sheet>
 
+    <main class="wrapper px-wrapper pt-0 pb-section">
         <div class="grid grid-cols-4 gap-inline">
             @foreach ($category->articles as $article)
                 <x-article-card :article="$article" />
             @endforeach
         </div>
-    </x-wrapper>
-</x-layouts.tally-sheet>
+    </main>
+</x-layout.main>

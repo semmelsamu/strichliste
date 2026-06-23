@@ -1,5 +1,5 @@
-<x-layouts.main title="Artikel">
-    <header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
+<x-layout.main title="Artikel">
+    <x-header class="wrapper flex items-center gap-4 px-wrapper py-6">
         <a class="button" href="{{ route('dashboard') }}">
             <x-lucide-arrow-left />
         </a>
@@ -11,8 +11,9 @@
             <x-lucide-plus />
             Neuen Artikel erstellen
         </a>
-    </header>
-    <x-wrapper>
+    </x-header>
+
+    <main class="wrapper px-wrapper py-section">
         <table class="table">
             <thead>
                 <tr>
@@ -96,5 +97,5 @@
                 {{ sizeof($archivedArticles) }} archivierte Artikel gesamt.
             </caption>
         </table>
-    </x-wrapper>
-</x-layouts.main>
+    </main>
+</x-layout.main>

@@ -1,5 +1,7 @@
-<x-layouts.tally-sheet title="Geld senden" activeTab="transfer">
-    <x-wrapper class="space-y-section">
+<x-layout.main title="Geld senden">
+    <x-header.tally-sheet activeTab="transfer" />
+
+    <main class="wrapper space-y-section px-wrapper py-section">
         <section class="space-y-content">
             <h2>Geld an einen anderen Nutzer senden</h2>
             <x-form post="{{ route('tally-sheet.transfer') }}">
@@ -21,5 +23,5 @@
                 </x-input.currency>
             </x-form>
         </section>
-    </x-wrapper>
-</x-layouts.tally-sheet>
+    </main>
+</x-layout.main>

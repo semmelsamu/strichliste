@@ -1,11 +1,14 @@
-<x-layouts.main title="Nutzer erstellen">
-    <header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
+<x-layout.main title="Nutzer erstellen">
+    <x-header
+        class="wrapper flex items-center gap-4 bg-fsim-medium px-wrapper py-6"
+    >
         <a class="button" href="{{ route('users.index') }}">
             <x-lucide-arrow-left />
         </a>
         <h1>Nutzer erstellen</h1>
-    </header>
-    <x-wrapper>
+    </x-header>
+
+    <main class="wrapper px-wrapper py-section">
         <x-form post="{{ route('users.store') }}">
             <x-input.text
                 name="username"
@@ -23,5 +26,5 @@
 
             <x-input.submit>Nutzer erstellen</x-input.submit>
         </x-form>
-    </x-wrapper>
-</x-layouts.main>
+    </main>
+</x-layout.main>

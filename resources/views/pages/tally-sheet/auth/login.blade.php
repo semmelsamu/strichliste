@@ -1,5 +1,5 @@
-<x-layouts.main title="Anmelden">
-    <header class="flex items-center justify-between bg-fsim-medium p-wrapper">
+<x-layout.main title="Anmelden" class="max-h-screen">
+    <x-header class="wrapper flex items-center justify-between px-wrapper py-6">
         <h1>Anmelden</h1>
         <a
             class="button bg-fsim-light"
@@ -8,7 +8,8 @@
             <x-lucide-user-plus />
             Registrieren
         </a>
-    </header>
+    </x-header>
+
     <x-scanner>
         <x-form
             post="{{ route('tally-sheet.auth.scan-barcode') }}"
@@ -18,13 +19,13 @@
         </x-form>
     </x-scanner>
 
-    <x-wrapper
-        class="grid grid-cols-[auto_1fr] gap-content overflow-hidden p-wrapper"
+    <main
+        class="wrapper grid grid-cols-[auto_1fr] overflow-hidden"
         x-data="scrollspy({{ $usersByLetter->keys()->first()?->id ?? 'null' }})"
     >
         <nav
             x-ref="nav"
-            class="flex touch-none flex-col overflow-y-auto select-none"
+            class="flex touch-none flex-col overflow-y-auto py-section pl-wrapper select-none"
         >
             @foreach ($usersByLetter as $letter => $users)
                 <a
@@ -39,7 +40,7 @@
 
         <div
             x-ref="scrollContainer"
-            class="flex flex-col gap-section overflow-y-auto"
+            class="flex flex-col gap-section overflow-y-auto py-section pr-wrapper pl-content"
         >
             @foreach ($usersByLetter as $letter => $users)
                 <section id="{{ $letter }}" data-group-id="{{ $letter }}">
@@ -57,5 +58,5 @@
                 </section>
             @endforeach
         </div>
-    </x-wrapper>
-</x-layouts.main>
+    </main>
+</x-layout.main>

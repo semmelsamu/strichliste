@@ -1,4 +1,4 @@
-<x-layouts.main title="{{ $article->name }}">
+<x-layout.main title="{{ $article->name }}">
     <x-scanner>
         <x-form
             post="{{ route('tally-sheet.article-details.buy-by-barcode', $article) }}"
@@ -8,15 +8,16 @@
         </x-form>
     </x-scanner>
 
-    <header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
+    <x-header class="wrapper flex items-center gap-4 px-wrapper py-6">
         <a
             class="button bg-fsim-light"
             href="{{ route('tally-sheet.auth.list-users') }}"
         >
             <x-lucide-arrow-left /> Zurück
         </a>
-    </header>
-    <x-wrapper class="flex flex-col items-center">
+    </x-header>
+
+    <main class="wrapper flex flex-col items-center px-wrapper py-section">
         <h1>{{ $article->name }}</h1>
         <x-currency
             class="mt-inline mb-content text-2xl"
@@ -31,5 +32,5 @@
             Wenn du einen Barcode hinterlegt hast, kannst du ihn jetzt scannen
             um den Artikel zu kaufen.
         </x-note>
-    </x-wrapper>
-</x-layouts.main>
+    </main>
+</x-layout.main>

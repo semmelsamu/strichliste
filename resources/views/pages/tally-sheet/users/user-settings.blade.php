@@ -1,13 +1,15 @@
-<x-layouts.main title="Account-Einstellungen">
+<x-layout.main title="Account-Einstellungen">
     <x-tally-sheet-inactivity-logout />
-    <header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
+
+    <x-header class="wrapper flex items-center gap-4 px-wrapper py-6">
         <a class="button" href="{{ route('tally-sheet.buy-overview') }}">
             <x-lucide-arrow-left />
         </a>
         <h1>Account-Einstellungen</h1>
-    </header>
-    <x-wrapper class="mx-auto flex flex-col space-y-section">
-        <section class="space-y-content">
+    </x-header>
+
+    <main class="wrapper space-y-section px-wrapper py-section">
+        <section class="section space-y-content">
             <h2>Nutzername</h2>
 
             <x-form put="{{ route('tally-sheet.users.update') }}">
@@ -23,7 +25,7 @@
             </x-form>
         </section>
 
-        <section class="space-y-content">
+        <section class="section space-y-content">
             <h2>PIN</h2>
 
             <x-form post="{{ route('tally-sheet.users.update-pin') }}">
@@ -48,7 +50,7 @@
             @endif
         </section>
 
-        <section class="space-y-content">
+        <section class="section space-y-content">
             <h2>Barcodes</h2>
             <x-form post="{{ route('tally-sheet.users.add-barcode') }}">
                 <x-input.text
@@ -98,7 +100,7 @@
             </table>
         </section>
 
-        <section class="space-y-content">
+        <section class="section space-y-content border-red-900">
             <h2>Danger Zone</h2>
 
             <x-form delete="{{ route('tally-sheet.users.destroy') }}">
@@ -107,5 +109,5 @@
                 >
             </x-form>
         </section>
-    </x-wrapper>
-</x-layouts.main>
+    </main>
+</x-layout.main>

@@ -1,11 +1,14 @@
-<x-layouts.main title="Artikel erstellen">
-    <header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
+<x-layout.main title="Artikel erstellen">
+    <x-header
+        class="wrapper flex items-center gap-4 bg-fsim-medium px-wrapper py-6"
+    >
         <a class="button" href="{{ route('articles.index') }}">
             <x-lucide-arrow-left />
         </a>
         <h1>Artikel erstellen</h1>
-    </header>
-    <x-wrapper>
+    </x-header>
+
+    <main class="wrapper px-wrapper py-section">
         <x-form post="{{ route('articles.store') }}">
             <x-input.text
                 name="name"
@@ -34,5 +37,5 @@
 
             <x-input.submit>Artikel erstellen</x-input.submit>
         </x-form>
-    </x-wrapper>
-</x-layouts.main>
+    </main>
+</x-layout.main>

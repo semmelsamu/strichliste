@@ -83,7 +83,7 @@ input[type="checkbox"]:checked::after {
 }
 
 .badge {
-    @apply inline-flex w-fit items-center gap-1 rounded-full bg-fsim-medium px-2 py-1 align-middle text-xs;
+    @apply inline-flex w-fit items-center gap-1 rounded-full bg-fsim-medium px-2 py-1 align-middle text-xs ring-1 ring-fsim-light print:ring-0;
 }
 
 .badge svg {
@@ -96,4 +96,12 @@ input[type="checkbox"]:checked::after {
 
 .form-error-text {
     @apply max-w-prose text-sm text-red-500;
+}
+
+.wrapper {
+    @apply mx-auto w-full max-w-5xl;
+}
+
+.section {
+    @apply w-full rounded-2xl border-4 border-fsim-medium p-content;
 }

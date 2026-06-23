@@ -13,16 +13,10 @@
     @livewireStyles
 </head>
 <body
-    class="relative mx-auto flex h-screen max-w-6xl flex-col overflow-y-hidden bg-fsim-dark"
+    {{ $attributes->class(["relative mx-auto flex min-h-svh flex-col bg-fsim-dark"]) }}
 >
-    <x-version-badge />
-    <nav
-        class="flex w-full items-center justify-center gap-inline bg-black p-inline"
-    >
-        <img src="{{ asset('fsim-logo.svg') }}" class="h-6 w-6" />
-        <a href="/">Strichliste der FSIM</a>
-    </nav>
     {{ $slot }}
+
     <x-toast.toaster>
         @if (session('toast'))
             <x-toast :type="session('toast.type')">
@@ -33,6 +27,7 @@
             <x-toast type="error">{{ $error }}</x-toast>
         @endforeach
     </x-toast.toaster>
+
     @if (session('sound') && Sound::get(session("sound")) != null)
         <audio
             id="sound"

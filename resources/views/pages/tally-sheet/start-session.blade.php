@@ -1,5 +1,7 @@
-<x-layouts.main title="Preisliste">
-    <x-wrapper>
+<x-layout.main title="Session Starten">
+    <x-header />
+
+    <main class="wrapper px-wrapper py-section">
         <x-form get="" class="mx-auto max-w-2xl p-section">
             <button
                 type="submit"
@@ -27,5 +29,5 @@
                 </div>
             </details>
         </x-form>
-    </x-wrapper>
-</x-layouts.main>
+    </main>
+</x-layout.main>

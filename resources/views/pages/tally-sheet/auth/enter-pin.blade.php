@@ -1,11 +1,12 @@
-<x-layouts.main title="Pin eingeben">
-    <header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
+<x-layout.main title="Pin eingeben">
+    <x-header class="wrapper flex items-center gap-4 px-wrapper py-6">
         <a class="button" href="{{ route('tally-sheet.auth.list-users') }}">
             <x-lucide-arrow-left />
         </a>
         <h1>Pin eingeben</h1>
-    </header>
-    <x-wrapper>
+    </x-header>
+
+    <main class="wrapper px-wrapper py-section">
         <x-form
             post="{{ route('tally-sheet.auth.validate-pin', $user) }}"
             class="mx-auto max-w-sm"
@@ -29,5 +30,5 @@
 
             <x-input.submit class="ml-auto">Anmelden</x-input.submit>
         </x-form>
-    </x-wrapper>
-</x-layouts.main>
+    </main>
+</x-layout.main>

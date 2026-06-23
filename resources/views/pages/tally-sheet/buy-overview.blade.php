@@ -1,5 +1,7 @@
-<x-layouts.tally-sheet title="Artikel kaufen" activeTab="buy">
-    <x-wrapper class="space-y-section">
+<x-layout.main title="Artikel kaufen">
+    <x-header.tally-sheet activeTab="buy" />
+
+    <main class="wrapper space-y-section px-wrapper py-section">
         <x-note>
             Du kannst Artikel entweder mit dem Barcodescanner einscannen oder
             sie hier auswählen.
@@ -28,5 +30,5 @@
                 @endforeach
             </div>
         </section>
-    </x-wrapper>
-</x-layouts.tally-sheet>
+    </main>
+</x-layout.main>

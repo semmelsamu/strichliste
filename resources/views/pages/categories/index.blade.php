@@ -1,5 +1,5 @@
-<x-layouts.main title="Kategorien">
-    <header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
+<x-layout.main title="Kategorien">
+    <x-header class="wrapper flex items-center gap-4 px-wrapper py-6">
         <a class="button" href="{{ route('dashboard') }}">
             <x-lucide-arrow-left />
         </a>
@@ -11,8 +11,9 @@
             <x-lucide-plus />
             Neue Kategorie erstellen
         </a>
-    </header>
-    <x-wrapper>
+    </x-header>
+
+    <main class="wrapper px-wrapper py-section">
         <x-form patch="{{ route('categories.reorder') }}">
             <table class="table">
                 <thead>
@@ -66,5 +67,5 @@
                 </button>
             @endif
         </x-form>
-    </x-wrapper>
-</x-layouts.main>
+    </main>
+</x-layout.main>
