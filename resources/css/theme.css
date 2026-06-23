@@ -1,3 +1,13 @@
+:root {
+    --spacing-wrapper: calc(6 * var(--spacing));
+}
+
+@media print {
+    :root {
+        --spacing-wrapper: 0;
+    }
+}
+
 @theme {
     --font-rubik: "Rubik", ui-sans-serif, system-ui, sans-serif;
 
@@ -10,7 +20,7 @@
     --color-text-primary: white;
     --color-text-secondary: var(--color-neutral-400);
 
-    --spacing-wrapper: calc(6 * var(--spacing));
+    --spacing-wrapper: var(--spacing-wrapper);
 
     --spacing-inline: calc(4 * var(--spacing));
     --spacing-content: calc(8 * var(--spacing));
