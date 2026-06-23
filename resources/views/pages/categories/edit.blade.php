@@ -1,4 +1,4 @@
-<x-layouts.main title="Kategorie bearbeiten">
+<x-layout.main title="Kategorie bearbeiten">
     <header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
         <a class="button" href="{{ route('categories.index') }}">
             <x-lucide-arrow-left />
@@ -49,4 +49,4 @@
             <p class="mt-2 text-sm text-text-secondary">Eine Kategorie kann erst gelöscht werden, wenn sie keine Artikel mehr enthält.</p>
         @endif
     </x-wrapper>
-</x-layouts.main>
+</x-layout.main>

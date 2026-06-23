@@ -1,4 +1,4 @@
-<x-layouts.main title="Registrieren">
+<x-layout.main title="Registrieren">
     <header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
         <a class="button" href="{{ route('tally-sheet.auth.list-users') }}">
             <x-lucide-arrow-left />
@@ -23,4 +23,4 @@
             <x-input.submit class="ml-auto">Registrieren</x-input.submit>
         </x-form>
     </x-wrapper>
-</x-layouts.main>
+</x-layout.main>

@@ -1,4 +1,4 @@
-<x-layouts.main title="Kategorie erstellen">
+<x-layout.main title="Kategorie erstellen">
     <header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
         <a class="button" href="{{ route('categories.index') }}">
             <x-lucide-arrow-left />
@@ -26,4 +26,4 @@
             <x-input.submit>Kategorie erstellen</x-input.submit>
         </x-form>
     </x-wrapper>
-</x-layouts.main>
+</x-layout.main>

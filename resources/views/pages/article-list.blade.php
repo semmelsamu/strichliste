@@ -1,4 +1,4 @@
-<x-layouts.main title="Preisliste">
+<x-layout.main title="Preisliste">
     <header class="bg-fsim-medium p-wrapper">
         <h1>Preisliste</h1>
     </header>
@@ -49,4 +49,4 @@
             @endforeach
         </div>
     </x-wrapper>
-</x-layouts.main>
+</x-layout.main>

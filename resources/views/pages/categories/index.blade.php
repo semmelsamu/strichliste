@@ -1,4 +1,4 @@
-<x-layouts.main title="Kategorien">
+<x-layout.main title="Kategorien">
     <header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
         <a class="button" href="{{ route('dashboard') }}">
             <x-lucide-arrow-left />
@@ -67,4 +67,4 @@
             @endif
         </x-form>
     </x-wrapper>
-</x-layouts.main>
+</x-layout.main>

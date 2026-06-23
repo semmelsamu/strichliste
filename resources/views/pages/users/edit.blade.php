@@ -1,6 +1,6 @@
 @use (App\Enums\UserRole)
 
-<x-layouts.main title="Nutzer bearbeiten">
+<x-layout.main title="Nutzer bearbeiten">
     <header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
         <a class="button" href="{{ route('users.index') }}">
             <x-lucide-arrow-left />
@@ -139,4 +139,4 @@
             </x-input.text>
         </x-form>
     </x-wrapper>
-</x-layouts.main>
+</x-layout.main>

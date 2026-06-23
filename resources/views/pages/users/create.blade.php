@@ -1,4 +1,4 @@
-<x-layouts.main title="Nutzer erstellen">
+<x-layout.main title="Nutzer erstellen">
     <header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
         <a class="button" href="{{ route('users.index') }}">
             <x-lucide-arrow-left />
@@ -24,4 +24,4 @@
             <x-input.submit>Nutzer erstellen</x-input.submit>
         </x-form>
     </x-wrapper>
-</x-layouts.main>
+</x-layout.main>

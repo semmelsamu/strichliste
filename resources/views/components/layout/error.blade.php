@@ -1,4 +1,4 @@
-<x-layouts.main title="Fehler">
+<x-layout.main title="Fehler">
     <x-wrapper class="mx-auto max-w-prose space-y-inline text-center">
         <h1>
             Fehler {{ $exception->getStatusCode() }} - {{ __('http-statuses.'.$exception->getStatusCode()) }}
@@ -10,4 +10,4 @@
             >Zurück</a
         >
     </x-wrapper>
-</x-layouts.main>
+</x-layout.main>

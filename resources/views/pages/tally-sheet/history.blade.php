@@ -1,6 +1,6 @@
 @use (App\Enums\UserRole)
 
-<x-layouts.tally-sheet title="Verlauf" activeTab="history">
+<x-layout.tally-sheet title="Verlauf" activeTab="history">
     <x-wrapper class="space-y-section">
         <x-lazy-content :url="route('tally-sheet.history')" name="transactions">
             <table class="table">
@@ -83,4 +83,4 @@
             </table>
         </x-lazy-content>
     </x-wrapper>
-</x-layouts.tally-sheet>
+</x-layout.tally-sheet>

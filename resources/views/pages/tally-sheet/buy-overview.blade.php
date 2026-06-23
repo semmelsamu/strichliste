@@ -1,4 +1,4 @@
-<x-layouts.tally-sheet title="Artikel kaufen" activeTab="buy">
+<x-layout.tally-sheet title="Artikel kaufen" activeTab="buy">
     <x-wrapper class="space-y-section">
         <x-note>
             Du kannst Artikel entweder mit dem Barcodescanner einscannen oder
@@ -29,4 +29,4 @@
             </div>
         </section>
     </x-wrapper>
-</x-layouts.tally-sheet>
+</x-layout.tally-sheet>

@@ -1,6 +1,6 @@
 @use (App\Enums\UserRole)
 
-<x-layouts.main title="Nutzer">
+<x-layout.main title="Nutzer">
     <header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
         <a class="button" href="{{ route('dashboard') }}">
             <x-lucide-arrow-left />
@@ -63,4 +63,4 @@
             </caption>
         </table>
     </x-wrapper>
-</x-layouts.main>
+</x-layout.main>

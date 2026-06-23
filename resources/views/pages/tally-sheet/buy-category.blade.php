@@ -1,4 +1,4 @@
-<x-layouts.tally-sheet :title="$category->name . ' kaufen'" activeTab="buy">
+<x-layout.tally-sheet :title="$category->name . ' kaufen'" activeTab="buy">
     <x-wrapper class="relative pt-0">
         <header
             class="sticky top-0 space-y-content bg-fsim-dark pt-section pb-content"
@@ -19,4 +19,4 @@
             @endforeach
         </div>
     </x-wrapper>
-</x-layouts.tally-sheet>
+</x-layout.tally-sheet>

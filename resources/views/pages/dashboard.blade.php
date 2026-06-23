@@ -1,6 +1,6 @@
 @use (App\Enums\UserRole)
 
-<x-layouts.main title="Preisliste">
+<x-layout.main title="Preisliste">
     <x-wrapper class="space-y-content">
         <header class="space-y-inline">
             <h1 class="text-center">Willkommen</h1>
@@ -78,4 +78,4 @@
             <a class="card p-inline" href="{{ route('logout') }}">Abmelden</a>
         </nav>
     </x-wrapper>
-</x-layouts.main>
+</x-layout.main>

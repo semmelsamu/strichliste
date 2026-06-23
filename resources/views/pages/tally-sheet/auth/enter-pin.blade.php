@@ -1,4 +1,4 @@
-<x-layouts.main title="Pin eingeben">
+<x-layout.main title="Pin eingeben">
     <header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
         <a class="button" href="{{ route('tally-sheet.auth.list-users') }}">
             <x-lucide-arrow-left />
@@ -30,4 +30,4 @@
             <x-input.submit class="ml-auto">Anmelden</x-input.submit>
         </x-form>
     </x-wrapper>
-</x-layouts.main>
+</x-layout.main>

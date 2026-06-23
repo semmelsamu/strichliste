@@ -1,1 +1,1 @@
-<x-layouts.error :exception="$exception" />
+<x-layout.error :exception="$exception" />

@@ -2,7 +2,7 @@
 @use (App\Models\User)
 @use (App\Services\TallySheetSessionService)
 
-<x-layouts.main :title="$title">
+<x-layout.main :title="$title">
     <x-tally-sheet-inactivity-logout />
     <header class="space-y-content bg-fsim-medium">
         <div
@@ -69,4 +69,4 @@
     </x-scanner>
 
     {{ $slot }}
-</x-layouts.main>
+</x-layout.main>

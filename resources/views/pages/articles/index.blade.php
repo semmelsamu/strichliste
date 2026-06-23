@@ -1,4 +1,4 @@
-<x-layouts.main title="Artikel">
+<x-layout.main title="Artikel">
     <header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
         <a class="button" href="{{ route('dashboard') }}">
             <x-lucide-arrow-left />
@@ -97,4 +97,4 @@
             </caption>
         </table>
     </x-wrapper>
-</x-layouts.main>
+</x-layout.main>

@@ -1,4 +1,4 @@
-<x-layouts.main title="Artikel bearbeiten">
+<x-layout.main title="Artikel bearbeiten">
     <header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
         <a class="button" href="{{ route('articles.index') }}">
             <x-lucide-arrow-left />
@@ -226,4 +226,4 @@
             </x-form>
         </section>
     </x-wrapper>
-</x-layouts.main>
+</x-layout.main>

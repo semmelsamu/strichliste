@@ -1,4 +1,4 @@
-<x-layouts.main title="{{ $article->name }}">
+<x-layout.main title="{{ $article->name }}">
     <x-scanner>
         <x-form
             post="{{ route('tally-sheet.article-details.buy-by-barcode', $article) }}"
@@ -32,4 +32,4 @@
             um den Artikel zu kaufen.
         </x-note>
     </x-wrapper>
-</x-layouts.main>
+</x-layout.main>

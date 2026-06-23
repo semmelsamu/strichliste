@@ -1,6 +1,6 @@
 @use (Illuminate\Support\Facades\Auth)
 
-<x-layouts.main title="Anmelden">
+<x-layout.main title="Anmelden">
     <header class="bg-fsim-medium p-wrapper">
         <h1>Anmelden</h1>
     </header>
@@ -21,4 +21,4 @@
             <x-input.submit class="ml-auto">Anmelden</x-input.submit>
         </x-form>
     </x-wrapper>
-</x-layouts.main>
+</x-layout.main>

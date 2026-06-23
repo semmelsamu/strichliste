@@ -1,4 +1,4 @@
-<x-layouts.main title="Anmelden">
+<x-layout.main title="Anmelden">
     <header class="flex items-center justify-between bg-fsim-medium p-wrapper">
         <h1>Anmelden</h1>
         <a
@@ -58,4 +58,4 @@
             @endforeach
         </div>
     </x-wrapper>
-</x-layouts.main>
+</x-layout.main>

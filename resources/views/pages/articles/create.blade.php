@@ -1,4 +1,4 @@
-<x-layouts.main title="Artikel erstellen">
+<x-layout.main title="Artikel erstellen">
     <header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
         <a class="button" href="{{ route('articles.index') }}">
             <x-lucide-arrow-left />
@@ -35,4 +35,4 @@
             <x-input.submit>Artikel erstellen</x-input.submit>
         </x-form>
     </x-wrapper>
-</x-layouts.main>
+</x-layout.main>
