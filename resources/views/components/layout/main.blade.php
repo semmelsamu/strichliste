@@ -1,5 +1,10 @@
 @use (\App\Models\Sound)
 
+@props ([
+    "title",
+    "withoutHeader" => false
+])
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -15,8 +20,13 @@
     class="relative mx-auto flex h-screen max-w-6xl flex-col overflow-y-hidden bg-fsim-dark"
 >
     <x-version-badge />
-    <x-header />
+
+    @unless ($withoutHeader)
+        <x-header />
+    @endunless
+
     {{ $slot }}
+
     <x-toast.toaster>
         @if (session('toast'))
             <x-toast :type="session('toast.type')">
@@ -27,6 +37,7 @@
             <x-toast type="error">{{ $error }}</x-toast>
         @endforeach
     </x-toast.toaster>
+
     @if (session('sound') && Sound::get(session("sound")) != null)
         <audio
             id="sound"
