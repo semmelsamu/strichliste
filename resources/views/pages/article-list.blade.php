@@ -1,5 +1,5 @@
 <x-layout.main title="Preisliste" class="print:max-h-auto max-h-screen">
-    <x-header class="bg-fsim-medium p-wrapper">
+    <x-header class="bg-fsim-medium px-wrapper py-6">
         <h1>Preisliste</h1>
     </x-header>
 
