@@ -10,6 +10,7 @@
 
     @fonts
     @vite (['resources/css/app.css', 'resources/js/app.ts'])
+    @livewireStyles
 </head>
 <body
     {{ $attributes->class(["relative mx-auto flex min-h-svh flex-col bg-fsim-dark"]) }}
@@ -45,5 +46,6 @@
             );
         </script>
     @endif
+    @livewireScriptConfig
 </body>
 </html>

@@ -9,6 +9,7 @@ use App\Models\UndoTransaction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Livewire;
 
 pest()->use(RefreshDatabase::class);
 
@@ -438,20 +439,19 @@ test('history view returns normalized transactions newest first', function () {
         'created_at' => Carbon::now(),
     ]);
 
-    $this->actingAs($admin)->withSession(tallySheetSession($user, $world ?? null, $vendor ?? null))
-        ->withHeader('HX-Request', 'true')
-        ->get(route('tally-sheet.history'))
-        ->assertSuccessful()
+    session(tallySheetSession($user, $world));
+
+    Livewire::test('livewire.transaction-history')
         ->assertSeeInOrder([
-            "transaction-{$newerPositive->id}",
-            "transaction-{$olderNegative->id}",
+            'transaction-'.$newerPositive->id.'"',
+            'transaction-'.$olderNegative->id.'"',
         ], false)
         // The negative transaction is normalized: from/to users are swapped,
         // so it reads as money paid out to the world user.
         ->assertSee("Geld bei {$world->name} ausgezahlt");
 });
 
-test('history view lazily loads transactions and only queries them for htmx requests', function () {
+test('history view defers rendering of the transaction list', function () {
     ['admin' => $admin, 'world' => $world, 'user' => $user] = transactionUsers();
 
     $transaction = Transaction::factory()->create([
@@ -461,23 +461,12 @@ test('history view lazily loads transactions and only queries them for htmx requ
         'created_at' => Carbon::now(),
     ]);
 
-    $session = tallySheetSession($user, $world, null);
-
-    // Initial (non-HTMX) page load renders only the shell: a spinner placeholder
-    // with the lazy-loading trigger, and none of the transaction data.
-    $this->actingAs($admin)->withSession($session)->get(route('tally-sheet.history'))
+    // The page renders the deferred Livewire component: a spinner placeholder,
+    // and none of the transaction data on the initial load.
+    $this->actingAs($admin)->withSession(tallySheetSession($user, $world))->get(route('tally-sheet.history'))
         ->assertSuccessful()
-        ->assertSee('hx-get', false)
+        ->assertSeeLivewire('livewire.transaction-history')
         ->assertSee('animate-spin', false)
         ->assertDontSee('Transaktionen gesamt.')
         ->assertDontSee("transaction-{$transaction->id}", false);
-
-    // The HTMX fragment request renders the transactions, without the shell wrapper.
-    $this->actingAs($admin)->withSession($session)
-        ->withHeader('HX-Request', 'true')
-        ->get(route('tally-sheet.history'))
-        ->assertSuccessful()
-        ->assertSee('1 Transaktionen gesamt.')
-        ->assertSee("transaction-{$transaction->id}", false)
-        ->assertDontSee('hx-get', false);
 });
