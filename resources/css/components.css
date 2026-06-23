@@ -10,6 +10,14 @@ a.card:not([href]) {
     @apply flex h-12 items-center gap-inline overflow-clip rounded-md px-inline;
 }
 
+.button-row {
+    @apply flex w-fit items-center divide-x-2 divide-fsim-dark overflow-clip rounded-md;
+}
+
+.button-row > .button {
+    @apply rounded-none;
+}
+
 .text-input {
     @apply h-12 rounded-md border-2 px-inline;
 }

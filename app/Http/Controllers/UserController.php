@@ -15,9 +15,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return view('pages.users.index', [
-            'users' => User::with('roles')->withTrashed()->get(),
-        ]);
+        return view('pages.users.index');
     }
 
     /**

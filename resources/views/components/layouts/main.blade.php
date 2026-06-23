@@ -10,6 +10,7 @@
 
     @fonts
     @vite (['resources/css/app.css', 'resources/js/app.ts'])
+    @livewireStyles
 </head>
 <body
     class="relative mx-auto flex h-screen max-w-6xl flex-col overflow-y-hidden bg-fsim-dark"
@@ -50,5 +51,6 @@
             );
         </script>
     @endif
+    @livewireScriptConfig
 </body>
 </html>
