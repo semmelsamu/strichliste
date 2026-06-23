@@ -8,7 +8,7 @@
         <h1>Nutzer bearbeiten</h1>
     </x-header>
 
-    <x-wrapper>
+    <main class="wrapper">
         <x-form put="{{ route('users.update', $user->id) }}">
             <x-input.text
                 name="username"
@@ -139,5 +139,5 @@
                 </x-input.submit>
             </x-input.text>
         </x-form>
-    </x-wrapper>
+    </main>
 </x-layout.main>

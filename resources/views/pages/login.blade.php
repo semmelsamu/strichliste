@@ -5,7 +5,7 @@
         <h1>Anmelden</h1>
     </x-header>
 
-    <x-wrapper>
+    <main class="wrapper">
         <x-form post="{{ route('authenticate') }}" class="mx-auto max-w-sm">
             <x-input.text
                 name="name"
@@ -21,5 +21,5 @@
 
             <x-input.submit class="ml-auto">Anmelden</x-input.submit>
         </x-form>
-    </x-wrapper>
+    </main>
 </x-layout.main>

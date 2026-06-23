@@ -89,3 +89,7 @@ input[type="checkbox"]:checked::after {
 .form-error-text {
     @apply max-w-prose text-sm text-red-500;
 }
+
+.wrapper {
+    @apply mx-auto w-full max-w-5xl px-wrapper py-section;
+}

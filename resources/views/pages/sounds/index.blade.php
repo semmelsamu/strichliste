@@ -14,7 +14,7 @@
             Sound hochladen
         </a>
     </x-header>
-    <x-wrapper class="space-y-section">
+    <main class="wrapper space-y-section">
         <table class="table">
             <thead>
                 <tr>
@@ -90,5 +90,5 @@
                 </button>
             </form>
         </section>
-    </x-wrapper>
+    </main>
 </x-layout.main>

@@ -5,7 +5,7 @@
         </a>
         <h1>Sound hochladen</h1>
     </x-header>
-    <x-wrapper>
+    <main class="wrapper">
         <x-form
             post="{{ route('sounds.store') }}"
             enctype="multipart/form-data"
@@ -14,5 +14,5 @@
 
             <x-input.submit>Sound hochladen</x-input.submit>
         </x-form>
-    </x-wrapper>
+    </main>
 </x-layout.main>

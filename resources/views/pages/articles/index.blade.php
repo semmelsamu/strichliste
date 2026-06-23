@@ -12,7 +12,7 @@
             Neuen Artikel erstellen
         </a>
     </x-header>
-    <x-wrapper>
+    <main class="wrapper">
         <table class="table">
             <thead>
                 <tr>
@@ -96,5 +96,5 @@
                 {{ sizeof($archivedArticles) }} archivierte Artikel gesamt.
             </caption>
         </table>
-    </x-wrapper>
+    </main>
 </x-layout.main>

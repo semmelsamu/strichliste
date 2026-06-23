@@ -5,7 +5,7 @@
         </a>
         <h1>Kategorie bearbeiten</h1>
     </x-header>
-    <x-wrapper>
+    <main class="wrapper">
         <x-form put="{{ route('categories.update', $category->id) }}">
             <x-input.text
                 name="name"
@@ -48,5 +48,5 @@
         @if ($category->articles()->withTrashed()->get()->isNotEmpty())
             <p class="mt-2 text-sm text-text-secondary">Eine Kategorie kann erst gelöscht werden, wenn sie keine Artikel mehr enthält.</p>
         @endif
-    </x-wrapper>
+    </main>
 </x-layout.main>

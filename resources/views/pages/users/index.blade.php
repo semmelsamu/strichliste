@@ -15,7 +15,7 @@
         </a>
     </x-header>
 
-    <x-wrapper>
+    <main class="wrapper">
         <table class="table">
             <thead>
                 <tr>
@@ -63,5 +63,5 @@
                 {{ sizeof($users) }} Nutzer gesamt.
             </caption>
         </table>
-    </x-wrapper>
+    </main>
 </x-layout.main>

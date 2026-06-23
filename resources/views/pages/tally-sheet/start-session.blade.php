@@ -1,7 +1,7 @@
 <x-layout.main title="Session Starten">
     <x-header />
 
-    <x-wrapper>
+    <main class="wrapper">
         <x-form get="" class="mx-auto max-w-2xl p-section">
             <button
                 type="submit"
@@ -29,5 +29,5 @@
                 </div>
             </details>
         </x-form>
-    </x-wrapper>
+    </main>
 </x-layout.main>

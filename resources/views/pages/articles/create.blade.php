@@ -5,7 +5,7 @@
         </a>
         <h1>Artikel erstellen</h1>
     </x-header>
-    <x-wrapper>
+    <main class="wrapper">
         <x-form post="{{ route('articles.store') }}">
             <x-input.text
                 name="name"
@@ -34,5 +34,5 @@
 
             <x-input.submit>Artikel erstellen</x-input.submit>
         </x-form>
-    </x-wrapper>
+    </main>
 </x-layout.main>

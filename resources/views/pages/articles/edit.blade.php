@@ -5,7 +5,8 @@
         </a>
         <h1>Artikel bearbeiten</h1>
     </x-header>
-    <x-wrapper
+    <main
+        class="wrapper"
         class="space-y-section *:rounded-2xl *:border-4 *:border-fsim-medium *:p-content"
     >
         <section class="space-y-content">
@@ -225,5 +226,5 @@
                 </div>
             </x-form>
         </section>
-    </x-wrapper>
+    </main>
 </x-layout.main>

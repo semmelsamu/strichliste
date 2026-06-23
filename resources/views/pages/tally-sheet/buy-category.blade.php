@@ -13,11 +13,11 @@
         <h2>{{ $category->name }}</h2>
     </x-header.tally-sheet>
 
-    <x-wrapper class="pt-0">
+    <main class="wrapper pt-0">
         <div class="grid grid-cols-4 gap-inline">
             @foreach ($category->articles as $article)
                 <x-article-card :article="$article" />
             @endforeach
         </div>
-    </x-wrapper>
+    </main>
 </x-layout.main>

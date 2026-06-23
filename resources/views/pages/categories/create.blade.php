@@ -5,7 +5,7 @@
         </a>
         <h1>Kategorie erstellen</h1>
     </x-header>
-    <x-wrapper>
+    <main class="wrapper">
         <x-form post="{{ route('categories.store') }}">
             <x-input.text
                 name="name"
@@ -25,5 +25,5 @@
 
             <x-input.submit>Kategorie erstellen</x-input.submit>
         </x-form>
-    </x-wrapper>
+    </main>
 </x-layout.main>

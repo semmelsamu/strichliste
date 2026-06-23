@@ -17,7 +17,7 @@
         </a>
     </x-header>
 
-    <x-wrapper class="flex flex-col items-center">
+    <main class="wrapper flex flex-col items-center">
         <h1>{{ $article->name }}</h1>
         <x-currency
             class="mt-inline mb-content text-2xl"
@@ -32,5 +32,5 @@
             Wenn du einen Barcode hinterlegt hast, kannst du ihn jetzt scannen
             um den Artikel zu kaufen.
         </x-note>
-    </x-wrapper>
+    </main>
 </x-layout.main>

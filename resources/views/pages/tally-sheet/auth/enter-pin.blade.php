@@ -5,7 +5,7 @@
         </a>
         <h1>Pin eingeben</h1>
     </x-header>
-    <x-wrapper>
+    <main class="wrapper">
         <x-form
             post="{{ route('tally-sheet.auth.validate-pin', $user) }}"
             class="mx-auto max-w-sm"
@@ -29,5 +29,5 @@
 
             <x-input.submit class="ml-auto">Anmelden</x-input.submit>
         </x-form>
-    </x-wrapper>
+    </main>
 </x-layout.main>

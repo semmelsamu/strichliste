@@ -3,7 +3,7 @@
 <x-layout.main title="Preisliste">
     <x-header />
 
-    <x-wrapper class="space-y-content">
+    <main class="wrapper space-y-content">
         <header class="space-y-inline">
             <h1 class="text-center">Willkommen</h1>
             <p class="flex items-center justify-center gap-2 text-center text-text-secondary">
@@ -79,5 +79,5 @@
             @endunless
             <a class="card p-inline" href="{{ route('logout') }}">Abmelden</a>
         </nav>
-    </x-wrapper>
+    </main>
 </x-layout.main>

@@ -8,7 +8,7 @@
         <h1>Account-Einstellungen</h1>
     </x-header>
 
-    <x-wrapper class="mx-auto flex flex-col space-y-section">
+    <main class="wrapper mx-auto flex flex-col space-y-section">
         <section class="space-y-content">
             <h2>Nutzername</h2>
 
@@ -109,5 +109,5 @@
                 >
             </x-form>
         </section>
-    </x-wrapper>
+    </main>
 </x-layout.main>

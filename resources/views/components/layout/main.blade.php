@@ -12,7 +12,7 @@
     @vite (['resources/css/app.css', 'resources/js/app.ts'])
 </head>
 <body
-    {{ $attributes->class(["relative mx-auto flex min-h-svh max-w-6xl flex-col bg-fsim-dark"]) }}
+    {{ $attributes->class(["relative mx-auto flex min-h-svh flex-col bg-fsim-dark"]) }}
 >
     <x-version-badge />
 

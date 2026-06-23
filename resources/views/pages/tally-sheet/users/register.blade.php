@@ -6,7 +6,7 @@
         <h1>Registrieren</h1>
     </x-header>
 
-    <x-wrapper>
+    <main class="wrapper">
         <x-form
             post="{{ route('tally-sheet.users.store') }}"
             class="mx-auto max-w-sm"
@@ -23,5 +23,5 @@
 
             <x-input.submit class="ml-auto">Registrieren</x-input.submit>
         </x-form>
-    </x-wrapper>
+    </main>
 </x-layout.main>

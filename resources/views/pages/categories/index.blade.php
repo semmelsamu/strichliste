@@ -12,7 +12,7 @@
             Neue Kategorie erstellen
         </a>
     </x-header>
-    <x-wrapper>
+    <main class="wrapper">
         <x-form patch="{{ route('categories.reorder') }}">
             <table class="table">
                 <thead>
@@ -66,5 +66,5 @@
                 </button>
             @endif
         </x-form>
-    </x-wrapper>
+    </main>
 </x-layout.main>

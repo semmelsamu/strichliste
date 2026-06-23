@@ -6,7 +6,7 @@
         <h1>Nutzer erstellen</h1>
     </x-header>
 
-    <x-wrapper>
+    <main class="wrapper">
         <x-form post="{{ route('users.store') }}">
             <x-input.text
                 name="username"
@@ -24,5 +24,5 @@
 
             <x-input.submit>Nutzer erstellen</x-input.submit>
         </x-form>
-    </x-wrapper>
+    </main>
 </x-layout.main>
