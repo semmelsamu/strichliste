@@ -1,11 +1,12 @@
 <x-layout.main title="Kategorie bearbeiten">
-    <x-header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
+    <x-header class="wrapper flex items-center gap-4 px-wrapper py-6">
         <a class="button" href="{{ route('categories.index') }}">
             <x-lucide-arrow-left />
         </a>
         <h1>Kategorie bearbeiten</h1>
     </x-header>
-    <main class="wrapper">
+
+    <main class="wrapper px-wrapper py-section">
         <x-form put="{{ route('categories.update', $category->id) }}">
             <x-input.text
                 name="name"

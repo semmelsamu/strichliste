@@ -8,7 +8,7 @@
         </x-form>
     </x-scanner>
 
-    <x-header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
+    <x-header class="wrapper flex items-center gap-4 px-wrapper py-6">
         <a
             class="button bg-fsim-light"
             href="{{ route('tally-sheet.auth.list-users') }}"
@@ -17,7 +17,7 @@
         </a>
     </x-header>
 
-    <main class="wrapper flex flex-col items-center">
+    <main class="wrapper flex flex-col items-center px-wrapper py-section">
         <h1>{{ $article->name }}</h1>
         <x-currency
             class="mt-inline mb-content text-2xl"

@@ -3,7 +3,7 @@
 <x-layout.main title="Preisliste">
     <x-header />
 
-    <main class="wrapper space-y-content">
+    <main class="wrapper space-y-content px-wrapper py-section">
         <header class="space-y-inline">
             <h1 class="text-center">Willkommen</h1>
             <p class="flex items-center justify-center gap-2 text-center text-text-secondary">

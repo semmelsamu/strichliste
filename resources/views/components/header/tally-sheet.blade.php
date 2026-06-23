@@ -1,9 +1,9 @@
 @use (Illuminate\Support\Facades\Auth)
 @use (App\Models\User)
 
-<x-header class="bg-fsim-medium">
+<x-header class="wrapper">
     <div
-        class="mb-content flex items-center justify-between gap-content px-wrapper pt-wrapper"
+        class="mb-content flex items-center justify-between gap-content px-wrapper pt-6"
     >
         <a
             class="button bg-fsim-light"

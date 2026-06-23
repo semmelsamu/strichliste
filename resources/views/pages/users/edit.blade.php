@@ -1,14 +1,14 @@
 @use (App\Enums\UserRole)
 
 <x-layout.main title="Nutzer bearbeiten">
-    <x-header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
+    <x-header class="wrapper flex items-center gap-4 px-wrapper py-6">
         <a class="button" href="{{ route('users.index') }}">
             <x-lucide-arrow-left />
         </a>
         <h1>Nutzer bearbeiten</h1>
     </x-header>
 
-    <main class="wrapper">
+    <main class="wrapper px-wrapper py-section">
         <x-form put="{{ route('users.update', $user->id) }}">
             <x-input.text
                 name="username"

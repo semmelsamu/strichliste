@@ -3,7 +3,7 @@
 <x-layout.main title="Verlauf">
     <x-header.tally-sheet activeTab="history" />
 
-    <main class="wrapper space-y-section">
+    <main class="wrapper space-y-section px-wrapper py-section">
         <x-lazy-content :url="route('tally-sheet.history')" name="transactions">
             <table class="table">
                 <thead>

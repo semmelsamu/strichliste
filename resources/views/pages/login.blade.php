@@ -1,11 +1,11 @@
 @use (Illuminate\Support\Facades\Auth)
 
 <x-layout.main title="Anmelden">
-    <x-header class="bg-fsim-medium p-wrapper">
+    <x-header class="wrapper px-wrapper py-6">
         <h1>Anmelden</h1>
     </x-header>
 
-    <main class="wrapper">
+    <main class="wrapper px-wrapper py-section">
         <x-form post="{{ route('authenticate') }}" class="mx-auto max-w-sm">
             <x-input.text
                 name="name"

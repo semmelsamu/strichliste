@@ -1,7 +1,5 @@
 <x-layout.main title="Anmelden" class="max-h-screen">
-    <x-header
-        class="flex items-center justify-between bg-fsim-medium p-wrapper"
-    >
+    <x-header class="wrapper flex items-center justify-between px-wrapper py-6">
         <h1>Anmelden</h1>
         <a
             class="button bg-fsim-light"
@@ -22,7 +20,7 @@
     </x-scanner>
 
     <main
-        class="wrapper grid grid-cols-[auto_1fr] overflow-hidden p-0"
+        class="wrapper grid grid-cols-[auto_1fr] overflow-hidden"
         x-data="scrollspy({{ $usersByLetter->keys()->first()?->id ?? 'null' }})"
     >
         <nav

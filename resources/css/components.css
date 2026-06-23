@@ -91,5 +91,5 @@ input[type="checkbox"]:checked::after {
 }
 
 .wrapper {
-    @apply mx-auto w-full max-w-5xl px-wrapper py-section;
+    @apply mx-auto w-full max-w-5xl;
 }

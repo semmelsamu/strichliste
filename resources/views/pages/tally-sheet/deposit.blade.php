@@ -1,7 +1,7 @@
 <x-layout.main title="Geld ein- und auszahlen">
     <x-header.tally-sheet activeTab="deposit" />
 
-    <main class="wrapper space-y-section">
+    <main class="wrapper space-y-section px-wrapper py-section">
         <section class="space-y-content">
             <h2>Betrag eingeben</h2>
             <x-form post="{{ route('tally-sheet.deposit') }}">
