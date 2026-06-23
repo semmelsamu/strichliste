@@ -1,7 +1,7 @@
 @use (App\Enums\SystemSound)
 
 <x-layout.main title="Sounds">
-    <header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
+    <x-header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
         <a class="button" href="{{ route('dashboard') }}">
             <x-lucide-arrow-left />
         </a>
@@ -13,7 +13,7 @@
             <x-lucide-plus />
             Sound hochladen
         </a>
-    </header>
+    </x-header>
     <x-wrapper class="space-y-section">
         <table class="table">
             <thead>

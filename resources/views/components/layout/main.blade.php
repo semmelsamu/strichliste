@@ -1,10 +1,5 @@
 @use (\App\Models\Sound)
 
-@props ([
-    "title",
-    "withoutHeader" => false
-])
-
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -18,10 +13,6 @@
 </head>
 <body class="relative mx-auto flex h-screen max-w-6xl flex-col bg-fsim-dark">
     <x-version-badge />
-
-    @unless ($withoutHeader)
-        <x-header />
-    @endunless
 
     {{ $slot }}
 

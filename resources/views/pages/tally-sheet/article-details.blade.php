@@ -8,14 +8,15 @@
         </x-form>
     </x-scanner>
 
-    <header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
+    <x-header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
         <a
             class="button bg-fsim-light"
             href="{{ route('tally-sheet.auth.list-users') }}"
         >
             <x-lucide-arrow-left /> Zurück
         </a>
-    </header>
+    </x-header>
+
     <x-wrapper class="flex flex-col items-center">
         <h1>{{ $article->name }}</h1>
         <x-currency

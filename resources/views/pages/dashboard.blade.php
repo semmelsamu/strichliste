@@ -1,6 +1,8 @@
 @use (App\Enums\UserRole)
 
 <x-layout.main title="Preisliste">
+    <x-header />
+
     <x-wrapper class="space-y-content">
         <header class="space-y-inline">
             <h1 class="text-center">Willkommen</h1>

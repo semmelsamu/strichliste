@@ -1,10 +1,10 @@
 <x-layout.main title="Pin eingeben">
-    <header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
+    <x-header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
         <a class="button" href="{{ route('tally-sheet.auth.list-users') }}">
             <x-lucide-arrow-left />
         </a>
         <h1>Pin eingeben</h1>
-    </header>
+    </x-header>
     <x-wrapper>
         <x-form
             post="{{ route('tally-sheet.auth.validate-pin', $user) }}"

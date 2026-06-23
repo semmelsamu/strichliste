@@ -1,4 +1,6 @@
-<x-layout.main title="Preisliste">
+<x-layout.main title="Session Starten">
+    <x-header />
+
     <x-wrapper>
         <x-form get="" class="mx-auto max-w-2xl p-section">
             <button

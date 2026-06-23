@@ -1,10 +1,10 @@
 <x-layout.main title="Kategorie erstellen">
-    <header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
+    <x-header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
         <a class="button" href="{{ route('categories.index') }}">
             <x-lucide-arrow-left />
         </a>
         <h1>Kategorie erstellen</h1>
-    </header>
+    </x-header>
     <x-wrapper>
         <x-form post="{{ route('categories.store') }}">
             <x-input.text

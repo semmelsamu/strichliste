@@ -1,4 +1,6 @@
-<x-layout.tally-sheet title="Geld ein- und auszahlen" activeTab="deposit">
+<x-layout.main title="Geld ein- und auszahlen">
+    <x-header.tally-sheet activeTab="deposit" />
+
     <x-wrapper class="space-y-section">
         <section class="space-y-content">
             <h2>Betrag eingeben</h2>
@@ -71,4 +73,4 @@
             </section>
         @endforeach
     </x-wrapper>
-</x-layout.tally-sheet>
+</x-layout.main>

@@ -1,5 +1,5 @@
 <x-layout.main title="Artikel">
-    <header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
+    <x-header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
         <a class="button" href="{{ route('dashboard') }}">
             <x-lucide-arrow-left />
         </a>
@@ -11,7 +11,7 @@
             <x-lucide-plus />
             Neuen Artikel erstellen
         </a>
-    </header>
+    </x-header>
     <x-wrapper>
         <table class="table">
             <thead>

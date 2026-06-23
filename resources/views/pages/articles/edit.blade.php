@@ -1,10 +1,10 @@
 <x-layout.main title="Artikel bearbeiten">
-    <header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
+    <x-header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
         <a class="button" href="{{ route('articles.index') }}">
             <x-lucide-arrow-left />
         </a>
         <h1>Artikel bearbeiten</h1>
-    </header>
+    </x-header>
     <x-wrapper
         class="space-y-section *:rounded-2xl *:border-4 *:border-fsim-medium *:p-content"
     >

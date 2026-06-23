@@ -1,11 +1,13 @@
 <x-layout.main title="Account-Einstellungen">
     <x-tally-sheet-inactivity-logout />
-    <header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
+
+    <x-header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
         <a class="button" href="{{ route('tally-sheet.buy-overview') }}">
             <x-lucide-arrow-left />
         </a>
         <h1>Account-Einstellungen</h1>
-    </header>
+    </x-header>
+
     <x-wrapper class="mx-auto flex flex-col space-y-section">
         <section class="space-y-content">
             <h2>Nutzername</h2>

@@ -1,5 +1,7 @@
 <x-layout.main title="Anmelden">
-    <header class="flex items-center justify-between bg-fsim-medium p-wrapper">
+    <x-header
+        class="flex items-center justify-between bg-fsim-medium p-wrapper"
+    >
         <h1>Anmelden</h1>
         <a
             class="button bg-fsim-light"
@@ -8,7 +10,8 @@
             <x-lucide-user-plus />
             Registrieren
         </a>
-    </header>
+    </x-header>
+
     <x-scanner>
         <x-form
             post="{{ route('tally-sheet.auth.scan-barcode') }}"

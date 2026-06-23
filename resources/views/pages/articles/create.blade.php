@@ -1,10 +1,10 @@
 <x-layout.main title="Artikel erstellen">
-    <header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
+    <x-header class="flex items-center gap-4 bg-fsim-medium p-wrapper">
         <a class="button" href="{{ route('articles.index') }}">
             <x-lucide-arrow-left />
         </a>
         <h1>Artikel erstellen</h1>
-    </header>
+    </x-header>
     <x-wrapper>
         <x-form post="{{ route('articles.store') }}">
             <x-input.text

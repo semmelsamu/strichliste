@@ -1,4 +1,4 @@
-<x-layout.main without-header title="Preisliste">
+<x-layout.main title="Preisliste">
     <x-header class="bg-fsim-medium p-wrapper">
         <h1>Preisliste</h1>
     </x-header>
