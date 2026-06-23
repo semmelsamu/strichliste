@@ -6,8 +6,11 @@
         <h1>Kategorie bearbeiten</h1>
     </x-header>
 
-    <main class="wrapper px-wrapper py-section">
-        <x-form put="{{ route('categories.update', $category->id) }}">
+    <main class="wrapper space-y-section px-wrapper py-section">
+        <x-form
+            put="{{ route('categories.update', $category->id) }}"
+            class="section"
+        >
             <x-input.text
                 name="name"
                 label="Name"
@@ -34,20 +37,22 @@
             <x-input.submit>Änderungen speichern</x-input.submit>
         </x-form>
 
-        <h2 class="mt-section mb-content">Danger zone</h2>
+        <section class="section border-red-900">
+            <h2 class="mb-content">Danger zone</h2>
 
-        <x-form delete="{{ route('categories.destroy', $category->id) }}">
-            <button
-                type="submit"
-                class="button bg-red-800"
-                @disabled ($category->articles()->withTrashed()->get()->isNotEmpty())
-            >
-                <x-lucide-trash />
-                Kategorie löschen
-            </button>
-        </x-form>
-        @if ($category->articles()->withTrashed()->get()->isNotEmpty())
-            <p class="mt-2 text-sm text-text-secondary">Eine Kategorie kann erst gelöscht werden, wenn sie keine Artikel mehr enthält.</p>
-        @endif
+            <x-form delete="{{ route('categories.destroy', $category->id) }}">
+                <button
+                    type="submit"
+                    class="button bg-red-800"
+                    @disabled ($category->articles()->withTrashed()->get()->isNotEmpty())
+                >
+                    <x-lucide-trash />
+                    Kategorie löschen
+                </button>
+            </x-form>
+            @if ($category->articles()->withTrashed()->get()->isNotEmpty())
+                <p class="mt-2 text-sm text-text-secondary">Eine Kategorie kann erst gelöscht werden, wenn sie keine Artikel mehr enthält.</p>
+            @endif
+        </section>
     </main>
 </x-layout.main>

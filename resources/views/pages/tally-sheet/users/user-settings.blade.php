@@ -8,8 +8,8 @@
         <h1>Account-Einstellungen</h1>
     </x-header>
 
-    <main class="wrapper flex flex-col space-y-section px-wrapper py-section">
-        <section class="space-y-content">
+    <main class="wrapper space-y-section px-wrapper py-section">
+        <section class="section space-y-content">
             <h2>Nutzername</h2>
 
             <x-form put="{{ route('tally-sheet.users.update') }}">
@@ -25,7 +25,7 @@
             </x-form>
         </section>
 
-        <section class="space-y-content">
+        <section class="section space-y-content">
             <h2>PIN</h2>
 
             <x-form post="{{ route('tally-sheet.users.update-pin') }}">
@@ -50,7 +50,7 @@
             @endif
         </section>
 
-        <section class="space-y-content">
+        <section class="section space-y-content">
             <h2>Barcodes</h2>
             <x-form post="{{ route('tally-sheet.users.add-barcode') }}">
                 <x-input.text
@@ -100,7 +100,7 @@
             </table>
         </section>
 
-        <section class="space-y-content">
+        <section class="section space-y-content border-red-900">
             <h2>Danger Zone</h2>
 
             <x-form delete="{{ route('tally-sheet.users.destroy') }}">

@@ -8,8 +8,10 @@
         <h1>Nutzer bearbeiten</h1>
     </x-header>
 
-    <main class="wrapper px-wrapper py-section">
-        <x-form put="{{ route('users.update', $user->id) }}">
+    <main class="wrapper space-y-section px-wrapper py-section">
+        <x-form put="{{ route('users.update', $user->id) }}" class="section">
+            <h2>Generelle Informationen</h2>
+
             <x-input.text
                 name="username"
                 label="Name"
@@ -20,7 +22,7 @@
             <x-input.submit>Nutzername speichern</x-input.submit>
         </x-form>
 
-        <section class="my-section">
+        <section class="section">
             <h2 class="mb-inline">Rollen</h2>
             <x-form put="{{ route('users.update-roles', $user->id) }}">
                 <table class="table">
@@ -74,7 +76,7 @@
             </x-form>
         </section>
 
-        <section class="my-section">
+        <section class="section">
             <h2 class="mb-inline">Strichlisten-Zuweisung</h2>
             <p class="mb-content max-w-prose text-text-secondary">Ist eine Außenwelt und ein Verkäufer zugewiesen, startet dieser Nutzer beim Anmelden automatisch eine Strichlisten-Session mit diesen Konten.</p>
             <x-form put="{{ route('users.update-assignment', $user->id) }}">
@@ -98,46 +100,48 @@
             </x-form>
         </section>
 
-        <h2 class="mt-section mb-content">Danger zone</h2>
+        <section class="section border-red-900">
+            <h2 class="mb-content">Danger zone</h2>
 
-        @if ($user->trashed())
-            <x-form post="{{ route('users.restore', $user->id) }}">
-                <x-input.submit>
-                    <x-lucide-user-check />
-                    Nutzer reaktivieren
-                </x-input.submit>
-            </x-form>
-        @else
-            <x-form delete="{{ route('users.destroy', $user->id) }}">
-                <x-input.submit class="bg-red-800">
-                    <x-lucide-octagon-minus />
-                    Nutzer deaktivieren
-                </x-input.submit>
-            </x-form>
-        @endif
+            @if ($user->trashed())
+                <x-form post="{{ route('users.restore', $user->id) }}">
+                    <x-input.submit>
+                        <x-lucide-user-check />
+                        Nutzer reaktivieren
+                    </x-input.submit>
+                </x-form>
+            @else
+                <x-form delete="{{ route('users.destroy', $user->id) }}">
+                    <x-input.submit class="bg-red-800">
+                        <x-lucide-octagon-minus />
+                        Nutzer deaktivieren
+                    </x-input.submit>
+                </x-form>
+            @endif
 
-        @if ($user->pin)
-            <x-form delete="{{ route('users.remove-pin', $user->id) }}">
-                <x-input.submit class="bg-red-800">
-                    <x-lucide-rotate-ccw-key />
-                    PIN entfernen
-                </x-input.submit>
-            </x-form>
-        @endif
+            @if ($user->pin)
+                <x-form delete="{{ route('users.remove-pin', $user->id) }}">
+                    <x-input.submit class="bg-red-800">
+                        <x-lucide-rotate-ccw-key />
+                        PIN entfernen
+                    </x-input.submit>
+                </x-form>
+            @endif
 
-        <h3 class="mt-content mb-inline">Passwort setzen</h3>
-        <x-form put="{{ route('users.update-password', $user->id) }}">
-            <x-input.text
-                name="password"
-                type="password"
-                label="Neues Passwort"
-                class="max-w-md"
-            >
-                <x-input.submit class="bg-red-800">
-                    <x-lucide-key-round />
-                    Passwort setzen
-                </x-input.submit>
-            </x-input.text>
-        </x-form>
+            <h3 class="mt-content mb-inline">Passwort setzen</h3>
+            <x-form put="{{ route('users.update-password', $user->id) }}">
+                <x-input.text
+                    name="password"
+                    type="password"
+                    label="Neues Passwort"
+                    class="max-w-md"
+                >
+                    <x-input.submit class="bg-red-800">
+                        <x-lucide-key-round />
+                        Passwort setzen
+                    </x-input.submit>
+                </x-input.text>
+            </x-form>
+        </section>
     </main>
 </x-layout.main>
