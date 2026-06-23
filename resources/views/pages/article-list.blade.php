@@ -4,7 +4,7 @@
     </x-header>
 
     <x-wrapper
-        class="grid grid-cols-[1fr_3fr] gap-content overflow-hidden p-wrapper"
+        class="grid max-h-full flex-1 grid-cols-[1fr_3fr] gap-content overflow-hidden p-wrapper"
         x-data="scrollspy({{ $categories->first()?->id ?? 'null' }})"
     >
         <nav
@@ -24,7 +24,7 @@
 
         <div
             x-ref="scrollContainer"
-            class="flex flex-col gap-section overflow-y-auto"
+            class="flex max-h-full flex-col gap-section overflow-y-auto"
         >
             @foreach ($categories as $category)
                 <section

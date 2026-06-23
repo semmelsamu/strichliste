@@ -11,7 +11,7 @@
     @fonts
     @vite (['resources/css/app.css', 'resources/js/app.ts'])
 </head>
-<body class="relative mx-auto flex max-w-6xl flex-col bg-fsim-dark">
+<body class="relative mx-auto flex min-h-svh max-w-6xl flex-col bg-fsim-dark">
     <x-version-badge />
 
     {{ $slot }}

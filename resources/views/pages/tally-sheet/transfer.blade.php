@@ -1,4 +1,4 @@
-<x-layout.tally-sheet title="Geld senden">
+<x-layout.main title="Geld senden">
     <x-header.tally-sheet activeTab="transfer" />
 
     <x-wrapper class="space-y-section">
@@ -24,4 +24,4 @@
             </x-form>
         </section>
     </x-wrapper>
-</x-layout.tally-sheet>
+</x-layout.main>
