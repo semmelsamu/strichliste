@@ -306,6 +306,7 @@ in
 
             ${deleteFolderIfExists "${cfg.paths.application}/public/build"}
             ${deleteFolderIfExists "${cfg.paths.application}/resources"}
+            ${deleteFolderIfExists "${cfg.paths.application}/storage/framework/views"}
 
             cp -r ${cfg.package}/* "${cfg.paths.application}/"
 
