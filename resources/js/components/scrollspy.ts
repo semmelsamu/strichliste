@@ -32,9 +32,10 @@ export default (initialGroup: any = null) => ({
             }
         };
 
-        const scrollPaddingTop = parseFloat(
-            getComputedStyle(this.$refs.scrollContainer).scrollPaddingTop,
-        );
+        const scrollPaddingTop =
+            parseFloat(
+                getComputedStyle(this.$refs.scrollContainer).scrollPaddingTop,
+            ) || 0;
 
         const observer = new IntersectionObserver(
             (entries) => {

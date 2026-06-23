@@ -1,4 +1,4 @@
-<x-layout.main title="Anmelden">
+<x-layout.main title="Anmelden" class="max-h-screen">
     <x-header
         class="flex items-center justify-between bg-fsim-medium p-wrapper"
     >
@@ -21,13 +21,13 @@
         </x-form>
     </x-scanner>
 
-    <x-wrapper
-        class="grid grid-cols-[auto_1fr] gap-content overflow-hidden p-wrapper"
+    <main
+        class="grid grid-cols-[auto_1fr] overflow-hidden"
         x-data="scrollspy({{ $usersByLetter->keys()->first()?->id ?? 'null' }})"
     >
         <nav
             x-ref="nav"
-            class="flex touch-none flex-col overflow-y-auto select-none"
+            class="flex touch-none flex-col overflow-y-auto py-section pl-wrapper select-none"
         >
             @foreach ($usersByLetter as $letter => $users)
                 <a
@@ -42,7 +42,7 @@
 
         <div
             x-ref="scrollContainer"
-            class="flex flex-col gap-section overflow-y-auto"
+            class="flex flex-col gap-section overflow-y-auto py-section pr-wrapper pl-content"
         >
             @foreach ($usersByLetter as $letter => $users)
                 <section id="{{ $letter }}" data-group-id="{{ $letter }}">
@@ -60,5 +60,5 @@
                 </section>
             @endforeach
         </div>
-    </x-wrapper>
+    </main>
 </x-layout.main>
