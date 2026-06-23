@@ -1,19 +1,21 @@
-@if (app()->environment('local'))
-    <span
-        class="fixed top-0 left-0 z-50 rounded-br bg-yellow-500 px-inline py-0.5 text-xs font-bold text-black"
-    >
+<?php
+$version = config('app.version')
+?>
+
+<span
+    {{ $attributes->class([
+    "badge",
+    "bg-yellow-500 font-bold text-black *:text-black ring-0" => app()->environment('local'),
+    "bg-fsim-dark font-bold text-text-secondary *:text-text-secondary ring-fsim-light" => $version,
+    "bg-red-900 ring-0" => !(app()->environment('local') || $version)
+])}}
+>
+    <x-lucide-git-branch />
+    @if (app()->environment('local'))
         DEV
-    </span>
-@elseif ($version = config('app.version'))
-    <span
-        class="fixed top-0 left-0 z-50 rounded-br bg-fsim-dark px-inline py-0.5 text-xs font-bold text-text-secondary ring-1 ring-fsim-light"
-    >
+    @elseif ($version)
         {{ $version }}
-    </span>
-@else
-    <span
-        class="fixed top-0 left-0 z-50 rounded-br bg-red-900 px-inline py-0.5 text-xs font-bold text-text-primary ring-1 ring-red-600"
-    >
+    @else
         Unbekannte Version
-    </span>
-@endif
+    @endif
+</span>

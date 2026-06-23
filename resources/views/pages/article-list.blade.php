@@ -4,7 +4,7 @@
     </x-header>
 
     <main
-        class="grid flex-1 grid-cols-[1fr_3fr] overflow-hidden print:block print:overflow-visible"
+        class="wrapper grid flex-1 grid-cols-[1fr_3fr] overflow-hidden p-0 print:block print:overflow-visible"
         x-data="scrollspy({{ $categories->first()?->id ?? 'null' }})"
     >
         <nav

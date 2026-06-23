@@ -22,7 +22,7 @@
     </x-scanner>
 
     <main
-        class="grid grid-cols-[auto_1fr] overflow-hidden"
+        class="wrapper grid grid-cols-[auto_1fr] overflow-hidden p-0"
         x-data="scrollspy({{ $usersByLetter->keys()->first()?->id ?? 'null' }})"
     >
         <nav

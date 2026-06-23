@@ -75,7 +75,7 @@ input[type="checkbox"]:checked::after {
 }
 
 .badge {
-    @apply inline-flex w-fit items-center gap-1 rounded-full bg-fsim-medium px-2 py-1 align-middle text-xs;
+    @apply inline-flex w-fit items-center gap-1 rounded-full bg-fsim-medium px-2 py-1 align-middle text-xs ring-1 ring-fsim-light print:ring-0;
 }
 
 .badge svg {

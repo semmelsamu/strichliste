@@ -14,8 +14,6 @@
 <body
     {{ $attributes->class(["relative mx-auto flex min-h-svh flex-col bg-fsim-dark"]) }}
 >
-    <x-version-badge />
-
     {{ $slot }}
 
     <x-toast.toaster>
