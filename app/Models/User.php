@@ -96,6 +96,7 @@ class User extends Authenticatable
     public static function groupByFirstLetter(Collection $users)
     {
         return $users
+            ->sortBy(fn ($user) => strtolower($user->name))
             ->groupBy(function ($user) {
                 $first = strtoupper(substr($user->name, 0, 1));
 
@@ -103,10 +104,11 @@ class User extends Authenticatable
             })
             ->sortKeys()
             ->pipe(function ($col) {
-                // Move '*' to the end if present
+                // Move '*' to the front if present
                 if ($col->has('*')) {
                     $star = $col->pull('*');
-                    $col->put('*', $star);
+
+                    return collect(['*' => $star])->merge($col);
                 }
 
                 return $col;
