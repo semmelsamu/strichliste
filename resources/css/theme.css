@@ -27,6 +27,7 @@
     --spacing-section: calc(12 * var(--spacing));
 
     --animate-toast-in: toast-in 0.3s ease-out;
+    --animate-toast-out: toast-out 0.3s ease-in forwards;
 
     --spacing-form-contents: var(--spacing-content);
     --spacing-form-labels: calc(3 * var(--spacing));
@@ -35,5 +36,11 @@
 @keyframes toast-in {
     from {
         transform: translateY(100%);
+    }
+}
+
+@keyframes toast-out {
+    to {
+        transform: translateX(calc(100% + var(--spacing-content)));
     }
 }

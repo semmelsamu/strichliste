@@ -98,9 +98,16 @@ class LoginController extends Controller
         return $this->userStartPage($user);
     }
 
-    public function logout(): RedirectResponse
+    public function logout(Request $request): RedirectResponse
     {
         $this->tallySheetSessionService->logout();
+
+        if ($request->boolean('inactivity')) {
+            return redirect()->route('tally-sheet.auth.list-users')->with('toast', [
+                'type' => 'info',
+                'message' => 'Du wurdest nach inaktivität ausgeloggt.',
+            ]);
+        }
 
         return redirect()->route('tally-sheet.auth.list-users');
     }
