@@ -1,1 +1,1 @@
-<div x-data="inactivityTimeout('{{ route('tally-sheet.auth.logout') }}')"></div>
+<div x-data="inactivityTimeout('{{ route('tally-sheet.auth.logout', ['inactivity' => 1]) }}')"></div>
