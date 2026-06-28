@@ -104,11 +104,10 @@ class User extends Authenticatable
             })
             ->sortKeys()
             ->pipe(function ($col) {
-                // Move '*' to the front if present
+                // Move '*' to the end if present
                 if ($col->has('*')) {
                     $star = $col->pull('*');
-
-                    return collect(['*' => $star])->merge($col);
+                    $col->put('*', $star);
                 }
 
                 return $col;

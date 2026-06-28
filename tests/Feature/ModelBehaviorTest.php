@@ -171,7 +171,7 @@ test('a users transactions include sent and received transactions only', functio
         ->and($user->transactions()->pluck('id')->all())->not->toContain($unrelated->id);
 });
 
-test('users are grouped alphabetically by first letter with non letters at the start', function () {
+test('users are grouped alphabetically by first letter with non letters at the end', function () {
     $anna = new User(['name' => 'anna']);
     $alice = new User(['name' => 'Alice']);
     $bob = new User(['name' => 'Bob']);
@@ -180,7 +180,7 @@ test('users are grouped alphabetically by first letter with non letters at the s
 
     $grouped = User::groupByFirstLetter(collect([$number, $bob, $alice, $anna, $underscore]));
 
-    expect($grouped->keys()->all())->toBe(['*', 'A', 'B'])
+    expect($grouped->keys()->all())->toBe(['A', 'B', '*'])
         ->and($grouped->get('A')->values()->all())->toBe([$alice, $anna])
         ->and($grouped->get('B')->first())->toBe($bob)
         ->and($grouped->get('*')->all())->toBe([$number, $underscore]);
