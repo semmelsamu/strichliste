@@ -40,7 +40,7 @@
 
         <div
             x-ref="scrollContainer"
-            class="flex flex-col gap-section overflow-y-auto py-section pr-wrapper pl-content"
+            class="flex scroll-p-section flex-col gap-section overflow-y-auto py-section pr-wrapper pl-content"
         >
             @foreach ($usersByLetter as $letter => $users)
                 <section id="{{ $letter }}" data-group-id="{{ $letter }}">
