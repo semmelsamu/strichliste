@@ -2,7 +2,11 @@
     x-data="{
         dismiss() {
             this.$el.classList.add('animate-toast-out');
-            this.$el.addEventListener('animationend', () => this.$el.style.display = 'none', { once: true });
+            this.$el.addEventListener(
+                'animationend',
+                () => (this.$el.style.display = 'none'),
+                { once: true },
+            );
         },
         init() {
             setTimeout(() => this.dismiss(), 10000);
