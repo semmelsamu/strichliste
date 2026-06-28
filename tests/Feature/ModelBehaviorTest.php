@@ -173,14 +173,15 @@ test('a users transactions include sent and received transactions only', functio
 
 test('users are grouped alphabetically by first letter with non letters at the end', function () {
     $anna = new User(['name' => 'anna']);
+    $alice = new User(['name' => 'Alice']);
     $bob = new User(['name' => 'Bob']);
     $number = new User(['name' => '1st User']);
     $underscore = new User(['name' => '_robot']);
 
-    $grouped = User::groupByFirstLetter(collect([$number, $bob, $anna, $underscore]));
+    $grouped = User::groupByFirstLetter(collect([$number, $bob, $alice, $anna, $underscore]));
 
     expect($grouped->keys()->all())->toBe(['A', 'B', '*'])
-        ->and($grouped->get('A')->first())->toBe($anna)
+        ->and($grouped->get('A')->values()->all())->toBe([$alice, $anna])
         ->and($grouped->get('B')->first())->toBe($bob)
         ->and($grouped->get('*')->all())->toBe([$number, $underscore]);
 });

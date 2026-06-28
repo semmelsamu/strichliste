@@ -96,6 +96,7 @@ class User extends Authenticatable
     public static function groupByFirstLetter(Collection $users)
     {
         return $users
+            ->sortBy(fn ($user) => strtolower($user->name))
             ->groupBy(function ($user) {
                 $first = strtoupper(substr($user->name, 0, 1));
 
