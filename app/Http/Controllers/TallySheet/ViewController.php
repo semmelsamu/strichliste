@@ -36,7 +36,7 @@ class ViewController extends Controller
     public function showBuyCategory($category_id)
     {
         return view('pages.tally-sheet.buy-category', [
-            'category' => Category::with('articles')->firstWhere('id', $category_id),
+            'category' => Category::with(['articles' => fn ($q) => $q->orderBy('name')])->firstWhere('id', $category_id),
         ]);
     }
 
