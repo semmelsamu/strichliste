@@ -25,7 +25,7 @@
     >
         <nav
             x-ref="nav"
-            class="flex touch-none flex-col overflow-y-auto py-section pl-wrapper select-none"
+            class="flex touch-none flex-col items-center overflow-y-auto py-section pl-wrapper select-none"
         >
             @foreach ($usersByLetter as $letter => $users)
                 <a
