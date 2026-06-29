@@ -105,3 +105,11 @@ input[type="checkbox"]:checked::after {
 .section {
     @apply w-full rounded-2xl border-4 border-fsim-medium p-content;
 }
+
+dialog {
+    @apply m-auto rounded-2xl bg-fsim-medium p-content text-text-primary shadow-lg;
+}
+
+dialog::backdrop {
+    @apply bg-black/60;
+}
