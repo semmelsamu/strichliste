@@ -97,7 +97,14 @@ new class extends Component
                     tabindex="-1"
                     onmousedown="event.preventDefault()"
                 >
-                    <td>{{ $transaction->created_at->diffForHumans() }}</td>
+                    <td>
+                        <time class="inline print:hidden">
+                            {{ $transaction->created_at->diffForHumans() }}
+                        </time>
+                        <time class="hidden print:inline">
+                            {{ $transaction->created_at->format('d.m.Y, H:i') }}
+                        </time>
+                    </td>
                     <th>
                         @if ($transaction->buyArticleTransaction)
                             {{ $transaction->buyArticleTransaction->article->name }}
