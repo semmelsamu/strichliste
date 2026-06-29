@@ -55,11 +55,14 @@
                     PIN entfernen
                 </button>
                 <dialog id="confirm-delete-user-pin">
-                    <form method="dialog">
-                        <p>Element wirklich unwiderruflich löschen?</p>
-                        <menu>
+                    <form method="dialog" class="space-y-inline">
+                        <p>PIN wirklich entfernen?</p>
+                        <menu class="dialog-menu">
                             <li>
-                                <button class="button" value="cancel">
+                                <button
+                                    class="button bg-fsim-light"
+                                    value="cancel"
+                                >
                                     Abbrechen
                                 </button>
                             </li>
