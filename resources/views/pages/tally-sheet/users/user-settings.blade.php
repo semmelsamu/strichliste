@@ -47,9 +47,34 @@
                     id="delete-user-pin"
                     class="hidden"
                 />
-                <x-input.submit class="bg-red-800" form="delete-user-pin">
+                <button
+                    class="button bg-red-800"
+                    command="show-modal"
+                    commandfor="confirm-delete-user-pin"
+                >
                     PIN entfernen
-                </x-input.submit>
+                </button>
+                <dialog id="confirm-delete-user-pin">
+                    <form method="dialog">
+                        <p>Element wirklich unwiderruflich löschen?</p>
+                        <menu>
+                            <li>
+                                <button class="button" value="cancel">
+                                    Abbrechen
+                                </button>
+                            </li>
+                            <li>
+                                <x-input.submit
+                                    class="bg-red-800"
+                                    form="delete-user-pin"
+                                    autofocus
+                                >
+                                    Entfernen
+                                </x-input.submit>
+                            </li>
+                        </menu>
+                    </form>
+                </dialog>
             @endif
         </section>
 
