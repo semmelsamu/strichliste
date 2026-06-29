@@ -6,7 +6,7 @@
         class="wrapper mb-content flex items-center justify-between gap-content px-wrapper pt-6"
     >
         <a
-            class="button bg-fsim-light"
+            class="button bg-fsim-light print:hidden"
             href="{{ route('tally-sheet.auth.logout') }}"
         >
             <x-lucide-house />
@@ -28,7 +28,10 @@
         </a>
     </div>
 
-    <x-tab-bar class="wrapper px-wrapper" activeTab="{{ $activeTab }}">
+    <x-tab-bar
+        class="wrapper px-wrapper print:hidden"
+        activeTab="{{ $activeTab }}"
+    >
         <x-tab-bar.tab
             href="{{ route('tally-sheet.buy-overview') }}"
             name="buy"
