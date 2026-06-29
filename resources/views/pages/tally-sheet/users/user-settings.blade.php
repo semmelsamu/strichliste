@@ -42,11 +42,14 @@
             </x-form>
 
             @if ($user->pin)
-                <x-form delete="{{ route('tally-sheet.users.remove-pin') }}">
-                    <x-input.submit class="bg-red-800">
-                        PIN entfernen</x-input.submit
-                    >
-                </x-form>
+                <x-form
+                    delete="{{ route('tally-sheet.users.remove-pin') }}"
+                    id="delete-user-pin"
+                    class="hidden"
+                />
+                <x-input.submit class="bg-red-800" form="delete-user-pin">
+                    PIN entfernen
+                </x-input.submit>
             @endif
         </section>
 
