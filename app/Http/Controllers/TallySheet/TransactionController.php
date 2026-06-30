@@ -167,6 +167,12 @@ class TransactionController extends Controller
                 function (string $attribute, mixed $value, Closure $fail) use ($user) {
                     $article = Barcode::where('barcode', $value)->first()?->article;
 
+                    if (! $article) {
+                        $fail('Artikel nicht gefunden');
+
+                        return;
+                    }
+
                     if ($user->balance < $article->currentPrice) {
                         $fail('Nicht genügend Guthaben.');
                     }

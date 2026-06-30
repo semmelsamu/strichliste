@@ -70,6 +70,29 @@ test('barcode purchases validate the barcode', function (array $payload, array $
     'unknown barcode' => [['barcode' => 'does-not-exist'], ['barcode']],
 ]);
 
+test('scanning a user barcode while logged in fails gracefully instead of erroring', function () {
+    $admin = testUser([], UserRole::TallyHost);
+    [$user, $world, $vendor] = createBarcodePurchaseFixtures(userBalance: 5.00, articlePrice: 1.50);
+
+    $scannedUser = testUser([], UserRole::Customer);
+    $userBarcode = new Barcode;
+    $userBarcode->user_id = $scannedUser->id;
+    $userBarcode->barcode = 'user-barcode-1';
+    $userBarcode->save();
+
+    $response = $this->actingAs($admin)->withSession(tallySheetSession($user, $world, $vendor))->post(route('tally-sheet.buy-by-barcode'), [
+        'vendor' => $vendor->id,
+        'barcode' => 'user-barcode-1',
+    ]);
+
+    $response->assertSessionHasErrors(['barcode' => 'Artikel nicht gefunden']);
+
+    $this->assertDatabaseMissing(Transaction::class, [
+        'from_user_id' => $user->id,
+        'to_user_id' => $vendor->id,
+    ]);
+});
+
 /**
  * @return array{0: User, 1: User, 2: User, 3: Article}
  */
