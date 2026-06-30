@@ -4,7 +4,7 @@ style="padding-top: 1rem;"></a></p>
 
 ## About
 
-This is a digital tally sheet ("Strichliste") for our snack / drink bar. Users can create a "prepaid" account, deposit money and buy articles with their balance. Admins can manage articles, categories and users. Some easter eggs are also installed :)
+This is a digital tally sheet ("Strichliste") for our snack / drink bar. Users can create a "prepaid" account, deposit money and buy articles with their balance. Admins can manage articles, categories and users. Some easter eggs are also installed! :)
 
 ## Technical Overview
 
@@ -12,7 +12,7 @@ This application runs on the TALL Stack:
 
 - [Laravel](https://laravel.com/) as the full-stack, batteries included framework
 - [Livewire](https://livewire.laravel.com/) for server-side interactivity
-- [Alpine.js](https://alpinejs.dev/) for lightweight interactivity
+- [Alpine.js](https://alpinejs.dev/) for client-side interactivity
 - [Tailwind CSS](https://tailwindcss.com/) as a CSS framework
 
 Additional technologies used:
@@ -37,10 +37,16 @@ The application expects a storage directory to be present in the public folder. 
 php artisan storage:link
 ```
 
-Next, set up the database by running the migrations and initial seeders:
+Next, set up the database by running the migrations and initial seeders. Note that this will wipe the database:
 
 ```sh
 php artisan migrate:fresh --seed
+```
+
+If you wish to only migrate new migrations and keep the database intact, run:
+
+```sh
+php artisan migrate
 ```
 
 If you want the application to contain some additional dummy data, also run the dummy data seeder:
