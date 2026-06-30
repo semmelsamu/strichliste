@@ -229,11 +229,44 @@
                     {{ sizeof($article->barcodes) }} Barcodes gesamt.
                 </caption>
             </table>
+
+            @if (session('barcodeConflict'))
+                <x-form
+                    post="{{ route('articles.add-barcode', $article) }}"
+                    id="confirm-overwrite-barcode"
+                    class="hidden"
+                >
+                    <input
+                        type="hidden"
+                        name="barcode"
+                        value="{{ session('barcodeConflict.barcode') }}"
+                    />
+                    <input type="hidden" name="overwrite" value="1" />
+                </x-form>
+                <x-confirmation-dialog
+                    id="confirm-overwrite-barcode-dialog"
+                    form="confirm-overwrite-barcode"
+                    confirm="Überschreiben"
+                >
+                    <p>Dieser Barcode wird bereits von {{ session('barcodeConflict.owner') }} verwendet. Überschreiben?</p>
+                </x-confirmation-dialog>
+                <script>
+                    document.addEventListener("DOMContentLoaded", () =>
+                        document
+                            .getElementById("confirm-overwrite-barcode-dialog")
+                            .showModal(),
+                    );
+                </script>
+            @endif
         </section>
 
         <section class="section border-red-900">
             <h2 class="mb-content">Danger Zone</h2>
-            <x-form delete="{{ route('articles.destroy', $article->id) }}" id="archive-article" class="hidden" />
+            <x-form
+                delete="{{ route('articles.destroy', $article->id) }}"
+                id="archive-article"
+                class="hidden"
+            />
             <div class="space-y-form-labels">
                 <button
                     class="button bg-red-800"
@@ -244,7 +277,11 @@
                 </button>
                 <p class="text-sm text-text-secondary">Dadurch wird der Artikel nicht mehr im Kaufmenü angezeigt.</p>
             </div>
-            <x-confirmation-dialog id="confirm-archive-article" form="archive-article" confirm="Archivieren">
+            <x-confirmation-dialog
+                id="confirm-archive-article"
+                form="archive-article"
+                confirm="Archivieren"
+            >
                 <p>Artikel wirklich archivieren?</p>
             </x-confirmation-dialog>
         </section>

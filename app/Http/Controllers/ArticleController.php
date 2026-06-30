@@ -159,7 +159,19 @@ class ArticleController extends Controller
             'barcode' => ['required', 'string'],
         ]);
 
-        $barcode = Barcode::where('barcode', $validated['barcode'])->first() ?? new Barcode;
+        $existing = Barcode::where('barcode', $validated['barcode'])->first();
+
+        if ($existing && ! $request->boolean('overwrite')
+            && ($existing->user_id !== null || $existing->article_id !== $article->id)) {
+            return redirect()->route('articles.edit', $article->id)->with('barcodeConflict', [
+                'barcode' => $validated['barcode'],
+                'owner' => $existing->user_id !== null
+                    ? 'Nutzer '.$existing->user->name
+                    : 'Artikel '.$existing->article->name,
+            ]);
+        }
+
+        $barcode = $existing ?? new Barcode;
         $barcode->barcode = $validated['barcode'];
         $barcode->user_id = null;
         $barcode->article_id = $article->id;
