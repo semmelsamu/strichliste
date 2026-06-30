@@ -104,7 +104,11 @@
             <h2 class="mb-content">Danger zone</h2>
 
             @if ($user->trashed())
-                <x-form post="{{ route('users.restore', $user->id) }}" id="restore-user" class="hidden" />
+                <x-form
+                    post="{{ route('users.restore', $user->id) }}"
+                    id="restore-user"
+                    class="hidden"
+                />
                 <button
                     class="button"
                     command="show-modal"
@@ -122,7 +126,11 @@
                     <p>Nutzer "{{ $user->name }}" wirklich reaktivieren?</p>
                 </x-confirmation-dialog>
             @else
-                <x-form delete="{{ route('users.destroy', $user->id) }}" id="deactivate-user" class="hidden" />
+                <x-form
+                    delete="{{ route('users.destroy', $user->id) }}"
+                    id="deactivate-user"
+                    class="hidden"
+                />
                 <button
                     class="button bg-red-800"
                     command="show-modal"
@@ -131,13 +139,21 @@
                     <x-lucide-octagon-minus />
                     Nutzer deaktivieren
                 </button>
-                <x-confirmation-dialog id="confirm-deactivate-user" form="deactivate-user" confirm="Deaktivieren">
+                <x-confirmation-dialog
+                    id="confirm-deactivate-user"
+                    form="deactivate-user"
+                    confirm="Deaktivieren"
+                >
                     <p>Nutzer "{{ $user->name }}" wirklich deaktivieren?</p>
                 </x-confirmation-dialog>
             @endif
 
             @if ($user->pin)
-                <x-form delete="{{ route('users.remove-pin', $user->id) }}" id="remove-user-pin" class="hidden" />
+                <x-form
+                    delete="{{ route('users.remove-pin', $user->id) }}"
+                    id="remove-user-pin"
+                    class="hidden"
+                />
                 <button
                     class="button bg-red-800"
                     command="show-modal"
@@ -146,13 +162,20 @@
                     <x-lucide-rotate-ccw-key />
                     PIN entfernen
                 </button>
-                <x-confirmation-dialog id="confirm-remove-user-pin" form="remove-user-pin" confirm="Entfernen">
+                <x-confirmation-dialog
+                    id="confirm-remove-user-pin"
+                    form="remove-user-pin"
+                    confirm="Entfernen"
+                >
                     <p>PIN von Nutzer "{{ $user->name }}" wirklich entfernen?</p>
                 </x-confirmation-dialog>
             @endif
 
             <h3 class="mt-content mb-inline">Passwort setzen</h3>
-            <x-form put="{{ route('users.update-password', $user->id) }}" id="set-user-password">
+            <x-form
+                put="{{ route('users.update-password', $user->id) }}"
+                id="set-user-password"
+            >
                 <x-input.text
                     name="password"
                     type="password"
@@ -170,7 +193,11 @@
                     </button>
                 </x-input.text>
             </x-form>
-            <x-confirmation-dialog id="confirm-set-user-password" form="set-user-password" confirm="Setzen">
+            <x-confirmation-dialog
+                id="confirm-set-user-password"
+                form="set-user-password"
+                confirm="Setzen"
+            >
                 <p>Passwort von Nutzer "{{ $user->name }}" wirklich überschreiben?</p>
             </x-confirmation-dialog>
         </section>

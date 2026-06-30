@@ -40,7 +40,11 @@
         <section class="section border-red-900">
             <h2 class="mb-content">Danger zone</h2>
 
-            <x-form delete="{{ route('categories.destroy', $category->id) }}" id="delete-category" class="hidden" />
+            <x-form
+                delete="{{ route('categories.destroy', $category->id) }}"
+                id="delete-category"
+                class="hidden"
+            />
             <button
                 class="button bg-red-800"
                 @disabled ($category->articles()->withTrashed()->get()->isNotEmpty())
@@ -50,7 +54,11 @@
                 <x-lucide-trash />
                 Kategorie löschen
             </button>
-            <x-confirmation-dialog id="confirm-delete-category" form="delete-category" confirm="Löschen">
+            <x-confirmation-dialog
+                id="confirm-delete-category"
+                form="delete-category"
+                confirm="Löschen"
+            >
                 <p>Kategorie wirklich löschen?</p>
             </x-confirmation-dialog>
             @if ($category->articles()->withTrashed()->get()->isNotEmpty())

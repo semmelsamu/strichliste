@@ -10,7 +10,11 @@
                 </button>
             </li>
             <li>
-                <x-input.submit class="{{ $confirmClass }}" form="{{ $form }}" autofocus>
+                <x-input.submit
+                    class="{{ $confirmClass }}"
+                    form="{{ $form }}"
+                    autofocus
+                >
                     {{ $confirm }}
                 </x-input.submit>
             </li>
