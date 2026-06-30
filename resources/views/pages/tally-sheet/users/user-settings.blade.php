@@ -60,6 +60,14 @@
                     confirm="Entfernen"
                 >
                     <p>PIN wirklich entfernen?</p>
+                    <x-input.text
+                        name="pin"
+                        type="password"
+                        label="Zum Bestätigen PIN eingeben"
+                        form="delete-user-pin"
+                        placeholder="PIN eingeben"
+                        required
+                    />
                 </x-confirmation-dialog>
             @endif
         </section>

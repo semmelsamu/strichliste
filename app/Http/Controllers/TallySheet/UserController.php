@@ -114,9 +114,18 @@ class UserController extends Controller
             ->with('toast', ['type' => 'success', 'message' => 'PIN geändert.']);
     }
 
-    public function removePin(): RedirectResponse
+    public function removePin(Request $request): RedirectResponse
     {
         $user = $this->tallySheetSessionService->get('user');
+
+        if ($user->pin && ! Hash::check((string) $request->input('pin'), $user->pin)) {
+            return redirect()
+                ->route('tally-sheet.users.edit')
+                ->with('toast', [
+                    'type' => 'error',
+                    'message' => 'Falsche PIN. Die PIN wurde nicht entfernt.',
+                ]);
+        }
 
         $user->pin = null;
         $user->save();
