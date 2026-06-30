@@ -54,30 +54,13 @@
                 >
                     PIN entfernen
                 </button>
-                <dialog id="confirm-delete-user-pin" class="dialog">
-                    <form method="dialog" class="space-y-inline">
-                        <p>PIN wirklich entfernen?</p>
-                        <menu>
-                            <li>
-                                <button
-                                    class="button bg-fsim-light"
-                                    value="cancel"
-                                >
-                                    Abbrechen
-                                </button>
-                            </li>
-                            <li>
-                                <x-input.submit
-                                    class="bg-red-800"
-                                    form="delete-user-pin"
-                                    autofocus
-                                >
-                                    Entfernen
-                                </x-input.submit>
-                            </li>
-                        </menu>
-                    </form>
-                </dialog>
+                <x-confirmation-dialog
+                    id="confirm-delete-user-pin"
+                    form="delete-user-pin"
+                    confirm="Entfernen"
+                >
+                    <p>PIN wirklich entfernen?</p>
+                </x-confirmation-dialog>
             @endif
         </section>
 
@@ -107,14 +90,23 @@
                             <td class="w-6">
                                 <x-form
                                     delete="{{ route('tally-sheet.users.remove-barcode', $barcode) }}"
+                                    id="delete-user-barcode-{{ $barcode->id }}"
+                                    class="hidden"
+                                />
+                                <button
+                                    class="flex items-center"
+                                    command="show-modal"
+                                    commandfor="confirm-delete-user-barcode-{{ $barcode->id }}"
                                 >
-                                    <button
-                                        type="submit"
-                                        class="flex items-center"
-                                    >
-                                        <x-lucide-trash-2 />
-                                    </button>
-                                </x-form>
+                                    <x-lucide-trash-2 />
+                                </button>
+                                <x-confirmation-dialog
+                                    id="confirm-delete-user-barcode-{{ $barcode->id }}"
+                                    form="delete-user-barcode-{{ $barcode->id }}"
+                                    confirm="Entfernen"
+                                >
+                                    <p>Barcode "{{ $barcode->barcode }}" wirklich entfernen?</p>
+                                </x-confirmation-dialog>
                             </td>
                         </tr>
                     @empty
@@ -134,11 +126,17 @@
         <section class="section space-y-content border-red-900">
             <h2>Danger Zone</h2>
 
-            <x-form delete="{{ route('tally-sheet.users.destroy') }}">
-                <x-input.submit class="bg-red-800">
-                    Account deaktivieren</x-input.submit
-                >
-            </x-form>
+            <x-form delete="{{ route('tally-sheet.users.destroy') }}" id="deactivate-account" class="hidden" />
+            <button
+                class="button bg-red-800"
+                command="show-modal"
+                commandfor="confirm-deactivate-account"
+            >
+                Account deaktivieren
+            </button>
+            <x-confirmation-dialog id="confirm-deactivate-account" form="deactivate-account" confirm="Deaktivieren">
+                <p>Account wirklich deaktivieren?</p>
+            </x-confirmation-dialog>
         </section>
     </main>
 </x-layout.main>

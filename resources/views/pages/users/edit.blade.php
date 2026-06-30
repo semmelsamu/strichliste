@@ -111,21 +111,33 @@
                     </x-input.submit>
                 </x-form>
             @else
-                <x-form delete="{{ route('users.destroy', $user->id) }}">
-                    <x-input.submit class="bg-red-800">
-                        <x-lucide-octagon-minus />
-                        Nutzer deaktivieren
-                    </x-input.submit>
-                </x-form>
+                <x-form delete="{{ route('users.destroy', $user->id) }}" id="deactivate-user" class="hidden" />
+                <button
+                    class="button bg-red-800"
+                    command="show-modal"
+                    commandfor="confirm-deactivate-user"
+                >
+                    <x-lucide-octagon-minus />
+                    Nutzer deaktivieren
+                </button>
+                <x-confirmation-dialog id="confirm-deactivate-user" form="deactivate-user" confirm="Deaktivieren">
+                    <p>Nutzer "{{ $user->name }}" wirklich deaktivieren?</p>
+                </x-confirmation-dialog>
             @endif
 
             @if ($user->pin)
-                <x-form delete="{{ route('users.remove-pin', $user->id) }}">
-                    <x-input.submit class="bg-red-800">
-                        <x-lucide-rotate-ccw-key />
-                        PIN entfernen
-                    </x-input.submit>
-                </x-form>
+                <x-form delete="{{ route('users.remove-pin', $user->id) }}" id="remove-user-pin" class="hidden" />
+                <button
+                    class="button bg-red-800"
+                    command="show-modal"
+                    commandfor="confirm-remove-user-pin"
+                >
+                    <x-lucide-rotate-ccw-key />
+                    PIN entfernen
+                </button>
+                <x-confirmation-dialog id="confirm-remove-user-pin" form="remove-user-pin" confirm="Entfernen">
+                    <p>PIN von Nutzer "{{ $user->name }}" wirklich entfernen?</p>
+                </x-confirmation-dialog>
             @endif
 
             <h3 class="mt-content mb-inline">Passwort setzen</h3>

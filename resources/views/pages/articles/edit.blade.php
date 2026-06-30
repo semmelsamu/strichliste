@@ -150,15 +150,24 @@
                     <x-article-image :article="$article" class="w-md" />
                     <x-form
                         delete="{{ route('articles.delete-image', $article->id) }}"
+                        id="delete-article-image"
+                        class="hidden"
+                    />
+                    <button
+                        class="button bg-red-800"
+                        aria-label="Bild entfernen"
+                        command="show-modal"
+                        commandfor="confirm-delete-article-image"
                     >
-                        <button
-                            type="submit"
-                            class="button bg-red-800"
-                            aria-label="Bild entfernen"
-                        >
-                            <x-lucide-trash-2 />
-                        </button>
-                    </x-form>
+                        <x-lucide-trash-2 />
+                    </button>
+                    <x-confirmation-dialog
+                        id="confirm-delete-article-image"
+                        form="delete-article-image"
+                        confirm="Entfernen"
+                    >
+                        <p>Bild wirklich entfernen?</p>
+                    </x-confirmation-dialog>
                 </div>
             @endif
         </section>
@@ -189,14 +198,23 @@
                             <td class="w-6">
                                 <x-form
                                     delete="{{ route('articles.remove-barcode', [$article, $barcode]) }}"
+                                    id="delete-article-barcode-{{ $barcode->id }}"
+                                    class="hidden"
+                                />
+                                <button
+                                    class="flex items-center"
+                                    command="show-modal"
+                                    commandfor="confirm-delete-article-barcode-{{ $barcode->id }}"
                                 >
-                                    <button
-                                        type="submit"
-                                        class="flex items-center"
-                                    >
-                                        <x-lucide-trash-2 />
-                                    </button>
-                                </x-form>
+                                    <x-lucide-trash-2 />
+                                </button>
+                                <x-confirmation-dialog
+                                    id="confirm-delete-article-barcode-{{ $barcode->id }}"
+                                    form="delete-article-barcode-{{ $barcode->id }}"
+                                    confirm="Entfernen"
+                                >
+                                    <p>Barcode "{{ $barcode->barcode }}" wirklich entfernen?</p>
+                                </x-confirmation-dialog>
                             </td>
                         </tr>
                     @empty
@@ -215,14 +233,20 @@
 
         <section class="section border-red-900">
             <h2 class="mb-content">Danger Zone</h2>
-            <x-form delete="{{ route('articles.destroy', $article->id) }}">
-                <div class="space-y-form-labels">
-                    <x-input.submit class="bg-red-800">
-                        <x-lucide-archive /> Artikel archivieren
-                    </x-input.submit>
-                    <p class="text-sm text-text-secondary">Dadurch wird der Artikel nicht mehr im Kaufmenü angezeigt.</p>
-                </div>
-            </x-form>
+            <x-form delete="{{ route('articles.destroy', $article->id) }}" id="archive-article" class="hidden" />
+            <div class="space-y-form-labels">
+                <button
+                    class="button bg-red-800"
+                    command="show-modal"
+                    commandfor="confirm-archive-article"
+                >
+                    <x-lucide-archive /> Artikel archivieren
+                </button>
+                <p class="text-sm text-text-secondary">Dadurch wird der Artikel nicht mehr im Kaufmenü angezeigt.</p>
+            </div>
+            <x-confirmation-dialog id="confirm-archive-article" form="archive-article" confirm="Archivieren">
+                <p>Artikel wirklich archivieren?</p>
+            </x-confirmation-dialog>
         </section>
     </main>
 </x-layout.main>
