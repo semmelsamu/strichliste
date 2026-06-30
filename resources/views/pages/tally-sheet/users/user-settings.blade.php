@@ -136,6 +136,16 @@
             </button>
             <x-confirmation-dialog id="confirm-deactivate-account" form="deactivate-account" confirm="Deaktivieren">
                 <p>Account wirklich deaktivieren?</p>
+                @if ($user->pin)
+                    <x-input.text
+                        name="pin"
+                        type="password"
+                        label="Zum Bestätigen PIN eingeben"
+                        form="deactivate-account"
+                        placeholder="PIN eingeben"
+                        required
+                    />
+                @endif
             </x-confirmation-dialog>
         </section>
     </main>

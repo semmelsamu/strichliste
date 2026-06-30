@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Services\TallySheetSessionService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
 class UserController extends Controller
@@ -156,9 +157,18 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(): RedirectResponse
+    public function destroy(Request $request): RedirectResponse
     {
         $user = $this->tallySheetSessionService->get('user');
+
+        if ($user->pin && ! Hash::check((string) $request->input('pin'), $user->pin)) {
+            return redirect()
+                ->route('tally-sheet.users.edit')
+                ->with('toast', [
+                    'type' => 'error',
+                    'message' => 'Falsche PIN. Der Account wurde nicht deaktiviert.',
+                ]);
+        }
 
         $user->delete();
         $this->tallySheetSessionService->logout();
