@@ -104,7 +104,9 @@ class UserController extends Controller
         $user = $this->tallySheetSessionService->get('user');
 
         $validated = $request->validate([
-            'pin' => ['required', 'string'],
+            'pin' => ['required', 'string', 'confirmed'],
+        ], [
+            'pin.confirmed' => 'Die PINs stimmen nicht überein.',
         ]);
 
         $user->pin = $validated['pin'];

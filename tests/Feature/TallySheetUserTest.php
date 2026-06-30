@@ -291,6 +291,7 @@ test('tally sheet users can save and remove their pin', function () {
 
     $this->actingAs($admin)->withSession(tallySheetSession($user))->post(route('tally-sheet.users.update-pin'), [
         'pin' => '9876',
+        'pin_confirmation' => '9876',
     ])
         ->assertRedirect(route('tally-sheet.users.edit'))
         ->assertSessionHas('toast.type', 'success');
@@ -341,6 +342,18 @@ test('tally sheet pin update requires a pin', function () {
     $this->actingAs($admin)->withSession(tallySheetSession($user))->post(route('tally-sheet.users.update-pin'), [
         'pin' => null,
     ])->assertSessionHasErrors('pin');
+});
+
+test('tally sheet pin update requires a matching confirmation', function () {
+    $admin = testUser([], UserRole::TallyHost);
+    $user = testUser(['pin' => null], UserRole::Customer);
+
+    $this->actingAs($admin)->withSession(tallySheetSession($user))->post(route('tally-sheet.users.update-pin'), [
+        'pin' => '9876',
+        'pin_confirmation' => '1234',
+    ])->assertSessionHasErrors('pin');
+
+    expect($user->fresh()->pin)->toBeNull();
 });
 
 test('tally sheet users can add and remove their barcodes', function () {

@@ -36,9 +36,16 @@
                     class="max-w-sm"
                     placeholder="Neue PIN eingeben"
                     required
-                >
-                    <x-input.submit>Speichern</x-input.submit>
-                </x-input.text>
+                />
+                <x-input.text
+                    name="pin_confirmation"
+                    type="password"
+                    label="PIN bestätigen"
+                    class="max-w-sm"
+                    placeholder="Neue PIN wiederholen"
+                    required
+                />
+                <x-input.submit>Speichern</x-input.submit>
             </x-form>
 
             @if ($user->pin)
@@ -134,7 +141,11 @@
         <section class="section space-y-content border-red-900">
             <h2>Danger Zone</h2>
 
-            <x-form delete="{{ route('tally-sheet.users.destroy') }}" id="deactivate-account" class="hidden" />
+            <x-form
+                delete="{{ route('tally-sheet.users.destroy') }}"
+                id="deactivate-account"
+                class="hidden"
+            />
             <button
                 class="button bg-red-800"
                 command="show-modal"
@@ -142,7 +153,11 @@
             >
                 Account deaktivieren
             </button>
-            <x-confirmation-dialog id="confirm-deactivate-account" form="deactivate-account" confirm="Deaktivieren">
+            <x-confirmation-dialog
+                id="confirm-deactivate-account"
+                form="deactivate-account"
+                confirm="Deaktivieren"
+            >
                 <p>Account wirklich deaktivieren?</p>
                 @if ($user->pin)
                     <x-input.text
