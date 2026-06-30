@@ -119,7 +119,7 @@ class UserController extends Controller
     {
         $user = $this->tallySheetSessionService->get('user');
 
-        $this->validateConfirmationPin($request, $user);
+        $this->validateConfirmationPin($request, $user, 'remove_pin_confirmation');
 
         $user->pin = null;
         $user->save();
@@ -164,7 +164,7 @@ class UserController extends Controller
     {
         $user = $this->tallySheetSessionService->get('user');
 
-        $this->validateConfirmationPin($request, $user);
+        $this->validateConfirmationPin($request, $user, 'deactivate_confirmation');
 
         $user->delete();
         $this->tallySheetSessionService->logout();
@@ -177,11 +177,14 @@ class UserController extends Controller
 
     /**
      * Validate the confirmation PIN against the user's stored PIN, if one is set.
+     *
+     * The field name is configurable so each confirmation form on the settings
+     * page can use a distinct input, keeping validation errors scoped to it.
      */
-    private function validateConfirmationPin(Request $request, User $user): void
+    private function validateConfirmationPin(Request $request, User $user, string $field): void
     {
         $request->validate([
-            'pin' => [
+            $field => [
                 Rule::requiredIf((bool) $user->pin),
                 function (string $attribute, mixed $value, Closure $fail) use ($user): void {
                     if ($user->pin && ! Hash::check((string) $value, $user->pin)) {
@@ -190,7 +193,7 @@ class UserController extends Controller
                 },
             ],
         ], [
-            'pin.required' => 'Falsche PIN.',
+            "{$field}.required" => 'Falsche PIN.',
         ]);
     }
 }

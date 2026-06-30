@@ -61,7 +61,7 @@
                 >
                     <p>PIN wirklich entfernen?</p>
                     <x-input.text
-                        name="pin"
+                        name="remove_pin_confirmation"
                         type="password"
                         label="Zum Bestätigen PIN eingeben"
                         form="delete-user-pin"
@@ -146,7 +146,7 @@
                 <p>Account wirklich deaktivieren?</p>
                 @if ($user->pin)
                     <x-input.text
-                        name="pin"
+                        name="deactivate_confirmation"
                         type="password"
                         label="Zum Bestätigen PIN eingeben"
                         form="deactivate-account"
