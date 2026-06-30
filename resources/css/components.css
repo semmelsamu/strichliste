@@ -107,7 +107,7 @@ input[type="checkbox"]:checked::after {
 }
 
 .dialog {
-    @apply m-auto w-full max-w-sm space-y-inline rounded-2xl bg-fsim-medium p-content shadow-lg;
+    @apply m-auto w-full max-w-sm overflow-clip rounded-2xl bg-fsim-medium p-content shadow-lg;
     opacity: 0;
     scale: 0.9;
     transition:
