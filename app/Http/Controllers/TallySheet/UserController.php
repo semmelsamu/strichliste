@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Barcode;
 use App\Models\User;
 use App\Services\TallySheetSessionService;
+use Closure;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -118,14 +119,7 @@ class UserController extends Controller
     {
         $user = $this->tallySheetSessionService->get('user');
 
-        if ($user->pin && ! Hash::check((string) $request->input('pin'), $user->pin)) {
-            return redirect()
-                ->route('tally-sheet.users.edit')
-                ->with('toast', [
-                    'type' => 'error',
-                    'message' => 'Falsche PIN. Die PIN wurde nicht entfernt.',
-                ]);
-        }
+        $this->validateConfirmationPin($request, $user);
 
         $user->pin = null;
         $user->save();
@@ -170,14 +164,7 @@ class UserController extends Controller
     {
         $user = $this->tallySheetSessionService->get('user');
 
-        if ($user->pin && ! Hash::check((string) $request->input('pin'), $user->pin)) {
-            return redirect()
-                ->route('tally-sheet.users.edit')
-                ->with('toast', [
-                    'type' => 'error',
-                    'message' => 'Falsche PIN. Der Account wurde nicht deaktiviert.',
-                ]);
-        }
+        $this->validateConfirmationPin($request, $user);
 
         $user->delete();
         $this->tallySheetSessionService->logout();
@@ -185,6 +172,25 @@ class UserController extends Controller
         return redirect()->route('tally-sheet.auth.list-users')->with('toast', [
             'type' => 'success',
             'message' => 'Account wurde erfolgreich deaktiviert.',
+        ]);
+    }
+
+    /**
+     * Validate the confirmation PIN against the user's stored PIN, if one is set.
+     */
+    private function validateConfirmationPin(Request $request, User $user): void
+    {
+        $request->validate([
+            'pin' => [
+                Rule::requiredIf((bool) $user->pin),
+                function (string $attribute, mixed $value, Closure $fail) use ($user): void {
+                    if ($user->pin && ! Hash::check((string) $value, $user->pin)) {
+                        $fail('Falsche PIN.');
+                    }
+                },
+            ],
+        ], [
+            'pin.required' => 'Falsche PIN.',
         ]);
     }
 }

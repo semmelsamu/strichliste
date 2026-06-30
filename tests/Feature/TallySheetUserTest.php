@@ -310,11 +310,13 @@ test('tally sheet pin removal is rejected with an incorrect pin', function () {
     $admin = testUser([], UserRole::TallyHost);
     $user = testUser(['pin' => '1234'], UserRole::Customer);
 
-    $this->actingAs($admin)->withSession(tallySheetSession($user))->delete(route('tally-sheet.users.remove-pin'), [
-        'pin' => '0000',
-    ])
+    $this->actingAs($admin)->withSession(tallySheetSession($user))
+        ->from(route('tally-sheet.users.edit'))
+        ->delete(route('tally-sheet.users.remove-pin'), [
+            'pin' => '0000',
+        ])
         ->assertRedirect(route('tally-sheet.users.edit'))
-        ->assertSessionHas('toast.type', 'error');
+        ->assertSessionHasErrors('pin');
 
     expect($user->fresh()->pin)->not->toBeNull();
 });
@@ -323,9 +325,11 @@ test('tally sheet pin removal requires the pin', function () {
     $admin = testUser([], UserRole::TallyHost);
     $user = testUser(['pin' => '1234'], UserRole::Customer);
 
-    $this->actingAs($admin)->withSession(tallySheetSession($user))->delete(route('tally-sheet.users.remove-pin'))
+    $this->actingAs($admin)->withSession(tallySheetSession($user))
+        ->from(route('tally-sheet.users.edit'))
+        ->delete(route('tally-sheet.users.remove-pin'))
         ->assertRedirect(route('tally-sheet.users.edit'))
-        ->assertSessionHas('toast.type', 'error');
+        ->assertSessionHasErrors('pin');
 
     expect($user->fresh()->pin)->not->toBeNull();
 });
@@ -414,11 +418,13 @@ test('tally sheet account deactivation is rejected with an incorrect pin', funct
     $admin = testUser([], UserRole::TallyHost);
     $user = testUser(['pin' => '1234'], UserRole::Customer);
 
-    $this->actingAs($admin)->withSession(tallySheetSession($user))->delete(route('tally-sheet.users.destroy'), [
-        'pin' => '0000',
-    ])
+    $this->actingAs($admin)->withSession(tallySheetSession($user))
+        ->from(route('tally-sheet.users.edit'))
+        ->delete(route('tally-sheet.users.destroy'), [
+            'pin' => '0000',
+        ])
         ->assertRedirect(route('tally-sheet.users.edit'))
-        ->assertSessionHas('toast.type', 'error');
+        ->assertSessionHasErrors('pin');
 
     expect($user->fresh()->trashed())->toBeFalse();
 });
@@ -427,9 +433,11 @@ test('tally sheet account deactivation requires a pin when one is set', function
     $admin = testUser([], UserRole::TallyHost);
     $user = testUser(['pin' => '1234'], UserRole::Customer);
 
-    $this->actingAs($admin)->withSession(tallySheetSession($user))->delete(route('tally-sheet.users.destroy'))
+    $this->actingAs($admin)->withSession(tallySheetSession($user))
+        ->from(route('tally-sheet.users.edit'))
+        ->delete(route('tally-sheet.users.destroy'))
         ->assertRedirect(route('tally-sheet.users.edit'))
-        ->assertSessionHas('toast.type', 'error');
+        ->assertSessionHasErrors('pin');
 
     expect($user->fresh()->trashed())->toBeFalse();
 });
