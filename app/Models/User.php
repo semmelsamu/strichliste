@@ -77,7 +77,8 @@ class User extends Authenticatable
                     $incoming = $this->receivedTransactions()->sum('amount');
                     $outgoing = $this->sentTransactions()->sum('amount');
 
-                    return $incoming - $outgoing;
+                    // Round to cents to avoid floating point errors
+                    return round($incoming - $outgoing, 2);
                 }
             )
         )->shouldCache();
