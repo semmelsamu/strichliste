@@ -76,12 +76,24 @@
                         <td class="flex items-center justify-end">
                             <x-form
                                 post="{{ route('articles.restore', $article->id) }}"
+                                id="restore-article-{{ $article->id }}"
+                                class="hidden"
+                            />
+                            <button
                                 class="flex items-center"
+                                command="show-modal"
+                                commandfor="confirm-restore-article-{{ $article->id }}"
                             >
-                                <button type="submit">
-                                    <x-lucide-archive-restore />
-                                </button>
-                            </x-form>
+                                <x-lucide-archive-restore />
+                            </button>
+                            <x-confirmation-dialog
+                                id="confirm-restore-article-{{ $article->id }}"
+                                form="restore-article-{{ $article->id }}"
+                                confirm="Wiederherstellen"
+                                confirmClass="bg-fsim-light"
+                            >
+                                <p>Artikel "{{ $article->name }}" wirklich wiederherstellen?</p>
+                            </x-confirmation-dialog>
                         </td>
                     </tr>
                 @empty

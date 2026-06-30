@@ -104,12 +104,23 @@
             <h2 class="mb-content">Danger zone</h2>
 
             @if ($user->trashed())
-                <x-form post="{{ route('users.restore', $user->id) }}">
-                    <x-input.submit>
-                        <x-lucide-user-check />
-                        Nutzer reaktivieren
-                    </x-input.submit>
-                </x-form>
+                <x-form post="{{ route('users.restore', $user->id) }}" id="restore-user" class="hidden" />
+                <button
+                    class="button"
+                    command="show-modal"
+                    commandfor="confirm-restore-user"
+                >
+                    <x-lucide-user-check />
+                    Nutzer reaktivieren
+                </button>
+                <x-confirmation-dialog
+                    id="confirm-restore-user"
+                    form="restore-user"
+                    confirm="Reaktivieren"
+                    confirmClass="bg-fsim-light"
+                >
+                    <p>Nutzer "{{ $user->name }}" wirklich reaktivieren?</p>
+                </x-confirmation-dialog>
             @else
                 <x-form delete="{{ route('users.destroy', $user->id) }}" id="deactivate-user" class="hidden" />
                 <button
@@ -141,19 +152,27 @@
             @endif
 
             <h3 class="mt-content mb-inline">Passwort setzen</h3>
-            <x-form put="{{ route('users.update-password', $user->id) }}">
+            <x-form put="{{ route('users.update-password', $user->id) }}" id="set-user-password">
                 <x-input.text
                     name="password"
                     type="password"
                     label="Neues Passwort"
                     class="max-w-md"
                 >
-                    <x-input.submit class="bg-red-800">
+                    <button
+                        type="button"
+                        class="button bg-red-800"
+                        command="show-modal"
+                        commandfor="confirm-set-user-password"
+                    >
                         <x-lucide-key-round />
                         Passwort setzen
-                    </x-input.submit>
+                    </button>
                 </x-input.text>
             </x-form>
+            <x-confirmation-dialog id="confirm-set-user-password" form="set-user-password" confirm="Setzen">
+                <p>Passwort von Nutzer "{{ $user->name }}" wirklich überschreiben?</p>
+            </x-confirmation-dialog>
         </section>
     </main>
 </x-layout.main>

@@ -1,4 +1,4 @@
-@props (["confirm" => "Bestätigen", "form"])
+@props (["confirm" => "Bestätigen", "form", "confirmClass" => "bg-red-800"])
 
 <dialog {{ $attributes->class("dialog") }}>
     <form method="dialog" class="space-y-inline">
@@ -10,7 +10,7 @@
                 </button>
             </li>
             <li>
-                <x-input.submit class="bg-red-800" form="{{ $form }}" autofocus>
+                <x-input.submit class="{{ $confirmClass }}" form="{{ $form }}" autofocus>
                     {{ $confirm }}
                 </x-input.submit>
             </li>
