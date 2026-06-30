@@ -106,18 +106,18 @@ input[type="checkbox"]:checked::after {
     @apply w-full rounded-2xl border-4 border-fsim-medium p-content;
 }
 
-dialog {
+.dialog {
     @apply m-auto w-full max-w-sm space-y-inline rounded-2xl bg-fsim-medium p-content shadow-lg;
 }
 
-dialog::backdrop {
+.dialog::backdrop {
     @apply bg-black/80;
 }
 
-html:has(dialog[open]) {
+html:has(.dialog[open]) {
     @apply overflow-hidden;
 }
 
-.dialog-menu {
+.dialog menu {
     @apply -m-content mt-content flex items-center justify-end gap-inline bg-fsim-dark p-content;
 }
