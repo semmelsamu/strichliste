@@ -103,6 +103,15 @@ class UserController extends Controller
     {
         $user = $this->tallySheetSessionService->get('user');
 
+        if ($user->pin) {
+            return redirect()
+                ->route('tally-sheet.users.edit')
+                ->with('toast', [
+                    'type' => 'error',
+                    'message' => 'Es ist bereits eine PIN gesetzt. Entferne sie zuerst.',
+                ]);
+        }
+
         $validated = $request->validate([
             'pin' => ['required', 'string', 'confirmed'],
         ], [
@@ -114,7 +123,7 @@ class UserController extends Controller
 
         return redirect()
             ->route('tally-sheet.users.edit')
-            ->with('toast', ['type' => 'success', 'message' => 'PIN geändert.']);
+            ->with('toast', ['type' => 'success', 'message' => 'PIN gesetzt.']);
     }
 
     public function removePin(Request $request): RedirectResponse

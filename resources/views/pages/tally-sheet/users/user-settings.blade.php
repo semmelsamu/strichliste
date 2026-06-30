@@ -28,27 +28,8 @@
         <section class="section space-y-content">
             <h2>PIN</h2>
 
-            <x-form post="{{ route('tally-sheet.users.update-pin') }}">
-                <x-input.text
-                    name="pin"
-                    type="password"
-                    label="{{ $user->pin ? 'PIN ändern' : 'PIN hinzufügen' }}"
-                    class="max-w-sm"
-                    placeholder="Neue PIN eingeben"
-                    required
-                />
-                <x-input.text
-                    name="pin_confirmation"
-                    type="password"
-                    label="PIN bestätigen"
-                    class="max-w-sm"
-                    placeholder="Neue PIN wiederholen"
-                    required
-                />
-                <x-input.submit>Speichern</x-input.submit>
-            </x-form>
-
             @if ($user->pin)
+                <p class="text-text-secondary">Dein Strichlisten-Account ist mit einer PIN gesichert.</p>
                 <x-form
                     delete="{{ route('tally-sheet.users.remove-pin') }}"
                     id="delete-user-pin"
@@ -76,6 +57,26 @@
                         required
                     />
                 </x-confirmation-dialog>
+            @else
+                <x-form post="{{ route('tally-sheet.users.update-pin') }}">
+                    <x-input.text
+                        name="pin"
+                        type="password"
+                        label="{{ $user->pin ? 'PIN ändern' : 'PIN hinzufügen' }}"
+                        class="max-w-sm"
+                        placeholder="Neue PIN eingeben"
+                        required
+                    />
+                    <x-input.text
+                        name="pin_confirmation"
+                        type="password"
+                        label="PIN bestätigen"
+                        class="max-w-sm"
+                        placeholder="Neue PIN wiederholen"
+                        required
+                    />
+                    <x-input.submit>Speichern</x-input.submit>
+                </x-form>
             @endif
         </section>
 

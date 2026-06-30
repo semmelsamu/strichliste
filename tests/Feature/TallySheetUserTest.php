@@ -344,6 +344,20 @@ test('tally sheet pin update requires a pin', function () {
     ])->assertSessionHasErrors('pin');
 });
 
+test('tally sheet pin cannot be set when one already exists', function () {
+    $admin = testUser([], UserRole::TallyHost);
+    $user = testUser(['pin' => '1234'], UserRole::Customer);
+
+    $this->actingAs($admin)->withSession(tallySheetSession($user))->post(route('tally-sheet.users.update-pin'), [
+        'pin' => '9876',
+        'pin_confirmation' => '9876',
+    ])
+        ->assertRedirect(route('tally-sheet.users.edit'))
+        ->assertSessionHas('toast.type', 'error');
+
+    expect(Hash::check('1234', $user->fresh()->pin))->toBeTrue();
+});
+
 test('tally sheet pin update requires a matching confirmation', function () {
     $admin = testUser([], UserRole::TallyHost);
     $user = testUser(['pin' => null], UserRole::Customer);
