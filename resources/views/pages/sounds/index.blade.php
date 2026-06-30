@@ -44,12 +44,23 @@
                         <td class="w-6">
                             <x-form
                                 delete="{{ route('sounds.destroy', $sound->name()) }}"
+                                id="delete-sound-{{ $loop->index }}"
+                                class="hidden"
+                            />
+                            <button
                                 class="flex items-center"
+                                command="show-modal"
+                                commandfor="confirm-delete-sound-{{ $loop->index }}"
                             >
-                                <button type="submit" class="flex items-center">
-                                    <x-lucide-trash-2 />
-                                </button>
-                            </x-form>
+                                <x-lucide-trash-2 />
+                            </button>
+                            <x-confirmation-dialog
+                                id="confirm-delete-sound-{{ $loop->index }}"
+                                form="delete-sound-{{ $loop->index }}"
+                                confirm="Löschen"
+                            >
+                                <p>Sound "{{ $sound->name() }}" wirklich löschen?</p>
+                            </x-confirmation-dialog>
                         </td>
                     </tr>
                 @empty

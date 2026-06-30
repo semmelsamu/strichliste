@@ -40,16 +40,27 @@
         <section class="section border-red-900">
             <h2 class="mb-content">Danger zone</h2>
 
-            <x-form delete="{{ route('categories.destroy', $category->id) }}">
-                <button
-                    type="submit"
-                    class="button bg-red-800"
-                    @disabled ($category->articles()->withTrashed()->get()->isNotEmpty())
-                >
-                    <x-lucide-trash />
-                    Kategorie löschen
-                </button>
-            </x-form>
+            <x-form
+                delete="{{ route('categories.destroy', $category->id) }}"
+                id="delete-category"
+                class="hidden"
+            />
+            <button
+                class="button bg-red-800"
+                @disabled ($category->articles()->withTrashed()->get()->isNotEmpty())
+                command="show-modal"
+                commandfor="confirm-delete-category"
+            >
+                <x-lucide-trash />
+                Kategorie löschen
+            </button>
+            <x-confirmation-dialog
+                id="confirm-delete-category"
+                form="delete-category"
+                confirm="Löschen"
+            >
+                <p>Kategorie wirklich löschen?</p>
+            </x-confirmation-dialog>
             @if ($category->articles()->withTrashed()->get()->isNotEmpty())
                 <p class="mt-2 text-sm text-text-secondary">Eine Kategorie kann erst gelöscht werden, wenn sie keine Artikel mehr enthält.</p>
             @endif

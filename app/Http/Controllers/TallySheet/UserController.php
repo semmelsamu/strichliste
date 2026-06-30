@@ -7,8 +7,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Barcode;
 use App\Models\User;
 use App\Services\TallySheetSessionService;
+use Closure;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
 class UserController extends Controller
@@ -101,8 +103,19 @@ class UserController extends Controller
     {
         $user = $this->tallySheetSessionService->get('user');
 
+        if ($user->pin) {
+            return redirect()
+                ->route('tally-sheet.users.edit')
+                ->with('toast', [
+                    'type' => 'error',
+                    'message' => 'Es ist bereits eine PIN gesetzt. Entferne sie zuerst.',
+                ]);
+        }
+
         $validated = $request->validate([
-            'pin' => ['required', 'string'],
+            'pin' => ['required', 'string', 'confirmed'],
+        ], [
+            'pin.confirmed' => 'Die PINs stimmen nicht überein.',
         ]);
 
         $user->pin = $validated['pin'];
@@ -110,12 +123,14 @@ class UserController extends Controller
 
         return redirect()
             ->route('tally-sheet.users.edit')
-            ->with('toast', ['type' => 'success', 'message' => 'PIN geändert.']);
+            ->with('toast', ['type' => 'success', 'message' => 'PIN gesetzt.']);
     }
 
-    public function removePin(): RedirectResponse
+    public function removePin(Request $request): RedirectResponse
     {
         $user = $this->tallySheetSessionService->get('user');
+
+        $this->validateConfirmationPin($request, $user, 'remove_pin_confirmation');
 
         $user->pin = null;
         $user->save();
@@ -156,9 +171,11 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(): RedirectResponse
+    public function destroy(Request $request): RedirectResponse
     {
         $user = $this->tallySheetSessionService->get('user');
+
+        $this->validateConfirmationPin($request, $user, 'deactivate_confirmation');
 
         $user->delete();
         $this->tallySheetSessionService->logout();
@@ -166,6 +183,28 @@ class UserController extends Controller
         return redirect()->route('tally-sheet.auth.list-users')->with('toast', [
             'type' => 'success',
             'message' => 'Account wurde erfolgreich deaktiviert.',
+        ]);
+    }
+
+    /**
+     * Validate the confirmation PIN against the user's stored PIN, if one is set.
+     *
+     * The field name is configurable so each confirmation form on the settings
+     * page can use a distinct input, keeping validation errors scoped to it.
+     */
+    private function validateConfirmationPin(Request $request, User $user, string $field): void
+    {
+        $request->validate([
+            $field => [
+                Rule::requiredIf((bool) $user->pin),
+                function (string $attribute, mixed $value, Closure $fail) use ($user): void {
+                    if ($user->pin && ! Hash::check((string) $value, $user->pin)) {
+                        $fail('Falsche PIN.');
+                    }
+                },
+            ],
+        ], [
+            "{$field}.required" => 'Falsche PIN.',
         ]);
     }
 }
