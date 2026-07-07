@@ -5,6 +5,10 @@
 
     <main class="wrapper px-wrapper py-section">
         <x-form post="{{ route('feedback.store') }}" class="mx-auto max-w-sm">
+            <div class="absolute -left-[9999px]" aria-hidden="true">
+                <label for="feedback-website">Website</label>
+                <input type="text" id="feedback-website" name="website" tabindex="-1" autocomplete="off" />
+            </div>
             <div class="w-full space-y-form-labels">
                 <label for="feedback-message" class="block">Kritik, Fragen, Anregungen...</label>
                 <textarea

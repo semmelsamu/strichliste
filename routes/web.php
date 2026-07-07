@@ -13,7 +13,7 @@ use App\Models\Category;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/feedback', [FeedbackController::class, 'create'])->name('feedback.create');
-Route::post('/feedback', [FeedbackController::class, 'store'])->name('feedback.store');
+Route::post('/feedback', [FeedbackController::class, 'store'])->middleware('throttle:5,10')->name('feedback.store');
 Route::get('/feedback/success', [FeedbackController::class, 'success'])->name('feedback.success');
 
 Route::get('/login', [LoginController::class, 'login'])->name('login')->middleware('guest');

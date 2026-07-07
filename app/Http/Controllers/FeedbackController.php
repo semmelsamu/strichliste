@@ -16,13 +16,17 @@ class FeedbackController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
+        if ($request->filled('website')) {
+            return redirect()->route('feedback.success');
+        }
+
         $validated = $request->validate([
             'message' => ['required', 'string', 'max:5000'],
         ]);
 
         Feedback::create($validated);
 
-        return redirect()->route('feedback.success')->with("toast", ["type" => "success", "message" => "Feedback wurde erfolgreich gesendet"]);
+        return redirect()->route('feedback.success')->with('toast', ['type' => 'success', 'message' => 'Feedback wurde erfolgreich gesendet']);
     }
 
     public function success(): View
