@@ -3,8 +3,10 @@
         <h1>Feedback zur Strichliste</h1>
     </x-header>
 
-    <main class="wrapper px-wrapper py-section text-center flex items-center gap-inline flex-col">
+    <main
+        class="wrapper flex flex-col items-center gap-inline px-wrapper py-section text-center"
+    >
         <x-lucide-party-popper />
-            <strong>Danke für dein Feedback!</strong>
+        <strong>Danke für dein Feedback!</strong>
     </main>
 </x-layout.main>
