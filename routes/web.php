@@ -99,6 +99,8 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
 
+    Route::get('feedbacks', [FeedbackController::class, 'index'])->name('feedbacks.index');
+
     Route::controller(ArticleController::class)->group(function () {
 
         Route::post('articles/{article}/restore', 'restore')->name('articles.restore')->withTrashed();

@@ -1,5 +1,7 @@
 <?php
 
+use App\Enums\UserRole;
+use App\Models\Feedback;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -40,4 +42,23 @@ test('feedback submit is rate limited', function () {
 
     $this->post(route('feedback.store'), ['message' => 'Over the limit'])
         ->assertStatus(429);
+});
+
+test('admin can view feedbacks index', function () {
+    Feedback::create(['message' => 'Hello from a user']);
+
+    $admin = testUser(role: UserRole::Admin);
+
+    $this->actingAs($admin)
+        ->get(route('feedbacks.index'))
+        ->assertStatus(200)
+        ->assertSee('Hello from a user');
+});
+
+test('non-admin cannot view feedbacks index', function () {
+    $user = testUser();
+
+    $this->actingAs($user)
+        ->get(route('feedbacks.index'))
+        ->assertStatus(403);
 });

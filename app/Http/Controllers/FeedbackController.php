@@ -9,6 +9,13 @@ use Illuminate\View\View;
 
 class FeedbackController extends Controller
 {
+    public function index(): View
+    {
+        return view('pages.feedbacks.index', [
+            'feedbacks' => Feedback::latest()->get(),
+        ]);
+    }
+
     public function create(): View
     {
         return view('pages.feedback');
