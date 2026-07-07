@@ -6,9 +6,9 @@
         <h1>Feedbacks</h1>
     </x-header>
 
-    <main class="wrapper px-wrapper py-section max-w-prose">
+    <main class="wrapper max-w-prose px-wrapper py-section">
         @forelse ($feedbacks as $feedback)
-            <div class="card p-inline mb-inline">
+            <div class="card mb-inline p-inline">
                 <p class="whitespace-pre-wrap">{{ $feedback->message }}</p>
                 <p class="mt-2 text-sm text-text-secondary">{{ $feedback->created_at->diffForHumans() }}</p>
             </div>

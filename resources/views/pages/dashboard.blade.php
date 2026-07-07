@@ -58,7 +58,9 @@
                     Sounds bearbeiten
                 </a>
                 <a class="card p-inline" href="/pulse">Pulse Dashboard</a>
-                <a class="card p-inline" href="{{ route('feedbacks.index') }}">Feedbacks</a>
+                <a class="card p-inline" href="{{ route('feedbacks.index') }}"
+                    >Feedbacks</a
+                >
             @endif
 
             @if (auth()->user()->hasRole(UserRole::Admin->value))
