@@ -11,14 +11,14 @@ class FeedbackController extends Controller
 {
     public function index(): View
     {
-        return view('pages.feedbacks.index', [
+        return view('pages.feedback.list', [
             'feedbacks' => Feedback::latest()->get(),
         ]);
     }
 
     public function create(): View
     {
-        return view('pages.feedback');
+        return view('pages.feedback.create');
     }
 
     public function store(Request $request): RedirectResponse
@@ -38,6 +38,6 @@ class FeedbackController extends Controller
 
     public function success(): View
     {
-        return view('pages.feedback-success');
+        return view('pages.feedback.success');
     }
 }
