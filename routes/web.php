@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SoundController;
 use App\Http\Controllers\TallySheet;
@@ -10,6 +11,10 @@ use App\Http\Middleware\EnsureTallySessionRunning;
 use App\Http\Middleware\EnsureTallySheetUserSelected;
 use App\Models\Category;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/feedback', [FeedbackController::class, 'create'])->name('feedback.create');
+Route::post('/feedback', [FeedbackController::class, 'store'])->middleware('throttle:5,10')->name('feedback.store');
+Route::get('/feedback/success', [FeedbackController::class, 'success'])->name('feedback.success');
 
 Route::get('/login', [LoginController::class, 'login'])->name('login')->middleware('guest');
 Route::post('/login', [LoginController::class, 'authenticate'])->name('authenticate')->middleware('guest');
