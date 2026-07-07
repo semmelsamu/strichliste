@@ -12,10 +12,14 @@ test('feedback page is accessible publicly', function () {
 
 test('feedback can be submitted', function () {
     $this->post(route('feedback.store'), ['message' => 'This is a test feedback.'])
-        ->assertRedirect()
-        ->assertSessionHas('toast');
+        ->assertRedirect(route('feedback.success'));
 
     $this->assertDatabaseHas('feedbacks', ['message' => 'This is a test feedback.']);
+});
+
+test('feedback success page is accessible publicly', function () {
+    $this->get(route('feedback.success'))
+        ->assertStatus(200);
 });
 
 test('feedback message is required', function () {

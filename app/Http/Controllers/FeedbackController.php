@@ -22,9 +22,11 @@ class FeedbackController extends Controller
 
         Feedback::create($validated);
 
-        return back()->with('toast', [
-            'type' => 'success',
-            'message' => 'Danke für dein Feedback!',
-        ]);
+        return redirect()->route('feedback.success')->with("toast", ["type" => "success", "message" => "Feedback wurde erfolgreich gesendet"]);
+    }
+
+    public function success(): View
+    {
+        return view('pages.feedback-success');
     }
 }
