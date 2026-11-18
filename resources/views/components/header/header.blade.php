@@ -24,6 +24,6 @@
     </nav>
 
     @unless ($slot->isEmpty())
-        <div {{ $attributes }}> {{ $slot }}</div>
+        <div {{ $attributes }}>{{ $slot }}</div>
     @endunless
 </header>
