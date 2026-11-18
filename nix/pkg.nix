@@ -15,7 +15,7 @@ let
 
     src = "${php-app}/share/php/${name}-php/";
 
-    npmDepsHash = "sha256-eIjVZv40yaE/aAVIG5oRma5JXGId6z5GhCClusSGPJk=U";
+    npmDepsHash = "sha256-TZl0+GcdD+D0+ChzcAy0FoZRNZep5USDmNAnKO/SauY=";
 
     # Don't run the postinstall composer/npm scripts; we only want `vite build`.
     npmPackFlags = [ "--ignore-scripts" ];
@@ -41,7 +41,7 @@ let
 
     src = ../.;
 
-    vendorHash = "sha256-oAe/pXNcQ+i/ZxOiv3XRETtsnfQZ08m/nbLCCBwBsTQ=";
+    vendorHash = "sha256-tl4Fl3al2GuCcSKGBDjaOKwJ46iNOe+DoSUv8Khnt08=";
 
     composerNoDev = true;
 
