@@ -8,7 +8,8 @@
         <option
             value="{{ $sound->name() }}"
             @selected ($sound->name() == $selected?->name())
-            >{{ $sound->name() }}
+        >
+            {{ $sound->name() }}
         </option>
     @endforeach
 </select>

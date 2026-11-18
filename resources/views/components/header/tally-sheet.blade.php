@@ -60,7 +60,7 @@
     </x-tab-bar>
 
     @unless ($slot->isEmpty())
-        <div {{ $attributes }}> {{ $slot }}</div>
+        <div {{ $attributes }}>{{ $slot }}</div>
     @endunless
 </x-header>
 
