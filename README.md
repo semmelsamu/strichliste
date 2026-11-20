@@ -70,4 +70,8 @@ Password: root
 
 ## Deployment
 
-Deployment is automated with Nix. We deploy on our own dedicated server running NixOS. General deployment information is available in the [Laravel documentation](https://laravel.com/docs/13.x/deployment).
+Deployment is automated with Nix. We deploy on our own dedicated server running NixOS.
+
+In order to deploy, run `nix flake update semmelstrichliste` in the [fsim/infra](https://git.fsim-ev.de/FSIM/infra) repo and open a Pull Request.
+
+General deployment information for Laravel is available in the [Laravel documentation](https://laravel.com/docs/13.x/deployment).
